@@ -3,21 +3,21 @@ import { createTool } from '@mastra/core/tools';
 import { jsonSchemaToModel } from '@mastra/core/utils';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { SSEClientTransport } from '@modelcontextprotocol/sdk/client/sse.js';
-import { getDefaultEnvironment, StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
-import type { StdioServerParameters } from '@modelcontextprotocol/sdk/client/stdio.js';
+// import { getDefaultEnvironment, StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
+// import type { StdioServerParameters } from '@modelcontextprotocol/sdk/client/stdio.js';
 import { DEFAULT_REQUEST_TIMEOUT_MSEC } from '@modelcontextprotocol/sdk/shared/protocol.js';
 import type { Protocol } from '@modelcontextprotocol/sdk/shared/protocol.js';
 import type { Transport } from '@modelcontextprotocol/sdk/shared/transport.js';
 import type { ClientCapabilities } from '@modelcontextprotocol/sdk/types.js';
 import { CallToolResultSchema, ListResourcesResultSchema } from '@modelcontextprotocol/sdk/types.js';
 
-import { asyncExitHook, gracefulExit } from 'exit-hook';
+// import { asyncExitHook, gracefulExit } from 'exit-hook';
 
 type SSEClientParameters = {
   url: URL;
 } & ConstructorParameters<typeof SSEClientTransport>[1];
 
-export type MastraMCPServerDefinition = StdioServerParameters | SSEClientParameters;
+export type MastraMCPServerDefinition = any | SSEClientParameters;
 
 export class MastraMCPClient extends MastraBase {
   name: string;
@@ -47,11 +47,12 @@ export class MastraMCPClient extends MastraBase {
         eventSourceInit: server.eventSourceInit,
       });
     } else {
-      this.transport = new StdioClientTransport({
-        ...server,
-        // without ...getDefaultEnvironment() commands like npx will fail because there will be no PATH env var
-        env: { ...getDefaultEnvironment(), ...(server.env || {}) },
-      });
+      // this.transport = new StdioClientTransport({
+      //   ...server,
+      //   // without ...getDefaultEnvironment() commands like npx will fail because there will be no PATH env var
+      //   env: { ...getDefaultEnvironment(), ...(server.env || {}) },
+      // });
+      this.transport = null as any;
     }
 
     this.client = new Client(
@@ -79,15 +80,15 @@ export class MastraMCPClient extends MastraBase {
           originalOnClose();
         }
       };
-      asyncExitHook(
-        async () => {
-          this.logger.debug(`Disconnecting ${this.name} MCP server`);
-          await this.disconnect();
-        },
-        { wait: 5000 },
-      );
+      // asyncExitHook(
+      //   async () => {
+      //     this.logger.debug(`Disconnecting ${this.name} MCP server`);
+      //     await this.disconnect();
+      //   },
+      //   { wait: 5000 },
+      // );
 
-      process.on('SIGTERM', () => gracefulExit());
+      // process.on('SIGTERM', () => gracefulExit());
     } catch (e) {
       this.logger.error(
         `Failed connecting to MCPClient with name ${this.name}.\n${e instanceof Error ? e.stack : JSON.stringify(e, null, 2)}`,
