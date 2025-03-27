@@ -1,6 +1,6 @@
 {
   "name": "mastra-browser-core",
-  "version": "0.7.0-alpha.3",
+  "version": "0.0.3",
   "license": "ISC",
   "type": "module",
   "main": "dist/index.js",
