@@ -1,6 +1,6 @@
 import { Transform } from 'stream';
-import pino from 'pino';
-import pretty from 'pino-pretty';
+// import pino from 'pino';
+// import pretty from 'pino-pretty';
 
 import type { Run } from '../run/types';
 
@@ -59,7 +59,7 @@ export type TransportMap = Record<string, LoggerTransport>;
 
 // Base Pino Logger
 export class Logger {
-  protected logger: pino.Logger;
+  // protected logger: pino.Logger;
   transports: TransportMap;
 
   constructor(
@@ -72,65 +72,69 @@ export class Logger {
   ) {
     this.transports = options.transports || {};
 
-    // Create Pino logger with multiple streams
-    const transportsAry = Object.entries(this.transports);
-    this.logger = pino(
-      {
-        name: options.name || 'app',
-        level: options.level || LogLevel.INFO,
-        formatters: {
-          level: label => {
-            return {
-              level: label,
-            };
-          },
-        },
-      },
-      options.overrideDefaultTransports
-        ? options?.transports?.default
-        : transportsAry.length === 0
-          ? pretty({
-              colorize: true,
-              levelFirst: true,
-              ignore: 'pid,hostname',
-              colorizeObjects: true,
-              translateTime: 'SYS:standard',
-              singleLine: false,
-            })
-          : pino.multistream([
-              ...transportsAry.map(([_, transport]) => ({
-                stream: transport,
-                level: options.level || LogLevel.INFO,
-              })),
-              {
-                stream: pretty({
-                  colorize: true,
-                  levelFirst: true,
-                  ignore: 'pid,hostname',
-                  colorizeObjects: true,
-                  translateTime: 'SYS:standard',
-                  singleLine: false,
-                }),
-                level: options.level || LogLevel.INFO,
-              },
-            ]),
-    );
+    // // Create Pino logger with multiple streams
+    // const transportsAry = Object.entries(this.transports);
+    // this.logger = pino(
+    //   {
+    //     name: options.name || 'app',
+    //     level: options.level || LogLevel.INFO,
+    //     formatters: {
+    //       level: label => {
+    //         return {
+    //           level: label,
+    //         };
+    //       },
+    //     },
+    //   },
+    //   options.overrideDefaultTransports
+    //     ? options?.transports?.default
+    //     : transportsAry.length === 0
+    //       ? pretty({
+    //           colorize: true,
+    //           levelFirst: true,
+    //           ignore: 'pid,hostname',
+    //           colorizeObjects: true,
+    //           translateTime: 'SYS:standard',
+    //           singleLine: false,
+    //         })
+    //       : pino.multistream([
+    //           ...transportsAry.map(([_, transport]) => ({
+    //             stream: transport,
+    //             level: options.level || LogLevel.INFO,
+    //           })),
+    //           {
+    //             stream: pretty({
+    //               colorize: true,
+    //               levelFirst: true,
+    //               ignore: 'pid,hostname',
+    //               colorizeObjects: true,
+    //               translateTime: 'SYS:standard',
+    //               singleLine: false,
+    //             }),
+    //             level: options.level || LogLevel.INFO,
+    //           },
+    //         ]),
+    // );
   }
 
   debug(message: string, args: Record<string, any> = {}): void {
-    this.logger.debug(args, message);
+    // this.logger.debug(args, message);
+    console.debug(args, message);
   }
 
   info(message: string, args: Record<string, any> = {}): void {
-    this.logger.info(args, message);
+    // this.logger.info(args, message);
+    console.info(args, message);
   }
 
   warn(message: string, args: Record<string, any> = {}): void {
-    this.logger.warn(args, message);
+    // this.logger.warn(args, message);
+    console.warn(args, message);
   }
 
   error(message: string, args: Record<string, any> = {}): void {
-    this.logger.error(args, message);
+    // this.logger.error(args, message);
+    console.error(args, message);
   }
 
   // Stream creation for process output handling
