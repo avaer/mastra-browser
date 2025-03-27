@@ -4,10 +4,7 @@ import type { Tracer, SpanOptions, Context, Span } from '@opentelemetry/api';
 import type { OtelConfig } from './types';
 import { hasActiveTelemetry } from './utility';
 
-// Add type declaration for global namespace
-declare global {
-  var __TELEMETRY__: Telemetry | undefined;
-}
+let __TELEMETRY__: Telemetry | undefined;
 
 export class Telemetry {
   public tracer: Tracer = trace.getTracer('default');
@@ -31,11 +28,11 @@ export class Telemetry {
    */
   static init(config: OtelConfig = {}): Telemetry {
     try {
-      if (!global.__TELEMETRY__) {
-        global.__TELEMETRY__ = new Telemetry(config);
+      if (!__TELEMETRY__) {
+        __TELEMETRY__ = new Telemetry(config);
       }
 
-      return global.__TELEMETRY__;
+      return __TELEMETRY__;
     } catch (error) {
       console.error('Failed to initialize telemetry:', error);
       throw error;
@@ -48,10 +45,10 @@ export class Telemetry {
    * @returns {Telemetry} The global telemetry instance
    */
   static get(): Telemetry {
-    if (!global.__TELEMETRY__) {
+    if (!__TELEMETRY__) {
       throw new Error('Telemetry not initialized');
     }
-    return global.__TELEMETRY__;
+    return __TELEMETRY__;
   }
 
   /**
