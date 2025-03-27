@@ -1,4 +1,4 @@
-import { randomUUID } from 'crypto';
+// import { randomUUID } from 'crypto';
 import type {
   AssistantContent,
   CoreAssistantMessage,
@@ -43,6 +43,8 @@ import type {
 } from './types';
 
 export * from './types';
+
+const randomUUID = crypto.randomUUID.bind(crypto);
 
 @InstrumentClass({
   prefix: 'agent',
