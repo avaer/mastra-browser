@@ -1,6 +1,6 @@
-import { join, resolve, isAbsolute } from 'node:path';
-import { createClient } from '@libsql/client';
-import type { Client, InValue } from '@libsql/client';
+import { join, resolve, isAbsolute } from 'path';
+// import { createClient } from '@libsql/client';
+// import type { Client, InValue } from '@libsql/client';
 
 import type { MetricResult, TestInfo } from '../../eval';
 import type { MessageType, StorageThreadType } from '../../memory/types';
@@ -23,7 +23,7 @@ export interface LibSQLConfig {
 }
 
 export class LibSQLStore extends MastraStorage {
-  private client: Client;
+  private client: any;
 
   constructor({ config }: { config: LibSQLConfig }) {
     super({ name: `LibSQLStore` });
@@ -33,10 +33,11 @@ export class LibSQLStore extends MastraStorage {
       this.shouldCacheInit = false;
     }
 
-    this.client = createClient({
-      url: this.rewriteDbUrl(config.url),
-      authToken: config.authToken,
-    });
+    // this.client = createClient({
+    //   url: this.rewriteDbUrl(config.url),
+    //   authToken: config.authToken,
+    // });
+    this.client = null;
   }
 
   // If we're in the .mastra/output directory, use the dir outside .mastra dir
@@ -130,7 +131,7 @@ export class LibSQLStore extends MastraStorage {
 
   private prepareStatement({ tableName, record }: { tableName: TABLE_NAMES; record: Record<string, any> }): {
     sql: string;
-    args: InValue[];
+    args: any[];
   } {
     const columns = Object.keys(record);
     const values = Object.values(record).map(v => {
@@ -235,7 +236,7 @@ export class LibSQLStore extends MastraStorage {
       return [];
     }
 
-    return result.rows.map(thread => ({
+    return result.rows.map((thread: any) => ({
       id: thread.id,
       resourceId: thread.resourceId,
       title: thread.title,
@@ -469,7 +470,7 @@ export class LibSQLStore extends MastraStorage {
         args: [agentName],
       });
 
-      return result.rows?.map(row => this.transformEvalRow(row)) ?? [];
+      return result.rows?.map((row: any) => this.transformEvalRow(row)) ?? [];
     } catch (error) {
       // Handle case where table doesn't exist yet
       if (error instanceof Error && error.message.includes('no such table')) {
@@ -538,7 +539,7 @@ export class LibSQLStore extends MastraStorage {
       return [];
     }
 
-    return result.rows.map(row => ({
+    return result.rows.map((row: any) => ({
       id: row.id,
       parentSpanId: row.parentSpanId,
       traceId: row.traceId,
