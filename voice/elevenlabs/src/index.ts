@@ -1,4 +1,4 @@
-import { File } from 'node:buffer';
+// import { File } from 'node:buffer';
 import { MastraVoice } from '@mastra/core/voice';
 import { ElevenLabsClient } from 'elevenlabs';
 
@@ -11,6 +11,7 @@ type ElevenLabsModel =
   | 'scribe_v1';
 
 interface ElevenLabsVoiceConfig {
+  baseURL?: string;
   name?: ElevenLabsModel;
   apiKey?: string;
 }
@@ -50,24 +51,32 @@ export class ElevenLabsVoice extends MastraVoice {
     listeningModel,
     speaker,
   }: { speechModel?: ElevenLabsVoiceConfig; listeningModel?: ElevenLabsVoiceConfig; speaker?: string } = {}) {
+    const baseURL = speechModel?.baseURL ?? listeningModel?.baseURL;
     const apiKey = speechModel?.apiKey ?? process.env.ELEVENLABS_API_KEY;
-    super({
+    const opts = {
       speechModel: {
+        baseURL: speechModel?.baseURL,
         name: speechModel?.name ?? 'eleven_multilingual_v2',
         apiKey: speechModel?.apiKey,
       },
       listeningModel: {
+        baseURL: listeningModel?.baseURL,
         name: listeningModel?.name ?? 'scribe_v1',
         apiKey: listeningModel?.apiKey,
       },
       speaker,
-    });
+    };
+    super(opts);
 
+    if (!baseURL) {
+      throw new Error('baseURL is required');
+    }
     if (!apiKey) {
       throw new Error('ELEVENLABS_API_KEY is not set');
     }
 
     this.client = new ElevenLabsClient({
+      baseUrl: baseURL,
       apiKey,
     });
 
