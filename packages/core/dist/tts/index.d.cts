@@ -7,6 +7,7 @@ import '@opentelemetry/sdk-trace-base';
 interface BuiltInModelConfig {
     provider: string;
     name: string;
+    baseURL?: string;
     apiKey?: string;
 }
 interface TTSConfig {

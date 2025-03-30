@@ -1,18 +1,18 @@
 import * as ai from 'ai';
 import { Tool as Tool$1, ToolExecutionOptions, CoreMessage as CoreMessage$1, TelemetrySettings, generateText, generateObject, streamText, GenerateTextResult, GenerateObjectResult, streamObject, StreamTextResult, StreamObjectResult, CoreSystemMessage as CoreSystemMessage$1, CoreAssistantMessage as CoreAssistantMessage$1, CoreUserMessage as CoreUserMessage$1, CoreToolMessage as CoreToolMessage$1, EmbedResult as EmbedResult$1, EmbedManyResult as EmbedManyResult$1, EmbeddingModel, Message, UserContent, AssistantContent, LanguageModelV1, GenerateTextOnStepFinishCallback, StreamTextOnFinishCallback, StreamObjectOnFinishCallback, StreamTextOnStepFinishCallback, LanguageModel as LanguageModel$1, DeepPartial, ToolContent } from 'ai';
-import { M as MastraBase, T as Telemetry, O as OtelConfig } from './base-D_N8PfP5.cjs';
-import { M as Metric, a as MetricResult, T as TestInfo } from './types-CwTG2XyQ.cjs';
+import { M as MastraBase, T as Telemetry, O as OtelConfig } from './base-Dq_cxikD.js';
+import { M as Metric, a as MetricResult, T as TestInfo } from './types-CwTG2XyQ.js';
 import { Query } from 'sift';
 import { z, ZodSchema } from 'zod';
 import { JSONSchema7 } from 'json-schema';
-import { d as Run, B as BaseLogMessage, R as RegisteredLogger, L as Logger } from './index-BXwGr3N7.cjs';
+import { d as Run, B as BaseLogMessage, R as RegisteredLogger, L as Logger } from './index-BXwGr3N7.js';
 import { Span } from '@opentelemetry/api';
 import * as xstate from 'xstate';
 import { Snapshot } from 'xstate';
 import EventEmitter from 'node:events';
-import { MastraVector } from './vector/index.cjs';
-import { MastraTTS } from './tts/index.cjs';
-import { MastraDeployer } from './deployer/index.cjs';
+import { MastraVector } from './vector/index.js';
+import { MastraTTS } from './tts/index.js';
+import { MastraDeployer } from './deployer/index.js';
 
 type VercelTool = Tool$1;
 type CoreTool = {
@@ -265,6 +265,7 @@ interface VoiceEventMap {
 }
 interface BuiltInModelConfig {
     name: string;
+    baseURL?: string;
     apiKey?: string;
 }
 interface VoiceConfig<T = unknown> {

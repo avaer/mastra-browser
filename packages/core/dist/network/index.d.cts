@@ -1,4 +1,4 @@
-export { f as AgentNetwork, aF as AgentNetworkConfig } from '../base-oVKXtAXh.cjs';
+export { f as AgentNetwork, aF as AgentNetworkConfig } from '../base-DLHdl2FF.cjs';
 import 'ai';
 import '../base-D_N8PfP5.cjs';
 import '@opentelemetry/api';

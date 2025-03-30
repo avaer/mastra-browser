@@ -1,5 +1,5 @@
 import { M as Metric, T as TestInfo, a as MetricResult } from '../types-CwTG2XyQ.cjs';
-import { A as Agent } from '../base-oVKXtAXh.cjs';
+import { A as Agent } from '../base-DLHdl2FF.cjs';
 import 'ai';
 import '../base-D_N8PfP5.cjs';
 import '@opentelemetry/api';

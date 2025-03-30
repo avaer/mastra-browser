@@ -1,5 +1,5 @@
 {
-  "name": "mastra-browser-core",
+  "name": "@mastra/core",
   "version": "0.0.3",
   "license": "ISC",
   "type": "module",
