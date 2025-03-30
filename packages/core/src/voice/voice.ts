@@ -14,6 +14,7 @@ export interface VoiceEventMap {
 
 interface BuiltInModelConfig {
   name: string;
+  baseURL?: string;
   apiKey?: string;
 }
 

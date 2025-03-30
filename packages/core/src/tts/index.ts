@@ -4,6 +4,7 @@ import { InstrumentClass } from '../telemetry';
 interface BuiltInModelConfig {
   provider: string;
   name: string;
+  baseURL?: string;
   apiKey?: string;
 }
 
