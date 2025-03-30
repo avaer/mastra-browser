@@ -7,6 +7,7 @@ type OpenAIVoiceId = 'alloy' | 'echo' | 'fable' | 'onyx' | 'nova' | 'shimmer' | 
 type OpenAIModel = 'tts-1' | 'tts-1-hd' | 'whisper-1';
 
 export interface OpenAIConfig {
+  baseURL?: string;
   name?: OpenAIModel;
   apiKey?: string;
 }
@@ -47,37 +48,53 @@ export class OpenAIVoice extends MastraVoice {
   } = {}) {
     const defaultApiKey = process.env.OPENAI_API_KEY;
     const defaultSpeechModel = {
+      baseURL: speechModel?.baseURL,
       name: 'tts-1',
       apiKey: defaultApiKey,
     };
     const defaultListeningModel = {
+      baseURL: listeningModel?.baseURL,
       name: 'whisper-1',
       apiKey: defaultApiKey,
     };
 
     super({
       speechModel: {
+        baseURL: speechModel?.baseURL ?? defaultSpeechModel.baseURL,
         name: speechModel?.name ?? defaultSpeechModel.name,
         apiKey: speechModel?.apiKey ?? defaultSpeechModel.apiKey,
       },
       listeningModel: {
+        baseURL: listeningModel?.baseURL ?? defaultListeningModel.baseURL,
         name: listeningModel?.name ?? defaultListeningModel.name,
         apiKey: listeningModel?.apiKey ?? defaultListeningModel.apiKey,
       },
       speaker: speaker ?? 'alloy',
     });
 
+    const speechBaseURL = speechModel?.baseURL ?? defaultSpeechModel.baseURL;
+    // if (!speechBaseURL) {
+    //   throw new Error('baseURL is required for speech model');
+    // }
     const speechApiKey = speechModel?.apiKey || defaultApiKey;
-    if (!speechApiKey) {
-      throw new Error('No API key provided for speech model');
-    }
-    this.speechClient = new OpenAI({ apiKey: speechApiKey });
+    // if (!speechApiKey) {
+    //   throw new Error('No API key provided for speech model');
+    // }
+    this.speechClient = (speechBaseURL && speechApiKey) ?
+      new OpenAI({ apiKey: speechApiKey, baseURL: speechBaseURL, dangerouslyAllowBrowser: true })
+      : undefined;
 
+    const listeningBaseURL = listeningModel?.baseURL ?? defaultListeningModel.baseURL;
+    // if (!listeningBaseURL) {
+    //   throw new Error('baseURL is required for listening model');
+    // }
     const listeningApiKey = listeningModel?.apiKey || defaultApiKey;
-    if (!listeningApiKey) {
-      throw new Error('No API key provided for listening model');
-    }
-    this.listeningClient = new OpenAI({ apiKey: listeningApiKey });
+    // if (!listeningApiKey) {
+    //   throw new Error('No API key provided for listening model');
+    // }
+    this.listeningClient = (listeningBaseURL && listeningApiKey) ?
+      new OpenAI({ apiKey: listeningApiKey, baseURL: listeningBaseURL, dangerouslyAllowBrowser: true })
+      : undefined;
 
     if (!this.speechClient && !this.listeningClient) {
       throw new Error('At least one of OPENAI_API_KEY, speechModel.apiKey, or listeningModel.apiKey must be set');
