@@ -28,7 +28,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@mastra/core": "workspace:^",
+    "@mastra/core": "npm:mastra-browser-core",
     "elevenlabs": "^1.54.0",
     "zod": "^3.24.2"
   },
