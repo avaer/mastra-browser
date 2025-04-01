@@ -1,5 +1,5 @@
 import { M as Metric, T as TestInfo, a as MetricResult } from '../types-CwTG2XyQ.js';
-import { A as Agent } from '../base-Cr6-Bega.js';
+import { A as Agent } from '../base-BoDWOJdC.js';
 import 'ai';
 import '../base-Dq_cxikD.js';
 import '@opentelemetry/api';
@@ -14,8 +14,6 @@ import 'events';
 import '../vector/index.js';
 import '../vector/filter/index.js';
 import '../tts/index.js';
-import '../deployer/index.js';
-import '../bundler/index.js';
 
 declare function evaluate<T extends Agent>({ agentName, input, metric, output, runId, globalRunId, testInfo, instructions, }: {
     agentName: string;

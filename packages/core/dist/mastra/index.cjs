@@ -1,10 +1,10 @@
 'use strict';
 
-var chunk6SNL5CXN_cjs = require('../chunk-6SNL5CXN.cjs');
+var chunkPCKQLTBW_cjs = require('../chunk-PCKQLTBW.cjs');
 
 
 
 Object.defineProperty(exports, "Mastra", {
   enumerable: true,
-  get: function () { return chunk6SNL5CXN_cjs.Mastra; }
+  get: function () { return chunkPCKQLTBW_cjs.Mastra; }
 });

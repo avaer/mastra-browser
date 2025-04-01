@@ -3,7 +3,7 @@ import { SpanKind } from '@opentelemetry/api';
 import { ExportResult } from '@opentelemetry/core';
 import { SpanExporter, ReadableSpan } from '@opentelemetry/sdk-trace-base';
 import { L as Logger } from '../index-BXwGr3N7.cjs';
-import { g as MastraStorage } from '../base-DxVp6eaF.cjs';
+import { g as MastraStorage } from '../base-BxvRGghw.cjs';
 import 'stream';
 import 'ai';
 import '../types-CwTG2XyQ.cjs';
@@ -15,8 +15,6 @@ import 'events';
 import '../vector/index.cjs';
 import '../vector/filter/index.cjs';
 import '../tts/index.cjs';
-import '../deployer/index.cjs';
-import '../bundler/index.cjs';
 
 declare function withSpan(options: {
     spanName?: string;

@@ -1,21 +1,23 @@
-import { DefaultProxyStorage } from './chunk-D3P2UQXV.js';
-import { InstrumentClass, Telemetry } from './chunk-RHSLRFEA.js';
-import { createLogger, LogLevel, noopLogger } from './chunk-UAVUAO53.js';
-import { __decoratorStart, __decorateElement, __runInitializers } from './chunk-C6A6W6XS.js';
+'use strict';
+
+var chunkS4RZ7LUX_cjs = require('./chunk-S4RZ7LUX.cjs');
+var chunkEDBJG533_cjs = require('./chunk-EDBJG533.cjs');
+var chunkCGUKSEPG_cjs = require('./chunk-CGUKSEPG.cjs');
+var chunkRWTSGWWL_cjs = require('./chunk-RWTSGWWL.cjs');
 
 // src/mastra/index.ts
 var _Mastra_decorators, _init;
-_Mastra_decorators = [InstrumentClass({
+_Mastra_decorators = [chunkEDBJG533_cjs.InstrumentClass({
   prefix: "mastra",
   excludeMethods: ["getLogger", "getTelemetry"]
 })];
-var Mastra = class {
+exports.Mastra = class Mastra {
   #vectors;
   #agents;
   #logger;
   #workflows;
   #tts;
-  #deployer;
+  // #deployer?: MastraDeployer;
   #serverMiddleware = [];
   #telemetry;
   #storage;
@@ -48,13 +50,13 @@ var Mastra = class {
     }
     let logger;
     if (config?.logger === false) {
-      logger = noopLogger;
+      logger = chunkCGUKSEPG_cjs.noopLogger;
     } else {
       if (config?.logger) {
         logger = config.logger;
       } else {
-        const levleOnEnv = process.env.NODE_ENV === "production" ? LogLevel.WARN : LogLevel.INFO;
-        logger = createLogger({
+        const levleOnEnv = process.env.NODE_ENV === "production" ? chunkCGUKSEPG_cjs.LogLevel.WARN : chunkCGUKSEPG_cjs.LogLevel.INFO;
+        logger = chunkCGUKSEPG_cjs.createLogger({
           name: "Mastra",
           level: levleOnEnv
         });
@@ -63,13 +65,13 @@ var Mastra = class {
     this.#logger = logger;
     let storage = config?.storage;
     if (!storage) {
-      storage = new DefaultProxyStorage({
+      storage = new chunkS4RZ7LUX_cjs.DefaultProxyStorage({
         config: {
           url: process.env.MASTRA_DEFAULT_STORAGE_URL || `:memory:`
         }
       });
     }
-    this.#telemetry = Telemetry.init(config?.telemetry);
+    this.#telemetry = chunkEDBJG533_cjs.Telemetry.init(config?.telemetry);
     if (this.#telemetry) {
       this.#storage = this.#telemetry.traceClass(storage, {
         excludeMethods: ["__setTelemetry", "__getTelemetry"]
@@ -197,9 +199,9 @@ This is a warning for now, but will throw an error in the future
   getVectors() {
     return this.#vectors;
   }
-  getDeployer() {
-    return this.#deployer;
-  }
+  // public getDeployer() {
+  //   return this.#deployer;
+  // }
   getWorkflow(id, {
     serialized
   } = {}) {
@@ -242,9 +244,6 @@ This is a warning for now, but will throw an error in the future
     if (this.#memory) {
       this.#memory.__setLogger(this.#logger);
     }
-    if (this.#deployer) {
-      this.#deployer.__setLogger(this.#logger);
-    }
     if (this.#tts) {
       Object.keys(this.#tts).forEach(key => {
         this.#tts?.[key]?.__setLogger(this.#logger);
@@ -260,7 +259,7 @@ This is a warning for now, but will throw an error in the future
     }
   }
   setTelemetry(telemetry) {
-    this.#telemetry = Telemetry.init(telemetry);
+    this.#telemetry = chunkEDBJG533_cjs.Telemetry.init(telemetry);
     if (this.#agents) {
       Object.keys(this.#agents).forEach(key => {
         if (this.#telemetry) {
@@ -273,12 +272,6 @@ This is a warning for now, but will throw an error in the future
         excludeMethods: ["__setTelemetry", "__getTelemetry"]
       });
       this.#memory.__setTelemetry(this.#telemetry);
-    }
-    if (this.#deployer) {
-      this.#deployer = this.#telemetry.traceClass(this.#deployer, {
-        excludeMethods: ["__setTelemetry", "__getTelemetry"]
-      });
-      this.#deployer.__setTelemetry(this.#telemetry);
     }
     if (this.#tts) {
       let tts = {};
@@ -363,11 +356,9 @@ This is a warning for now, but will throw an error in the future
     return await this.#logger.getLogs(transportId);
   }
 };
-Mastra = /*@__PURE__*/(_ => {
-  _init = __decoratorStart(null);
-  Mastra = __decorateElement(_init, 0, "Mastra", _Mastra_decorators, Mastra);
-  __runInitializers(_init, 1, Mastra);
-  return Mastra;
+exports.Mastra = /*@__PURE__*/(_ => {
+  _init = chunkRWTSGWWL_cjs.__decoratorStart(null);
+  exports.Mastra = chunkRWTSGWWL_cjs.__decorateElement(_init, 0, "Mastra", _Mastra_decorators, exports.Mastra);
+  chunkRWTSGWWL_cjs.__runInitializers(_init, 1, exports.Mastra);
+  return exports.Mastra;
 })();
-
-export { Mastra };

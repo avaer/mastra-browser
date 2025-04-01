@@ -1,4 +1,4 @@
-import { MastraBundler, IBundler } from '../bundler/index.cjs';
+import { IBundler, MastraBundler } from '../bundler/index.cjs';
 import '../base-D_N8PfP5.cjs';
 import '@opentelemetry/api';
 import '../index-BXwGr3N7.cjs';

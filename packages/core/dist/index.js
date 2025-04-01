@@ -2,17 +2,16 @@ import { MastraTTS } from './chunk-RYCNIYRH.js';
 import { Workflow } from './chunk-R6IKP45Q.js';
 export { Step, WhenConditionReturnValue, createStep, getActivePathsAndStatus, getResultActivePaths, getStepResult, getSuspendedPaths, isErrorEvent, isFinalState, isLimboState, isTransitionEvent, isVariableReference, isWorkflow, mergeChildValue, recursivelyCheckForFinalState, resolveVariables, updateStepInHierarchy, workflowToStep } from './chunk-R6IKP45Q.js';
 import { Integration, OpenAPIToolset } from './chunk-PNZK456O.js';
-export { Mastra } from './chunk-UZHU2DVK.js';
-import { MastraMemory } from './chunk-WRYUI5JJ.js';
+export { Mastra } from './chunk-5DGPPDCB.js';
+import { MastraMemory } from './chunk-43WHWDTM.js';
 import { MastraVector } from './chunk-B6WXWFN6.js';
-import { MastraStorage } from './chunk-BFE62BHD.js';
 export { CohereRelevanceScorer, MastraAgentRelevanceScorer, createSimilarityPrompt } from './chunk-FMXU2DHK.js';
+import { MastraStorage } from './chunk-BFE62BHD.js';
 import { Agent } from './chunk-UGPRAEX5.js';
 export { InstrumentClass, OTLPTraceExporter as OTLPStorageExporter, Telemetry, hasActiveTelemetry, withSpan } from './chunk-RHSLRFEA.js';
 export { checkEvalStorageFields, createMastraProxy, deepMerge, delay, ensureAllMessagesAreCoreMessages, ensureToolProperties, isVercelTool, jsonSchemaPropertiesToTSTypes, jsonSchemaToModel, makeCoreTool, maskStreamTags, resolveSerializedZodOutput } from './chunk-2YF5JYTJ.js';
 import { Tool } from './chunk-ZINPRHAN.js';
 export { createTool } from './chunk-ZINPRHAN.js';
-import { MastraDeployer } from './chunk-TA342VMQ.js';
 import { MastraBase } from './chunk-WUPACWA6.js';
 import { createLogger } from './chunk-UAVUAO53.js';
 export { LogLevel, Logger, LoggerTransport, MultiLogger, RegisteredLogger, combineLoggers, noopLogger } from './chunk-UAVUAO53.js';
@@ -32,14 +31,6 @@ var MastraBase2 = class extends MastraBase {
   constructor(args) {
     super(args);
     this.logger.warn('Please import "MastraBase" from "@mastra/core/base" instead of "@mastra/core"');
-  }
-};
-
-// src/deployer/index.warning.ts
-var MastraDeployer2 = class extends MastraDeployer {
-  constructor(args) {
-    super(args);
-    this.logger.warn('Please import "MastraDeployer" from "@mastra/core/deployer" instead of "@mastra/core"');
   }
 };
 
@@ -115,4 +106,4 @@ var Workflow2 = class extends Workflow {
   }
 };
 
-export { Agent2 as Agent, Integration2 as Integration, MastraBase2 as MastraBase, MastraDeployer2 as MastraDeployer, MastraMemory2 as MastraMemory, MastraStorage2 as MastraStorage, MastraTTS2 as MastraTTS, MastraVector2 as MastraVector, OpenAPIToolset2 as OpenAPIToolset, Tool2 as Tool, Workflow2 as Workflow, createLogger2 as createLogger };
+export { Agent2 as Agent, Integration2 as Integration, MastraBase2 as MastraBase, MastraMemory2 as MastraMemory, MastraStorage2 as MastraStorage, MastraTTS2 as MastraTTS, MastraVector2 as MastraVector, OpenAPIToolset2 as OpenAPIToolset, Tool2 as Tool, Workflow2 as Workflow, createLogger2 as createLogger };

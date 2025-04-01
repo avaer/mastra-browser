@@ -1,4 +1,4 @@
-export { C as CoreTool, o as Tool, T as ToolAction, n as ToolExecutionContext, V as VercelTool, $ as createTool } from '../base-DxVp6eaF.cjs';
+export { C as CoreTool, o as Tool, T as ToolAction, n as ToolExecutionContext, V as VercelTool, $ as createTool } from '../base-BxvRGghw.cjs';
 import 'ai';
 import '../base-D_N8PfP5.cjs';
 import '@opentelemetry/api';
@@ -14,5 +14,3 @@ import 'events';
 import '../vector/index.cjs';
 import '../vector/filter/index.cjs';
 import '../tts/index.cjs';
-import '../deployer/index.cjs';
-import '../bundler/index.cjs';

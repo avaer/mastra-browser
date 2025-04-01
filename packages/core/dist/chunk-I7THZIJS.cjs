@@ -1,111 +1,13 @@
-import { LibSQLVector } from './chunk-Y2USYAIT.js';
-import { DefaultProxyStorage } from './chunk-D3P2UQXV.js';
-import { deepMerge } from './chunk-2YF5JYTJ.js';
-import { MastraBase } from './chunk-WUPACWA6.js';
-import fs, { existsSync } from 'fs';
-import path, { join } from 'path';
-import os from 'os';
-import { experimental_customProvider } from 'ai';
+'use strict';
 
-var fsp = fs.promises;
-async function getModelCachePath() {
-  const cachePath = path.join(os.homedir(), ".cache", "mastra", "fastembed-models");
-  await fsp.mkdir(cachePath, { recursive: true });
-  return cachePath;
-}
-function unbundleableImport(name) {
-  const nonStaticallyAnalyzableName = `${name}?d=${Date.now()}`;
-  return import(nonStaticallyAnalyzableName.split(`?`)[0]);
-}
-async function generateEmbeddings(values, modelType) {
-  try {
-    let mod;
-    const importErrors = [];
-    {
-      try {
-        mod = await unbundleableImport("fastembed");
-      } catch (e) {
-        if (e instanceof Error) {
-          importErrors.push(e);
-        } else {
-          throw e;
-        }
-      }
-    }
-    if (!mod) {
-      throw new Error(`${importErrors.map((e) => e.message).join(`
-`)}
+var chunkRZKQOQL3_cjs = require('./chunk-RZKQOQL3.cjs');
+var chunkS4RZ7LUX_cjs = require('./chunk-S4RZ7LUX.cjs');
+var chunk5FAJ6HUC_cjs = require('./chunk-5FAJ6HUC.cjs');
+var chunkUV2QUUKW_cjs = require('./chunk-UV2QUUKW.cjs');
+var fs = require('fs');
+var path = require('path');
 
-This runtime does not support fastembed-js, which is the default embedder in Mastra. 
-Scroll up to read import errors. These errors mean you can't use the default Mastra embedder on this hosting platform.
-You can either use Mastra Cloud which supports the default embedder, or you can configure an alternate provider.
-
-For example if you're using Memory:
-
-import { openai } from "@ai-sdk/openai";
-
-const memory = new Memory({
-  embedder: openai.embedding("text-embedding-3-small"), // <- doesn't have to be openai
-})
-
-Visit https://sdk.vercel.ai/docs/foundations/overview#embedding-models to find an alternate embedding provider
-
-If you do not want to use the Memory semantic recall feature, you can disable it entirely and this error will go away.
-
-const memory = new Memory({
-  options: {
-    semanticRecall: false // <- an embedder will not be required with this set to false
-  }
-})
-`);
-    }
-    const { FlagEmbedding, EmbeddingModel } = mod;
-    const model = await FlagEmbedding.init({
-      model: EmbeddingModel[modelType],
-      cacheDir: await getModelCachePath()
-    });
-    const embeddings = await model.embed(values);
-    const allResults = [];
-    for await (const result of embeddings) {
-      allResults.push(...result.map((embedding) => Array.from(embedding)));
-    }
-    if (allResults.length === 0) throw new Error("No embeddings generated");
-    return {
-      embeddings: allResults
-    };
-  } catch (error) {
-    console.error("Error generating embeddings:", error);
-    throw error;
-  }
-}
-var fastEmbedProvider = experimental_customProvider({
-  textEmbeddingModels: {
-    "bge-small-en-v1.5": {
-      specificationVersion: "v1",
-      provider: "fastembed",
-      modelId: "bge-small-en-v1.5",
-      maxEmbeddingsPerCall: 256,
-      supportsParallelCalls: true,
-      async doEmbed({ values }) {
-        return generateEmbeddings(values, "BGESmallENV15");
-      }
-    },
-    "bge-base-en-v1.5": {
-      specificationVersion: "v1",
-      provider: "fastembed",
-      modelId: "bge-base-en-v1.5",
-      maxEmbeddingsPerCall: 256,
-      supportsParallelCalls: true,
-      async doEmbed({ values }) {
-        return generateEmbeddings(values, "BGEBaseENV15");
-      }
-    }
-  }
-});
-var defaultEmbedder = fastEmbedProvider.textEmbeddingModel;
-
-// src/memory/memory.ts
-var MastraMemory = class extends MastraBase {
+var MastraMemory = class extends chunkUV2QUUKW_cjs.MastraBase {
   MAX_CONTEXT_TOKENS;
   storage;
   vector;
@@ -120,7 +22,7 @@ var MastraMemory = class extends MastraBase {
   };
   constructor(config) {
     super({ component: "MEMORY", name: config.name });
-    this.storage = config.storage || new DefaultProxyStorage({
+    this.storage = config.storage || new chunkS4RZ7LUX_cjs.DefaultProxyStorage({
       config: {
         url: "file:memory.db"
       }
@@ -129,21 +31,21 @@ var MastraMemory = class extends MastraBase {
       this.vector = config.vector;
     } else {
       const oldDb = "memory-vector.db";
-      const hasOldDb = existsSync(join(process.cwd(), oldDb)) || existsSync(join(process.cwd(), ".mastra", oldDb));
+      const hasOldDb = fs.existsSync(path.join(process.cwd(), oldDb)) || fs.existsSync(path.join(process.cwd(), ".mastra", oldDb));
       const newDb = "memory.db";
       if (hasOldDb) {
         this.logger.warn(
           `Found deprecated Memory vector db file ${oldDb} this db is now merged with the default ${newDb} file. Delete the old one to use the new one. You will need to migrate any data if that's important to you. For now the deprecated path will be used but in a future breaking change we will only use the new db file path.`
         );
       }
-      this.vector = new LibSQLVector({
+      this.vector = new chunkRZKQOQL3_cjs.LibSQLVector({
         connectionUrl: hasOldDb ? `file:${oldDb}` : `file:${newDb}`
       });
     }
     if (config.embedder) {
       this.embedder = config.embedder;
     } else {
-      this.embedder = defaultEmbedder("bge-small-en-v1.5");
+      throw new Error("Embedder config is required");
     }
     if (config.options) {
       this.threadConfig = this.getMergedThreadConfig(config.options);
@@ -188,7 +90,7 @@ var MastraMemory = class extends MastraBase {
     return { indexName };
   }
   getMergedThreadConfig(config) {
-    return deepMerge(this.threadConfig, config || {});
+    return chunk5FAJ6HUC_cjs.deepMerge(this.threadConfig, config || {});
   }
   estimateTokens(text) {
     return Math.ceil(text.split(" ").length * 1.3);
@@ -337,4 +239,4 @@ var MastraMemory = class extends MastraBase {
   }
 };
 
-export { MastraMemory };
+exports.MastraMemory = MastraMemory;

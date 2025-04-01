@@ -1,4 +1,4 @@
-export { C as CoreTool, o as Tool, T as ToolAction, n as ToolExecutionContext, V as VercelTool, $ as createTool } from '../base-Cr6-Bega.js';
+export { C as CoreTool, o as Tool, T as ToolAction, n as ToolExecutionContext, V as VercelTool, $ as createTool } from '../base-BoDWOJdC.js';
 import 'ai';
 import '../base-Dq_cxikD.js';
 import '@opentelemetry/api';
@@ -14,5 +14,3 @@ import 'events';
 import '../vector/index.js';
 import '../vector/filter/index.js';
 import '../tts/index.js';
-import '../deployer/index.js';
-import '../bundler/index.js';

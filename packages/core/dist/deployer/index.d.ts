@@ -1,4 +1,4 @@
-import { MastraBundler, IBundler } from '../bundler/index.js';
+import { IBundler, MastraBundler } from '../bundler/index.js';
 import '../base-Dq_cxikD.js';
 import '@opentelemetry/api';
 import '../index-BXwGr3N7.js';

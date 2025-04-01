@@ -1,4 +1,4 @@
-export { aE as CompositeVoice, aD as MastraVoice, aC as VoiceConfig, aB as VoiceEventMap, aA as VoiceEventType } from '../base-DxVp6eaF.cjs';
+export { aE as CompositeVoice, aD as MastraVoice, aC as VoiceConfig, aB as VoiceEventMap, aA as VoiceEventType } from '../base-BxvRGghw.cjs';
 import 'ai';
 import '../base-D_N8PfP5.cjs';
 import '@opentelemetry/api';
@@ -14,5 +14,3 @@ import 'events';
 import '../vector/index.cjs';
 import '../vector/filter/index.cjs';
 import '../tts/index.cjs';
-import '../deployer/index.cjs';
-import '../bundler/index.cjs';

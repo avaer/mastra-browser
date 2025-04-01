@@ -1,4 +1,4 @@
-import { az as MastraLanguageModel } from '../base-Cr6-Bega.js';
+import { az as MastraLanguageModel } from '../base-BoDWOJdC.js';
 import 'ai';
 import '../base-Dq_cxikD.js';
 import '@opentelemetry/api';
@@ -14,8 +14,6 @@ import 'events';
 import '../vector/index.js';
 import '../vector/filter/index.js';
 import '../tts/index.js';
-import '../deployer/index.js';
-import '../bundler/index.js';
 
 interface RelevanceScoreProvider {
     getRelevanceScore(text1: string, text2: string): Promise<number>;

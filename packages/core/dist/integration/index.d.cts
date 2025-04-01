@@ -1,4 +1,4 @@
-import { W as Workflow, T as ToolAction } from '../base-DxVp6eaF.cjs';
+import { W as Workflow, T as ToolAction } from '../base-BxvRGghw.cjs';
 import 'ai';
 import '../base-D_N8PfP5.cjs';
 import '@opentelemetry/api';
@@ -14,8 +14,6 @@ import 'events';
 import '../vector/index.cjs';
 import '../vector/filter/index.cjs';
 import '../tts/index.cjs';
-import '../deployer/index.cjs';
-import '../bundler/index.cjs';
 
 declare class Integration<ToolsParams = void, ApiClient = void> {
     name: string;

@@ -12,7 +12,6 @@ import { Snapshot } from 'xstate';
 import EventEmitter from 'events';
 import { MastraVector } from './vector/index.cjs';
 import { MastraTTS } from './tts/index.cjs';
-import { MastraDeployer } from './deployer/index.cjs';
 
 type VercelTool = Tool$1;
 type CoreTool = {
@@ -1573,7 +1572,6 @@ interface Config<TAgents extends Record<string, Agent<any>> = Record<string, Age
     workflows?: TWorkflows;
     tts?: TTTS;
     telemetry?: OtelConfig;
-    deployer?: MastraDeployer;
     /**
      * Server middleware functions to be applied to API routes
      * Each middleware can specify a path pattern (defaults to '/api/*')
@@ -1603,7 +1601,6 @@ declare class Mastra<TAgents extends Record<string, Agent<any>> = Record<string,
     getAgents(): TAgents;
     getVector<TVectorName extends keyof TVectors>(name: TVectorName): TVectors[TVectorName];
     getVectors(): TVectors | undefined;
-    getDeployer(): MastraDeployer | undefined;
     getWorkflow<TWorkflowId extends keyof TWorkflows>(id: TWorkflowId, { serialized }?: {
         serialized?: boolean;
     }): TWorkflows[TWorkflowId];

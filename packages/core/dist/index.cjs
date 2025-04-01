@@ -3,16 +3,15 @@
 var chunkKKNAFCIB_cjs = require('./chunk-KKNAFCIB.cjs');
 var chunkRLQZLULL_cjs = require('./chunk-RLQZLULL.cjs');
 var chunkXLSROQ26_cjs = require('./chunk-XLSROQ26.cjs');
-var chunk6SNL5CXN_cjs = require('./chunk-6SNL5CXN.cjs');
-var chunkLNMTD7TL_cjs = require('./chunk-LNMTD7TL.cjs');
+var chunkPCKQLTBW_cjs = require('./chunk-PCKQLTBW.cjs');
+var chunkI7THZIJS_cjs = require('./chunk-I7THZIJS.cjs');
 var chunkCEU7VHOT_cjs = require('./chunk-CEU7VHOT.cjs');
-var chunkIX6VOIR7_cjs = require('./chunk-IX6VOIR7.cjs');
 var chunkSPNVVANI_cjs = require('./chunk-SPNVVANI.cjs');
+var chunkIX6VOIR7_cjs = require('./chunk-IX6VOIR7.cjs');
 var chunkU7LAN3FB_cjs = require('./chunk-U7LAN3FB.cjs');
 var chunkEDBJG533_cjs = require('./chunk-EDBJG533.cjs');
 var chunk5FAJ6HUC_cjs = require('./chunk-5FAJ6HUC.cjs');
 var chunk2W2GYEYQ_cjs = require('./chunk-2W2GYEYQ.cjs');
-var chunkGL3G7V3T_cjs = require('./chunk-GL3G7V3T.cjs');
 var chunkUV2QUUKW_cjs = require('./chunk-UV2QUUKW.cjs');
 var chunkCGUKSEPG_cjs = require('./chunk-CGUKSEPG.cjs');
 var chunkV5ORZPFW_cjs = require('./chunk-V5ORZPFW.cjs');
@@ -31,14 +30,6 @@ var MastraBase2 = class extends chunkUV2QUUKW_cjs.MastraBase {
   constructor(args) {
     super(args);
     this.logger.warn('Please import "MastraBase" from "@mastra/core/base" instead of "@mastra/core"');
-  }
-};
-
-// src/deployer/index.warning.ts
-var MastraDeployer2 = class extends chunkGL3G7V3T_cjs.MastraDeployer {
-  constructor(args) {
-    super(args);
-    this.logger.warn('Please import "MastraDeployer" from "@mastra/core/deployer" instead of "@mastra/core"');
   }
 };
 
@@ -75,7 +66,7 @@ function createLogger2(options) {
 }
 
 // src/memory/index.warning.ts
-var MastraMemory2 = class extends chunkLNMTD7TL_cjs.MastraMemory {
+var MastraMemory2 = class extends chunkI7THZIJS_cjs.MastraMemory {
   constructor(_arg) {
     super({ name: `Deprecated memory` });
     this.logger.warn('Please import "MastraMemory" from "@mastra/core/memory" instead of "@mastra/core"');
@@ -188,7 +179,7 @@ Object.defineProperty(exports, "workflowToStep", {
 });
 Object.defineProperty(exports, "Mastra", {
   enumerable: true,
-  get: function () { return chunk6SNL5CXN_cjs.Mastra; }
+  get: function () { return chunkPCKQLTBW_cjs.Mastra; }
 });
 Object.defineProperty(exports, "CohereRelevanceScorer", {
   enumerable: true,
@@ -325,7 +316,6 @@ Object.defineProperty(exports, "registerHook", {
 exports.Agent = Agent2;
 exports.Integration = Integration2;
 exports.MastraBase = MastraBase2;
-exports.MastraDeployer = MastraDeployer2;
 exports.MastraMemory = MastraMemory2;
 exports.MastraStorage = MastraStorage2;
 exports.MastraTTS = MastraTTS2;
