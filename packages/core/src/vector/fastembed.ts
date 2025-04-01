@@ -1,6 +1,6 @@
-import fsp from 'node:fs/promises';
-import os from 'node:os';
-import path from 'node:path';
+import fsp from 'fs/promises';
+import os from 'os';
+import path from 'path';
 import { experimental_customProvider } from 'ai';
 
 async function getModelCachePath() {
