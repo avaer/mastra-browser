@@ -1,9 +1,9 @@
 'use strict';
 
-var chunk5QZ6Y5FQ_cjs = require('./chunk-5QZ6Y5FQ.cjs');
+var chunk6IOEM5M5_cjs = require('./chunk-6IOEM5M5.cjs');
 
 // src/deployer/index.ts
-var MastraDeployer = class extends chunk5QZ6Y5FQ_cjs.MastraBundler {
+var MastraDeployer = class extends chunk6IOEM5M5_cjs.MastraBundler {
   constructor({ name }) {
     super({ component: "DEPLOYER", name });
   }

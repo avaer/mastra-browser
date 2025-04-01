@@ -1,10 +1,10 @@
 'use strict';
 
-var chunk6BUU65VU_cjs = require('../chunk-6BUU65VU.cjs');
+var chunkLNMTD7TL_cjs = require('../chunk-LNMTD7TL.cjs');
 
 
 
 Object.defineProperty(exports, "MastraMemory", {
   enumerable: true,
-  get: function () { return chunk6BUU65VU_cjs.MastraMemory; }
+  get: function () { return chunkLNMTD7TL_cjs.MastraMemory; }
 });

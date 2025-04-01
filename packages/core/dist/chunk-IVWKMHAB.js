@@ -1,7 +1,8 @@
 import { MastraBase } from './chunk-WUPACWA6.js';
-import { readFile } from 'fs/promises';
+import fs from 'fs';
 import { parse } from 'dotenv';
 
+var { readFile } = fs.promises;
 var MastraBundler = class extends MastraBase {
   constructor({ name, component = "BUNDLER" }) {
     super({ component, name });

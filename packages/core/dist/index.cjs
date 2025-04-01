@@ -2,21 +2,21 @@
 
 var chunkKKNAFCIB_cjs = require('./chunk-KKNAFCIB.cjs');
 var chunkRLQZLULL_cjs = require('./chunk-RLQZLULL.cjs');
-var chunk3W5XZ6GJ_cjs = require('./chunk-3W5XZ6GJ.cjs');
+var chunkXLSROQ26_cjs = require('./chunk-XLSROQ26.cjs');
 var chunk6SNL5CXN_cjs = require('./chunk-6SNL5CXN.cjs');
-var chunk6BUU65VU_cjs = require('./chunk-6BUU65VU.cjs');
+var chunkLNMTD7TL_cjs = require('./chunk-LNMTD7TL.cjs');
 var chunkCEU7VHOT_cjs = require('./chunk-CEU7VHOT.cjs');
-var chunkSPNVVANI_cjs = require('./chunk-SPNVVANI.cjs');
 var chunkIX6VOIR7_cjs = require('./chunk-IX6VOIR7.cjs');
+var chunkSPNVVANI_cjs = require('./chunk-SPNVVANI.cjs');
 var chunkU7LAN3FB_cjs = require('./chunk-U7LAN3FB.cjs');
 var chunkEDBJG533_cjs = require('./chunk-EDBJG533.cjs');
 var chunk5FAJ6HUC_cjs = require('./chunk-5FAJ6HUC.cjs');
+var chunk2W2GYEYQ_cjs = require('./chunk-2W2GYEYQ.cjs');
+var chunkGL3G7V3T_cjs = require('./chunk-GL3G7V3T.cjs');
 var chunkUV2QUUKW_cjs = require('./chunk-UV2QUUKW.cjs');
 var chunkCGUKSEPG_cjs = require('./chunk-CGUKSEPG.cjs');
 var chunkV5ORZPFW_cjs = require('./chunk-V5ORZPFW.cjs');
 var chunkST5RMVLG_cjs = require('./chunk-ST5RMVLG.cjs');
-var chunkXLSROQ26_cjs = require('./chunk-XLSROQ26.cjs');
-var chunk2W2GYEYQ_cjs = require('./chunk-2W2GYEYQ.cjs');
 
 // src/agent/index.warning.ts
 var Agent2 = class extends chunkU7LAN3FB_cjs.Agent {
@@ -35,7 +35,7 @@ var MastraBase2 = class extends chunkUV2QUUKW_cjs.MastraBase {
 };
 
 // src/deployer/index.warning.ts
-var MastraDeployer2 = class extends chunk3W5XZ6GJ_cjs.MastraDeployer {
+var MastraDeployer2 = class extends chunkGL3G7V3T_cjs.MastraDeployer {
   constructor(args) {
     super(args);
     this.logger.warn('Please import "MastraDeployer" from "@mastra/core/deployer" instead of "@mastra/core"');
@@ -75,7 +75,7 @@ function createLogger2(options) {
 }
 
 // src/memory/index.warning.ts
-var MastraMemory2 = class extends chunk6BUU65VU_cjs.MastraMemory {
+var MastraMemory2 = class extends chunkLNMTD7TL_cjs.MastraMemory {
   constructor(_arg) {
     super({ name: `Deprecated memory` });
     this.logger.warn('Please import "MastraMemory" from "@mastra/core/memory" instead of "@mastra/core"');
@@ -270,6 +270,10 @@ Object.defineProperty(exports, "resolveSerializedZodOutput", {
   enumerable: true,
   get: function () { return chunk5FAJ6HUC_cjs.resolveSerializedZodOutput; }
 });
+Object.defineProperty(exports, "createTool", {
+  enumerable: true,
+  get: function () { return chunk2W2GYEYQ_cjs.createTool; }
+});
 Object.defineProperty(exports, "LogLevel", {
   enumerable: true,
   get: function () { return chunkCGUKSEPG_cjs.LogLevel; }
@@ -317,10 +321,6 @@ Object.defineProperty(exports, "executeHook", {
 Object.defineProperty(exports, "registerHook", {
   enumerable: true,
   get: function () { return chunkST5RMVLG_cjs.registerHook; }
-});
-Object.defineProperty(exports, "createTool", {
-  enumerable: true,
-  get: function () { return chunk2W2GYEYQ_cjs.createTool; }
 });
 exports.Agent = Agent2;
 exports.Integration = Integration2;

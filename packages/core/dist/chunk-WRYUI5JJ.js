@@ -1,24 +1,16 @@
-'use strict';
+import { LibSQLVector } from './chunk-Y2USYAIT.js';
+import { DefaultProxyStorage } from './chunk-D3P2UQXV.js';
+import { deepMerge } from './chunk-2YF5JYTJ.js';
+import { MastraBase } from './chunk-WUPACWA6.js';
+import fs, { existsSync } from 'fs';
+import path, { join } from 'path';
+import os from 'os';
+import { experimental_customProvider } from 'ai';
 
-var chunkRZKQOQL3_cjs = require('./chunk-RZKQOQL3.cjs');
-var chunkS4RZ7LUX_cjs = require('./chunk-S4RZ7LUX.cjs');
-var chunk5FAJ6HUC_cjs = require('./chunk-5FAJ6HUC.cjs');
-var chunkUV2QUUKW_cjs = require('./chunk-UV2QUUKW.cjs');
-var fs = require('fs');
-var path = require('path');
-var fsp = require('fs/promises');
-var os = require('os');
-var ai = require('ai');
-
-function _interopDefault (e) { return e && e.__esModule ? e : { default: e }; }
-
-var path__default = /*#__PURE__*/_interopDefault(path);
-var fsp__default = /*#__PURE__*/_interopDefault(fsp);
-var os__default = /*#__PURE__*/_interopDefault(os);
-
+var fsp = fs.promises;
 async function getModelCachePath() {
-  const cachePath = path__default.default.join(os__default.default.homedir(), ".cache", "mastra", "fastembed-models");
-  await fsp__default.default.mkdir(cachePath, { recursive: true });
+  const cachePath = path.join(os.homedir(), ".cache", "mastra", "fastembed-models");
+  await fsp.mkdir(cachePath, { recursive: true });
   return cachePath;
 }
 function unbundleableImport(name) {
@@ -86,7 +78,7 @@ const memory = new Memory({
     throw error;
   }
 }
-var fastEmbedProvider = ai.experimental_customProvider({
+var fastEmbedProvider = experimental_customProvider({
   textEmbeddingModels: {
     "bge-small-en-v1.5": {
       specificationVersion: "v1",
@@ -113,7 +105,7 @@ var fastEmbedProvider = ai.experimental_customProvider({
 var defaultEmbedder = fastEmbedProvider.textEmbeddingModel;
 
 // src/memory/memory.ts
-var MastraMemory = class extends chunkUV2QUUKW_cjs.MastraBase {
+var MastraMemory = class extends MastraBase {
   MAX_CONTEXT_TOKENS;
   storage;
   vector;
@@ -128,7 +120,7 @@ var MastraMemory = class extends chunkUV2QUUKW_cjs.MastraBase {
   };
   constructor(config) {
     super({ component: "MEMORY", name: config.name });
-    this.storage = config.storage || new chunkS4RZ7LUX_cjs.DefaultProxyStorage({
+    this.storage = config.storage || new DefaultProxyStorage({
       config: {
         url: "file:memory.db"
       }
@@ -137,14 +129,14 @@ var MastraMemory = class extends chunkUV2QUUKW_cjs.MastraBase {
       this.vector = config.vector;
     } else {
       const oldDb = "memory-vector.db";
-      const hasOldDb = fs.existsSync(path.join(process.cwd(), oldDb)) || fs.existsSync(path.join(process.cwd(), ".mastra", oldDb));
+      const hasOldDb = existsSync(join(process.cwd(), oldDb)) || existsSync(join(process.cwd(), ".mastra", oldDb));
       const newDb = "memory.db";
       if (hasOldDb) {
         this.logger.warn(
           `Found deprecated Memory vector db file ${oldDb} this db is now merged with the default ${newDb} file. Delete the old one to use the new one. You will need to migrate any data if that's important to you. For now the deprecated path will be used but in a future breaking change we will only use the new db file path.`
         );
       }
-      this.vector = new chunkRZKQOQL3_cjs.LibSQLVector({
+      this.vector = new LibSQLVector({
         connectionUrl: hasOldDb ? `file:${oldDb}` : `file:${newDb}`
       });
     }
@@ -196,7 +188,7 @@ var MastraMemory = class extends chunkUV2QUUKW_cjs.MastraBase {
     return { indexName };
   }
   getMergedThreadConfig(config) {
-    return chunk5FAJ6HUC_cjs.deepMerge(this.threadConfig, config || {});
+    return deepMerge(this.threadConfig, config || {});
   }
   estimateTokens(text) {
     return Math.ceil(text.split(" ").length * 1.3);
@@ -345,4 +337,4 @@ var MastraMemory = class extends chunkUV2QUUKW_cjs.MastraBase {
   }
 };
 
-exports.MastraMemory = MastraMemory;
+export { MastraMemory };
