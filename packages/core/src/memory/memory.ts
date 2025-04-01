@@ -16,7 +16,7 @@ import { DefaultProxyStorage } from '../storage/default-proxy-storage';
 import type { CoreTool } from '../tools';
 import { deepMerge } from '../utils';
 import type { MastraVector } from '../vector';
-import { defaultEmbedder } from '../vector/fastembed';
+// import { defaultEmbedder } from '../vector/fastembed';
 import { DefaultVectorDB } from '../vector/libsql';
 
 import type { MessageType, SharedMemoryConfig, StorageThreadType, MemoryConfig, AiMessageType } from './types';
@@ -76,7 +76,8 @@ export abstract class MastraMemory extends MastraBase {
     if (config.embedder) {
       this.embedder = config.embedder;
     } else {
-      this.embedder = defaultEmbedder('bge-small-en-v1.5'); // https://huggingface.co/BAAI/bge-small-en-v1.5#model-list we're using small 1.5 because it's much faster than base 1.5 and only scores slightly worse despite being roughly 100MB smaller - small is ~130MB while base is ~220MB
+      // this.embedder = defaultEmbedder('bge-small-en-v1.5'); // https://huggingface.co/BAAI/bge-small-en-v1.5#model-list we're using small 1.5 because it's much faster than base 1.5 and only scores slightly worse despite being roughly 100MB smaller - small is ~130MB while base is ~220MB
+      throw new Error('Embedder config is required');
     }
 
     if (config.options) {
