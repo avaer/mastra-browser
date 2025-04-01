@@ -1,5 +1,5 @@
 import type { Agent } from '../agent';
-import type { MastraDeployer } from '../deployer';
+// import type { MastraDeployer } from '../deployer';
 import { LogLevel, createLogger, noopLogger } from '../logger';
 import type { Logger } from '../logger';
 import type { MastraMemory } from '../memory/memory';
@@ -28,7 +28,7 @@ export interface Config<
   workflows?: TWorkflows;
   tts?: TTTS;
   telemetry?: OtelConfig;
-  deployer?: MastraDeployer;
+  // deployer?: MastraDeployer;
 
   /**
    * Server middleware functions to be applied to API routes
@@ -60,7 +60,7 @@ export class Mastra<
   #logger: TLogger;
   #workflows: TWorkflows;
   #tts?: TTTS;
-  #deployer?: MastraDeployer;
+  // #deployer?: MastraDeployer;
   #serverMiddleware: Array<{
     handler: (c: any, next: () => Promise<void>) => Promise<Response | void>;
     path: string;
@@ -293,9 +293,9 @@ This is a warning for now, but will throw an error in the future
     return this.#vectors;
   }
 
-  public getDeployer() {
-    return this.#deployer;
-  }
+  // public getDeployer() {
+  //   return this.#deployer;
+  // }
 
   public getWorkflow<TWorkflowId extends keyof TWorkflows>(
     id: TWorkflowId,
@@ -342,9 +342,9 @@ This is a warning for now, but will throw an error in the future
       this.#memory.__setLogger(this.#logger);
     }
 
-    if (this.#deployer) {
-      this.#deployer.__setLogger(this.#logger);
-    }
+    // if (this.#deployer) {
+    //   this.#deployer.__setLogger(this.#logger);
+    // }
 
     if (this.#tts) {
       Object.keys(this.#tts).forEach(key => {
@@ -381,12 +381,12 @@ This is a warning for now, but will throw an error in the future
       this.#memory.__setTelemetry(this.#telemetry);
     }
 
-    if (this.#deployer) {
-      this.#deployer = this.#telemetry.traceClass(this.#deployer, {
-        excludeMethods: ['__setTelemetry', '__getTelemetry'],
-      });
-      this.#deployer.__setTelemetry(this.#telemetry);
-    }
+    // if (this.#deployer) {
+    //   this.#deployer = this.#telemetry.traceClass(this.#deployer, {
+    //     excludeMethods: ['__setTelemetry', '__getTelemetry'],
+    //   });
+    //   this.#deployer.__setTelemetry(this.#telemetry);
+    // }
 
     if (this.#tts) {
       let tts = {} as Record<string, MastraTTS>;
