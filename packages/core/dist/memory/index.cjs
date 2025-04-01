@@ -1,10 +1,10 @@
 'use strict';
 
-var chunkI7THZIJS_cjs = require('../chunk-I7THZIJS.cjs');
+var chunkJIF2UIXG_cjs = require('../chunk-JIF2UIXG.cjs');
 
 
 
 Object.defineProperty(exports, "MastraMemory", {
   enumerable: true,
-  get: function () { return chunkI7THZIJS_cjs.MastraMemory; }
+  get: function () { return chunkJIF2UIXG_cjs.MastraMemory; }
 });

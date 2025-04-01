@@ -1,13 +1,9 @@
-'use strict';
+import { DefaultProxyStorage } from './chunk-D3P2UQXV.js';
+import { deepMerge } from './chunk-2YF5JYTJ.js';
+import { MastraBase } from './chunk-WUPACWA6.js';
 
-var chunkRZKQOQL3_cjs = require('./chunk-RZKQOQL3.cjs');
-var chunkS4RZ7LUX_cjs = require('./chunk-S4RZ7LUX.cjs');
-var chunk5FAJ6HUC_cjs = require('./chunk-5FAJ6HUC.cjs');
-var chunkUV2QUUKW_cjs = require('./chunk-UV2QUUKW.cjs');
-var fs = require('fs');
-var path = require('path');
-
-var MastraMemory = class extends chunkUV2QUUKW_cjs.MastraBase {
+// src/memory/memory.ts
+var MastraMemory = class extends MastraBase {
   MAX_CONTEXT_TOKENS;
   storage;
   vector;
@@ -22,7 +18,7 @@ var MastraMemory = class extends chunkUV2QUUKW_cjs.MastraBase {
   };
   constructor(config) {
     super({ component: "MEMORY", name: config.name });
-    this.storage = config.storage || new chunkS4RZ7LUX_cjs.DefaultProxyStorage({
+    this.storage = config.storage || new DefaultProxyStorage({
       config: {
         url: "file:memory.db"
       }
@@ -30,17 +26,7 @@ var MastraMemory = class extends chunkUV2QUUKW_cjs.MastraBase {
     if (config.vector) {
       this.vector = config.vector;
     } else {
-      const oldDb = "memory-vector.db";
-      const hasOldDb = fs.existsSync(path.join(process.cwd(), oldDb)) || fs.existsSync(path.join(process.cwd(), ".mastra", oldDb));
-      const newDb = "memory.db";
-      if (hasOldDb) {
-        this.logger.warn(
-          `Found deprecated Memory vector db file ${oldDb} this db is now merged with the default ${newDb} file. Delete the old one to use the new one. You will need to migrate any data if that's important to you. For now the deprecated path will be used but in a future breaking change we will only use the new db file path.`
-        );
-      }
-      this.vector = new chunkRZKQOQL3_cjs.LibSQLVector({
-        connectionUrl: hasOldDb ? `file:${oldDb}` : `file:${newDb}`
-      });
+      throw new Error("Vector config is required");
     }
     if (config.embedder) {
       this.embedder = config.embedder;
@@ -90,7 +76,7 @@ var MastraMemory = class extends chunkUV2QUUKW_cjs.MastraBase {
     return { indexName };
   }
   getMergedThreadConfig(config) {
-    return chunk5FAJ6HUC_cjs.deepMerge(this.threadConfig, config || {});
+    return deepMerge(this.threadConfig, config || {});
   }
   estimateTokens(text) {
     return Math.ceil(text.split(" ").length * 1.3);
@@ -239,4 +225,4 @@ var MastraMemory = class extends chunkUV2QUUKW_cjs.MastraBase {
   }
 };
 
-exports.MastraMemory = MastraMemory;
+export { MastraMemory };

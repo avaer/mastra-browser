@@ -1,20 +1,20 @@
 'use strict';
 
 var chunkKKNAFCIB_cjs = require('./chunk-KKNAFCIB.cjs');
+var chunkCEU7VHOT_cjs = require('./chunk-CEU7VHOT.cjs');
 var chunkRLQZLULL_cjs = require('./chunk-RLQZLULL.cjs');
 var chunkXLSROQ26_cjs = require('./chunk-XLSROQ26.cjs');
 var chunkPCKQLTBW_cjs = require('./chunk-PCKQLTBW.cjs');
-var chunkI7THZIJS_cjs = require('./chunk-I7THZIJS.cjs');
-var chunkCEU7VHOT_cjs = require('./chunk-CEU7VHOT.cjs');
-var chunkSPNVVANI_cjs = require('./chunk-SPNVVANI.cjs');
+var chunkJIF2UIXG_cjs = require('./chunk-JIF2UIXG.cjs');
 var chunkIX6VOIR7_cjs = require('./chunk-IX6VOIR7.cjs');
+var chunkSPNVVANI_cjs = require('./chunk-SPNVVANI.cjs');
 var chunkU7LAN3FB_cjs = require('./chunk-U7LAN3FB.cjs');
 var chunkEDBJG533_cjs = require('./chunk-EDBJG533.cjs');
 var chunk5FAJ6HUC_cjs = require('./chunk-5FAJ6HUC.cjs');
 var chunk2W2GYEYQ_cjs = require('./chunk-2W2GYEYQ.cjs');
+var chunkV5ORZPFW_cjs = require('./chunk-V5ORZPFW.cjs');
 var chunkUV2QUUKW_cjs = require('./chunk-UV2QUUKW.cjs');
 var chunkCGUKSEPG_cjs = require('./chunk-CGUKSEPG.cjs');
-var chunkV5ORZPFW_cjs = require('./chunk-V5ORZPFW.cjs');
 var chunkST5RMVLG_cjs = require('./chunk-ST5RMVLG.cjs');
 
 // src/agent/index.warning.ts
@@ -66,7 +66,7 @@ function createLogger2(options) {
 }
 
 // src/memory/index.warning.ts
-var MastraMemory2 = class extends chunkI7THZIJS_cjs.MastraMemory {
+var MastraMemory2 = class extends chunkJIF2UIXG_cjs.MastraMemory {
   constructor(_arg) {
     super({ name: `Deprecated memory` });
     this.logger.warn('Please import "MastraMemory" from "@mastra/core/memory" instead of "@mastra/core"');
@@ -265,6 +265,14 @@ Object.defineProperty(exports, "createTool", {
   enumerable: true,
   get: function () { return chunk2W2GYEYQ_cjs.createTool; }
 });
+Object.defineProperty(exports, "Metric", {
+  enumerable: true,
+  get: function () { return chunkV5ORZPFW_cjs.Metric; }
+});
+Object.defineProperty(exports, "evaluate", {
+  enumerable: true,
+  get: function () { return chunkV5ORZPFW_cjs.evaluate; }
+});
 Object.defineProperty(exports, "LogLevel", {
   enumerable: true,
   get: function () { return chunkCGUKSEPG_cjs.LogLevel; }
@@ -292,14 +300,6 @@ Object.defineProperty(exports, "combineLoggers", {
 Object.defineProperty(exports, "noopLogger", {
   enumerable: true,
   get: function () { return chunkCGUKSEPG_cjs.noopLogger; }
-});
-Object.defineProperty(exports, "Metric", {
-  enumerable: true,
-  get: function () { return chunkV5ORZPFW_cjs.Metric; }
-});
-Object.defineProperty(exports, "evaluate", {
-  enumerable: true,
-  get: function () { return chunkV5ORZPFW_cjs.evaluate; }
 });
 Object.defineProperty(exports, "AvailableHooks", {
   enumerable: true,
