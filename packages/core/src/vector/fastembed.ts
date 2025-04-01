@@ -1,4 +1,5 @@
-import fsp from 'fs/promises';
+import fs from 'fs';
+const fsp = fs.promises;
 import os from 'os';
 import path from 'path';
 import { experimental_customProvider } from 'ai';

@@ -1,4 +1,5 @@
-import { readFile } from 'fs/promises';
+import fs from 'fs';
+const { readFile } = fs.promises;
 import { parse } from 'dotenv';
 
 import { MastraBase } from '../base';
