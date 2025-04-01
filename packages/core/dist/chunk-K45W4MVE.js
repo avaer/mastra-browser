@@ -3,10 +3,9 @@ import { DefaultProxyStorage } from './chunk-D3P2UQXV.js';
 import { deepMerge } from './chunk-2YF5JYTJ.js';
 import { MastraBase } from './chunk-WUPACWA6.js';
 import { existsSync } from 'fs';
-import { join } from 'path';
-import fsp from 'node:fs/promises';
-import os from 'node:os';
-import path from 'node:path';
+import path, { join } from 'path';
+import fsp from 'fs/promises';
+import os from 'os';
 import { experimental_customProvider } from 'ai';
 
 async function getModelCachePath() {
