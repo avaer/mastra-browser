@@ -1,4 +1,4 @@
-import EventEmitter from 'node:events';
+import EventEmitter from 'events';
 import type { Span } from '@opentelemetry/api';
 import { get } from 'radash';
 import sift from 'sift';
