@@ -1,4 +1,4 @@
-export { X as Config, M as Mastra } from '../base-c12pi2Tp.js';
+export { X as Config, M as Mastra } from '../base-Cr6-Bega.js';
 import '../index-BXwGr3N7.js';
 import '../vector/index.js';
 import '../base-Dq_cxikD.js';
@@ -11,7 +11,7 @@ import 'zod';
 import 'json-schema';
 import '@opentelemetry/api';
 import 'xstate';
-import 'node:events';
+import 'events';
 import 'stream';
 import '../vector/filter/index.js';
 import '@opentelemetry/sdk-trace-base';

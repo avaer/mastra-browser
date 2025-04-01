@@ -1,4 +1,4 @@
-export { c as MastraMemory, Z as MemoryConfig, Y as MessageResponse, k as MessageType, _ as SharedMemoryConfig, j as StorageThreadType } from '../base-DLHdl2FF.cjs';
+export { c as MastraMemory, Z as MemoryConfig, Y as MessageResponse, k as MessageType, _ as SharedMemoryConfig, j as StorageThreadType } from '../base-DxVp6eaF.cjs';
 export { Message as AiMessageType } from 'ai';
 import '../base-D_N8PfP5.cjs';
 import '@opentelemetry/api';
@@ -10,7 +10,7 @@ import 'sift';
 import 'zod';
 import 'json-schema';
 import 'xstate';
-import 'node:events';
+import 'events';
 import '../vector/index.cjs';
 import '../vector/filter/index.cjs';
 import '../tts/index.cjs';

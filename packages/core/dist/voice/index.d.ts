@@ -1,4 +1,4 @@
-export { aE as CompositeVoice, aD as MastraVoice, aC as VoiceConfig, aB as VoiceEventMap, aA as VoiceEventType } from '../base-c12pi2Tp.js';
+export { aE as CompositeVoice, aD as MastraVoice, aC as VoiceConfig, aB as VoiceEventMap, aA as VoiceEventType } from '../base-Cr6-Bega.js';
 import 'ai';
 import '../base-Dq_cxikD.js';
 import '@opentelemetry/api';
@@ -10,7 +10,7 @@ import 'sift';
 import 'zod';
 import 'json-schema';
 import 'xstate';
-import 'node:events';
+import 'events';
 import '../vector/index.js';
 import '../vector/filter/index.js';
 import '../tts/index.js';

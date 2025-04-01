@@ -3,7 +3,7 @@ import { MastraBase } from './chunk-WUPACWA6.js';
 import { context, trace } from '@opentelemetry/api';
 import { z } from 'zod';
 import { get } from 'radash';
-import EventEmitter from 'node:events';
+import EventEmitter from 'events';
 import sift from 'sift';
 import { createActor, assign, fromPromise, setup } from 'xstate';
 

@@ -1,5 +1,5 @@
 import { M as Metric, T as TestInfo, a as MetricResult } from '../types-CwTG2XyQ.js';
-import { A as Agent } from '../base-c12pi2Tp.js';
+import { A as Agent } from '../base-Cr6-Bega.js';
 import 'ai';
 import '../base-Dq_cxikD.js';
 import '@opentelemetry/api';
@@ -10,7 +10,7 @@ import 'sift';
 import 'zod';
 import 'json-schema';
 import 'xstate';
-import 'node:events';
+import 'events';
 import '../vector/index.js';
 import '../vector/filter/index.js';
 import '../tts/index.js';

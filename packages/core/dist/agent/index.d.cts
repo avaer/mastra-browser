@@ -1,7 +1,7 @@
 export { Message as AiMessageType } from 'ai';
 import 'json-schema';
 import 'zod';
-export { A as Agent, m as AgentConfig, aH as AgentGenerateOptions, aI as AgentStreamOptions, az as MastraLanguageModel, a as ToolsInput, aG as ToolsetsInput } from '../base-DLHdl2FF.cjs';
+export { A as Agent, m as AgentConfig, aH as AgentGenerateOptions, aI as AgentStreamOptions, az as MastraLanguageModel, a as ToolsInput, aG as ToolsetsInput } from '../base-DxVp6eaF.cjs';
 import '../base-D_N8PfP5.cjs';
 import '../types-CwTG2XyQ.cjs';
 import 'sift';
@@ -9,7 +9,7 @@ import '../index-BXwGr3N7.cjs';
 import 'stream';
 import '@opentelemetry/api';
 import 'xstate';
-import 'node:events';
+import 'events';
 import '../vector/index.cjs';
 import '../vector/filter/index.cjs';
 import '@opentelemetry/sdk-trace-base';

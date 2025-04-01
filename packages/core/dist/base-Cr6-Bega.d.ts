@@ -9,7 +9,7 @@ import { d as Run, B as BaseLogMessage, R as RegisteredLogger, L as Logger } fro
 import { Span } from '@opentelemetry/api';
 import * as xstate from 'xstate';
 import { Snapshot } from 'xstate';
-import EventEmitter from 'node:events';
+import EventEmitter from 'events';
 import { MastraVector } from './vector/index.js';
 import { MastraTTS } from './tts/index.js';
 import { MastraDeployer } from './deployer/index.js';

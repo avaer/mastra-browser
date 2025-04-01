@@ -1,4 +1,4 @@
-import { V as VercelTool, T as ToolAction, a as ToolsInput, M as Mastra, b as MastraPrimitives, c as MastraMemory, C as CoreTool, A as Agent, W as Workflow, S as Step, d as StepExecutionContext, e as WorkflowContext, f as AgentNetwork } from './base-c12pi2Tp.js';
+import { V as VercelTool, T as ToolAction, a as ToolsInput, M as Mastra, b as MastraPrimitives, c as MastraMemory, C as CoreTool, A as Agent, W as Workflow, S as Step, d as StepExecutionContext, e as WorkflowContext, f as AgentNetwork } from './base-Cr6-Bega.js';
 import { CoreMessage, Message } from 'ai';
 import { MastraTTS } from './tts/index.js';
 import { MastraVector } from './vector/index.js';
@@ -11,7 +11,7 @@ import '@opentelemetry/sdk-trace-base';
 import 'sift';
 import 'json-schema';
 import 'xstate';
-import 'node:events';
+import 'events';
 import './deployer/index.js';
 import './bundler/index.js';
 import './vector/filter/index.js';

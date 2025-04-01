@@ -1,4 +1,4 @@
-import { az as MastraLanguageModel } from '../base-c12pi2Tp.js';
+import { az as MastraLanguageModel } from '../base-Cr6-Bega.js';
 import 'ai';
 import '../base-Dq_cxikD.js';
 import '@opentelemetry/api';
@@ -10,7 +10,7 @@ import 'sift';
 import 'zod';
 import 'json-schema';
 import 'xstate';
-import 'node:events';
+import 'events';
 import '../vector/index.js';
 import '../vector/filter/index.js';
 import '../tts/index.js';
