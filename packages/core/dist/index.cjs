@@ -4,8 +4,8 @@ var chunkLUYBA3WN_cjs = require('./chunk-LUYBA3WN.cjs');
 var chunkSWYZHOFJ_cjs = require('./chunk-SWYZHOFJ.cjs');
 var chunkILWMZFHB_cjs = require('./chunk-ILWMZFHB.cjs');
 var chunkIYB4E5SF_cjs = require('./chunk-IYB4E5SF.cjs');
-var chunkZFTJ3OIX_cjs = require('./chunk-ZFTJ3OIX.cjs');
-var chunkQ6ZMX63D_cjs = require('./chunk-Q6ZMX63D.cjs');
+var chunk2HLDXBUY_cjs = require('./chunk-2HLDXBUY.cjs');
+var chunkIEGMYQ5N_cjs = require('./chunk-IEGMYQ5N.cjs');
 var chunkI3R2VONK_cjs = require('./chunk-I3R2VONK.cjs');
 var chunkBGCWUWVX_cjs = require('./chunk-BGCWUWVX.cjs');
 var chunkLV5CPU2X_cjs = require('./chunk-LV5CPU2X.cjs');
@@ -78,7 +78,7 @@ function createLogger2(options) {
 chunk7D636BPD_cjs.__name(createLogger2, "createLogger");
 
 // src/memory/index.warning.ts
-var _MastraMemory = class _MastraMemory extends chunkQ6ZMX63D_cjs.MastraMemory {
+var _MastraMemory = class _MastraMemory extends chunkIEGMYQ5N_cjs.MastraMemory {
   constructor(_arg) {
     super({ name: `Deprecated memory` });
     this.logger.warn('Please import "MastraMemory" from "@mastra/core/memory" instead of "@mastra/core"');
@@ -201,7 +201,7 @@ Object.defineProperty(exports, "workflowToStep", {
 });
 Object.defineProperty(exports, "Mastra", {
   enumerable: true,
-  get: function () { return chunkZFTJ3OIX_cjs.Mastra; }
+  get: function () { return chunk2HLDXBUY_cjs.Mastra; }
 });
 Object.defineProperty(exports, "CohereRelevanceScorer", {
   enumerable: true,
