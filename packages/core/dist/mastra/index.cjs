@@ -1,10 +1,12 @@
 'use strict';
 
-var chunkPCKQLTBW_cjs = require('../chunk-PCKQLTBW.cjs');
+var chunkZFTJ3OIX_cjs = require('../chunk-ZFTJ3OIX.cjs');
 
 
 
 Object.defineProperty(exports, "Mastra", {
   enumerable: true,
-  get: function () { return chunkPCKQLTBW_cjs.Mastra; }
+  get: function () { return chunkZFTJ3OIX_cjs.Mastra; }
 });
+//# sourceMappingURL=index.cjs.map
+//# sourceMappingURL=index.cjs.map

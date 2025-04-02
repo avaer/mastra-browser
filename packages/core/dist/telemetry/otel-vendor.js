@@ -6,3 +6,5 @@ export { Resource } from '@opentelemetry/resources';
 export { OTLPTraceExporter as OTLPHttpExporter } from '@opentelemetry/exporter-trace-otlp-http';
 export { OTLPTraceExporter as OTLPGrpcExporter } from '@opentelemetry/exporter-trace-otlp-grpc';
 export { AlwaysOffSampler, AlwaysOnSampler, ParentBasedSampler, TraceIdRatioBasedSampler } from '@opentelemetry/sdk-trace-base';
+//# sourceMappingURL=otel-vendor.js.map
+//# sourceMappingURL=otel-vendor.js.map

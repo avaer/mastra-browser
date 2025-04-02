@@ -55,3 +55,5 @@ Object.defineProperty(exports, "TraceIdRatioBasedSampler", {
   enumerable: true,
   get: function () { return sdkTraceBase.TraceIdRatioBasedSampler; }
 });
+//# sourceMappingURL=otel-vendor.cjs.map
+//# sourceMappingURL=otel-vendor.cjs.map

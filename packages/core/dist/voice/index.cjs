@@ -1,20 +1,16 @@
 'use strict';
 
-var chunkEDBJG533_cjs = require('../chunk-EDBJG533.cjs');
-var chunkUV2QUUKW_cjs = require('../chunk-UV2QUUKW.cjs');
-var chunkRWTSGWWL_cjs = require('../chunk-RWTSGWWL.cjs');
+var chunkXXM463NA_cjs = require('../chunk-XXM463NA.cjs');
+var chunkSUWCCDLE_cjs = require('../chunk-SUWCCDLE.cjs');
+var chunk7D636BPD_cjs = require('../chunk-7D636BPD.cjs');
 
 // src/voice/voice.ts
 var _MastraVoice_decorators, _init, _a;
-_MastraVoice_decorators = [chunkEDBJG533_cjs.InstrumentClass({
+_MastraVoice_decorators = [chunkXXM463NA_cjs.InstrumentClass({
   prefix: "voice",
   excludeMethods: ["__setTools", "__setLogger", "__setTelemetry", "#log"]
 })];
-exports.MastraVoice = class MastraVoice extends (_a = chunkUV2QUUKW_cjs.MastraBase) {
-  listeningModel;
-  speechModel;
-  speaker;
-  realtimeConfig;
+var _MastraVoice = class _MastraVoice extends (_a = chunkSUWCCDLE_cjs.MastraBase) {
   constructor({
     listeningModel,
     speechModel,
@@ -26,6 +22,10 @@ exports.MastraVoice = class MastraVoice extends (_a = chunkUV2QUUKW_cjs.MastraBa
       component: "VOICE",
       name
     });
+    chunk7D636BPD_cjs.__publicField(this, "listeningModel");
+    chunk7D636BPD_cjs.__publicField(this, "speechModel");
+    chunk7D636BPD_cjs.__publicField(this, "speaker");
+    chunk7D636BPD_cjs.__publicField(this, "realtimeConfig");
     this.listeningModel = listeningModel;
     this.speechModel = speechModel;
     this.speaker = speaker;
@@ -110,25 +110,26 @@ exports.MastraVoice = class MastraVoice extends (_a = chunkUV2QUUKW_cjs.MastraBa
     return Promise.resolve([]);
   }
 };
-exports.MastraVoice = /*@__PURE__*/(_ => {
-  _init = chunkRWTSGWWL_cjs.__decoratorStart(_a);
-  exports.MastraVoice = chunkRWTSGWWL_cjs.__decorateElement(_init, 0, "MastraVoice", _MastraVoice_decorators, exports.MastraVoice);
-  chunkRWTSGWWL_cjs.__runInitializers(_init, 1, exports.MastraVoice);
-
-  // src/voice/composite-voice.ts
-  return exports.MastraVoice;
+_MastraVoice = /*@__PURE__*/(_ => {
+  _init = chunk7D636BPD_cjs.__decoratorStart(_a);
+  _MastraVoice = chunk7D636BPD_cjs.__decorateElement(_init, 0, "MastraVoice", _MastraVoice_decorators, _MastraVoice);
+  chunk7D636BPD_cjs.__name(_MastraVoice, "MastraVoice");
+  return _MastraVoice;
 })();
+chunk7D636BPD_cjs.__runInitializers(_init, 1, _MastraVoice);
+var MastraVoice = _MastraVoice;
+
 // src/voice/composite-voice.ts
-var CompositeVoice = class extends exports.MastraVoice {
-  speakProvider;
-  listenProvider;
-  realtimeProvider;
+var _CompositeVoice = class _CompositeVoice extends MastraVoice {
   constructor({
     speakProvider,
     listenProvider,
     realtimeProvider
   }) {
     super();
+    chunk7D636BPD_cjs.__publicField(this, "speakProvider");
+    chunk7D636BPD_cjs.__publicField(this, "listenProvider");
+    chunk7D636BPD_cjs.__publicField(this, "realtimeProvider");
     this.speakProvider = speakProvider;
     this.listenProvider = listenProvider;
     this.realtimeProvider = realtimeProvider;
@@ -250,5 +251,10 @@ var CompositeVoice = class extends exports.MastraVoice {
     this.realtimeProvider.off(event, callback);
   }
 };
+chunk7D636BPD_cjs.__name(_CompositeVoice, "CompositeVoice");
+var CompositeVoice = _CompositeVoice;
 
 exports.CompositeVoice = CompositeVoice;
+exports.MastraVoice = MastraVoice;
+//# sourceMappingURL=index.cjs.map
+//# sourceMappingURL=index.cjs.map

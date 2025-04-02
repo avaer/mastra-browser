@@ -1,26 +1,29 @@
-import { Agent } from '../chunk-UGPRAEX5.js';
-import { createTool } from '../chunk-ZINPRHAN.js';
-import { MastraBase } from '../chunk-WUPACWA6.js';
-import { RegisteredLogger } from '../chunk-UAVUAO53.js';
+import { Agent } from '../chunk-HJIGVF7U.js';
+import { createTool } from '../chunk-YNOU42YW.js';
+import { MastraBase } from '../chunk-LE72NI7K.js';
+import { RegisteredLogger } from '../chunk-HEAZ5SGJ.js';
+import { __name, __privateAdd, __privateSet, __privateGet, __privateMethod } from '../chunk-WH5OY6PO.js';
 import { z } from 'zod';
 
-var AgentNetwork = class extends MastraBase {
-  #instructions;
-  #agents;
-  #model;
-  #routingAgent;
-  #agentHistory = {};
+var _instructions, _agents, _model, _routingAgent, _agentHistory, _AgentNetwork_instances, addToAgentHistory_fn, clearNetworkHistoryBeforeRun_fn;
+var _AgentNetwork = class _AgentNetwork extends MastraBase {
   constructor(config) {
     super({ component: RegisteredLogger.NETWORK, name: "AgentNetwork" });
-    this.#instructions = config.instructions;
-    this.#agents = config.agents;
-    this.#model = config.model;
-    this.#routingAgent = new Agent({
+    __privateAdd(this, _AgentNetwork_instances);
+    __privateAdd(this, _instructions);
+    __privateAdd(this, _agents);
+    __privateAdd(this, _model);
+    __privateAdd(this, _routingAgent);
+    __privateAdd(this, _agentHistory, {});
+    __privateSet(this, _instructions, config.instructions);
+    __privateSet(this, _agents, config.agents);
+    __privateSet(this, _model, config.model);
+    __privateSet(this, _routingAgent, new Agent({
       name: config.name,
       instructions: this.getInstructions(),
-      model: this.#model,
+      model: __privateGet(this, _model),
       tools: this.getTools()
-    });
+    }));
   }
   formatAgentId(name) {
     return name.replace(/[^a-zA-Z0-9_-]/g, "_");
@@ -39,7 +42,7 @@ var AgentNetwork = class extends MastraBase {
             })
           )
         }),
-        execute: async ({ context }) => {
+        execute: /* @__PURE__ */ __name(async ({ context }) => {
           try {
             const actions = context.actions;
             this.logger.debug(`Executing ${actions.length} specialized agents`);
@@ -50,7 +53,7 @@ var AgentNetwork = class extends MastraBase {
             );
             this.logger.debug("Results:", { results });
             actions.forEach((action, index) => {
-              this.#addToAgentHistory(action.agent, {
+              __privateMethod(this, _AgentNetwork_instances, addToAgentHistory_fn).call(this, action.agent, {
                 input: action.input,
                 output: results[index] || ""
                 // Ensure output is always a string
@@ -62,38 +65,26 @@ var AgentNetwork = class extends MastraBase {
             this.logger.error("Error in transmit tool:", { error });
             return `Error executing agents: ${error.message}`;
           }
-        }
+        }, "execute")
       })
     };
   }
-  #addToAgentHistory(agentId, interaction) {
-    if (!this.#agentHistory[agentId]) {
-      this.#agentHistory[agentId] = [];
-    }
-    this.#agentHistory[agentId].push({
-      ...interaction,
-      timestamp: (/* @__PURE__ */ new Date()).toISOString()
-    });
-  }
   getAgentHistory(agentId) {
-    return this.#agentHistory[agentId] || [];
-  }
-  #clearNetworkHistoryBeforeRun() {
-    this.#agentHistory = {};
+    return __privateGet(this, _agentHistory)[agentId] || [];
   }
   /**
    * Get the history of all agent interactions that have occurred in this network
    * @returns A record of agent interactions, keyed by agent ID
    */
   getAgentInteractionHistory() {
-    return { ...this.#agentHistory };
+    return { ...__privateGet(this, _agentHistory) };
   }
   /**
    * Get a summary of agent interactions in a more readable format, displayed chronologically
    * @returns A formatted string with all agent interactions in chronological order
    */
   getAgentInteractionSummary() {
-    const history = this.#agentHistory;
+    const history = __privateGet(this, _agentHistory);
     const agentIds = Object.keys(history);
     if (agentIds.length === 0) {
       return "No agent interactions have occurred yet.";
@@ -130,15 +121,15 @@ var AgentNetwork = class extends MastraBase {
   }
   async executeAgent(agentId, input, includeHistory = false) {
     try {
-      const agent = this.#agents.find((agent2) => this.formatAgentId(agent2.name) === agentId);
+      const agent = __privateGet(this, _agents).find((agent2) => this.formatAgentId(agent2.name) === agentId);
       if (!agent) {
         throw new Error(
-          `Agent "${agentId}" not found. Available agents: ${this.#agents.map((a) => this.formatAgentId(a.name)).join(", ")}`
+          `Agent "${agentId}" not found. Available agents: ${__privateGet(this, _agents).map((a) => this.formatAgentId(a.name)).join(", ")}`
         );
       }
       let messagesWithContext = [...input];
       if (includeHistory) {
-        const allHistory = Object.entries(this.#agentHistory);
+        const allHistory = Object.entries(__privateGet(this, _agentHistory));
         if (allHistory.length > 0) {
           const contextMessage = {
             role: "system",
@@ -165,7 +156,7 @@ ${interactions.map(
     }
   }
   getInstructions() {
-    const agentList = this.#agents.map((agent) => {
+    const agentList = __privateGet(this, _agents).map((agent) => {
       const id = this.formatAgentId(agent.name);
       return ` - **${id}**: ${agent.name}`;
     }).join("\n");
@@ -174,7 +165,7 @@ ${interactions.map(
             Your job is to decide which agent should handle each step of a task.
             
             ## System Instructions
-            ${this.#instructions}
+            ${__privateGet(this, _instructions)}
             
             ## Available Specialized Agents
             You can call these agents using the "transmit" tool:
@@ -248,21 +239,21 @@ ${interactions.map(
         `;
   }
   getRoutingAgent() {
-    return this.#routingAgent;
+    return __privateGet(this, _routingAgent);
   }
   getAgents() {
-    return this.#agents;
+    return __privateGet(this, _agents);
   }
   async generate(messages, args) {
-    this.#clearNetworkHistoryBeforeRun();
-    this.logger.debug(`AgentNetwork: Starting generation with ${this.#agents.length} available agents`);
+    __privateMethod(this, _AgentNetwork_instances, clearNetworkHistoryBeforeRun_fn).call(this);
+    this.logger.debug(`AgentNetwork: Starting generation with ${__privateGet(this, _agents).length} available agents`);
     const ops = {
-      maxSteps: this.#agents?.length * 10,
+      maxSteps: __privateGet(this, _agents)?.length * 10,
       // Default to 10 steps per agent
       ...args
     };
     this.logger.debug(`AgentNetwork: Routing with max steps: ${ops.maxSteps}`);
-    const result = await this.#routingAgent.generate(
+    const result = await __privateGet(this, _routingAgent).generate(
       messages,
       ops
     );
@@ -270,15 +261,15 @@ ${interactions.map(
     return result;
   }
   async stream(messages, args) {
-    this.#clearNetworkHistoryBeforeRun();
-    this.logger.debug(`AgentNetwork: Starting generation with ${this.#agents.length} available agents`);
+    __privateMethod(this, _AgentNetwork_instances, clearNetworkHistoryBeforeRun_fn).call(this);
+    this.logger.debug(`AgentNetwork: Starting generation with ${__privateGet(this, _agents).length} available agents`);
     const ops = {
-      maxSteps: this.#agents?.length * 10,
+      maxSteps: __privateGet(this, _agents)?.length * 10,
       // Default to 10 steps per agent
       ...args
     };
     this.logger.debug(`AgentNetwork: Routing with max steps: ${ops.maxSteps}`);
-    const result = await this.#routingAgent.stream(
+    const result = await __privateGet(this, _routingAgent).stream(
       messages,
       ops
     );
@@ -286,13 +277,35 @@ ${interactions.map(
   }
   __registerMastra(p) {
     this.__setLogger(p.getLogger());
-    this.#routingAgent.__registerMastra(p);
-    for (const agent of this.#agents) {
+    __privateGet(this, _routingAgent).__registerMastra(p);
+    for (const agent of __privateGet(this, _agents)) {
       if (typeof agent.__registerMastra === "function") {
         agent.__registerMastra(p);
       }
     }
   }
 };
+_instructions = new WeakMap();
+_agents = new WeakMap();
+_model = new WeakMap();
+_routingAgent = new WeakMap();
+_agentHistory = new WeakMap();
+_AgentNetwork_instances = new WeakSet();
+addToAgentHistory_fn = /* @__PURE__ */ __name(function(agentId, interaction) {
+  if (!__privateGet(this, _agentHistory)[agentId]) {
+    __privateGet(this, _agentHistory)[agentId] = [];
+  }
+  __privateGet(this, _agentHistory)[agentId].push({
+    ...interaction,
+    timestamp: (/* @__PURE__ */ new Date()).toISOString()
+  });
+}, "#addToAgentHistory");
+clearNetworkHistoryBeforeRun_fn = /* @__PURE__ */ __name(function() {
+  __privateSet(this, _agentHistory, {});
+}, "#clearNetworkHistoryBeforeRun");
+__name(_AgentNetwork, "AgentNetwork");
+var AgentNetwork = _AgentNetwork;
 
 export { AgentNetwork };
+//# sourceMappingURL=index.js.map
+//# sourceMappingURL=index.js.map

@@ -1,6 +1,6 @@
-import { InstrumentClass } from '../chunk-RHSLRFEA.js';
-import { MastraBase } from '../chunk-WUPACWA6.js';
-import { __decoratorStart, __decorateElement, __runInitializers } from '../chunk-C6A6W6XS.js';
+import { InstrumentClass } from '../chunk-GCXZG37R.js';
+import { MastraBase } from '../chunk-LE72NI7K.js';
+import { __runInitializers, __name, __publicField, __decoratorStart, __decorateElement } from '../chunk-WH5OY6PO.js';
 
 // src/voice/voice.ts
 var _MastraVoice_decorators, _init, _a;
@@ -8,11 +8,7 @@ _MastraVoice_decorators = [InstrumentClass({
   prefix: "voice",
   excludeMethods: ["__setTools", "__setLogger", "__setTelemetry", "#log"]
 })];
-var MastraVoice = class extends (_a = MastraBase) {
-  listeningModel;
-  speechModel;
-  speaker;
-  realtimeConfig;
+var _MastraVoice = class _MastraVoice extends (_a = MastraBase) {
   constructor({
     listeningModel,
     speechModel,
@@ -24,6 +20,10 @@ var MastraVoice = class extends (_a = MastraBase) {
       component: "VOICE",
       name
     });
+    __publicField(this, "listeningModel");
+    __publicField(this, "speechModel");
+    __publicField(this, "speaker");
+    __publicField(this, "realtimeConfig");
     this.listeningModel = listeningModel;
     this.speechModel = speechModel;
     this.speaker = speaker;
@@ -108,25 +108,26 @@ var MastraVoice = class extends (_a = MastraBase) {
     return Promise.resolve([]);
   }
 };
-MastraVoice = /*@__PURE__*/(_ => {
+_MastraVoice = /*@__PURE__*/(_ => {
   _init = __decoratorStart(_a);
-  MastraVoice = __decorateElement(_init, 0, "MastraVoice", _MastraVoice_decorators, MastraVoice);
-  __runInitializers(_init, 1, MastraVoice);
-
-  // src/voice/composite-voice.ts
-  return MastraVoice;
+  _MastraVoice = __decorateElement(_init, 0, "MastraVoice", _MastraVoice_decorators, _MastraVoice);
+  __name(_MastraVoice, "MastraVoice");
+  return _MastraVoice;
 })();
+__runInitializers(_init, 1, _MastraVoice);
+var MastraVoice = _MastraVoice;
+
 // src/voice/composite-voice.ts
-var CompositeVoice = class extends MastraVoice {
-  speakProvider;
-  listenProvider;
-  realtimeProvider;
+var _CompositeVoice = class _CompositeVoice extends MastraVoice {
   constructor({
     speakProvider,
     listenProvider,
     realtimeProvider
   }) {
     super();
+    __publicField(this, "speakProvider");
+    __publicField(this, "listenProvider");
+    __publicField(this, "realtimeProvider");
     this.speakProvider = speakProvider;
     this.listenProvider = listenProvider;
     this.realtimeProvider = realtimeProvider;
@@ -248,5 +249,9 @@ var CompositeVoice = class extends MastraVoice {
     this.realtimeProvider.off(event, callback);
   }
 };
+__name(_CompositeVoice, "CompositeVoice");
+var CompositeVoice = _CompositeVoice;
 
 export { CompositeVoice, MastraVoice };
+//# sourceMappingURL=index.js.map
+//# sourceMappingURL=index.js.map

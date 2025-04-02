@@ -1,10 +1,12 @@
 'use strict';
 
-var chunkUV2QUUKW_cjs = require('./chunk-UV2QUUKW.cjs');
+var chunkSUWCCDLE_cjs = require('./chunk-SUWCCDLE.cjs');
 
 
 
 Object.defineProperty(exports, "MastraBase", {
   enumerable: true,
-  get: function () { return chunkUV2QUUKW_cjs.MastraBase; }
+  get: function () { return chunkSUWCCDLE_cjs.MastraBase; }
 });
+//# sourceMappingURL=base.cjs.map
+//# sourceMappingURL=base.cjs.map

@@ -1,6 +1,8 @@
-import { MastraStorage } from '../../chunk-BFE62BHD.js';
-import { TABLE_WORKFLOW_SNAPSHOT, TABLE_THREADS, TABLE_MESSAGES, TABLE_EVALS, TABLE_TRACES } from '../../chunk-RG66XEJT.js';
-import { isAbsolute, join, resolve } from 'path';
+import { MastraStorage } from '../../chunk-UUMEB542.js';
+import { TABLE_WORKFLOW_SNAPSHOT, TABLE_THREADS, TABLE_MESSAGES, TABLE_EVALS, TABLE_TRACES } from '../../chunk-FAAZLQT5.js';
+import { __name, __publicField } from '../../chunk-WH5OY6PO.js';
+import { isAbsolute, join, resolve } from 'node:path';
+import { createClient } from '@libsql/client';
 
 function safelyParseJSON(jsonString) {
   try {
@@ -9,14 +11,18 @@ function safelyParseJSON(jsonString) {
     return {};
   }
 }
-var LibSQLStore = class extends MastraStorage {
-  client;
+__name(safelyParseJSON, "safelyParseJSON");
+var _LibSQLStore = class _LibSQLStore extends MastraStorage {
   constructor({ config }) {
     super({ name: `LibSQLStore` });
+    __publicField(this, "client");
     if (config.url === ":memory:" || config.url.startsWith("file::memory:")) {
       this.shouldCacheInit = false;
     }
-    this.client = null;
+    this.client = createClient({
+      url: this.rewriteDbUrl(config.url),
+      authToken: config.authToken
+    });
   }
   // If we're in the .mastra/output directory, use the dir outside .mastra dir
   // reason we need to do this is libsql relative file paths are based on cwd, not current file path
@@ -433,5 +439,9 @@ var LibSQLStore = class extends MastraStorage {
     }));
   }
 };
+__name(_LibSQLStore, "LibSQLStore");
+var LibSQLStore = _LibSQLStore;
 
 export { LibSQLStore as DefaultStorage, LibSQLStore };
+//# sourceMappingURL=index.js.map
+//# sourceMappingURL=index.js.map

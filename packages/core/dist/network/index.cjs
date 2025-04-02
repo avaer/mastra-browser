@@ -1,35 +1,38 @@
 'use strict';
 
-var chunkU7LAN3FB_cjs = require('../chunk-U7LAN3FB.cjs');
-var chunk2W2GYEYQ_cjs = require('../chunk-2W2GYEYQ.cjs');
-var chunkUV2QUUKW_cjs = require('../chunk-UV2QUUKW.cjs');
-var chunkCGUKSEPG_cjs = require('../chunk-CGUKSEPG.cjs');
+var chunkLV5CPU2X_cjs = require('../chunk-LV5CPU2X.cjs');
+var chunkOJDVHIBJ_cjs = require('../chunk-OJDVHIBJ.cjs');
+var chunkSUWCCDLE_cjs = require('../chunk-SUWCCDLE.cjs');
+var chunkQVQCHA2A_cjs = require('../chunk-QVQCHA2A.cjs');
+var chunk7D636BPD_cjs = require('../chunk-7D636BPD.cjs');
 var zod = require('zod');
 
-var AgentNetwork = class extends chunkUV2QUUKW_cjs.MastraBase {
-  #instructions;
-  #agents;
-  #model;
-  #routingAgent;
-  #agentHistory = {};
+var _instructions, _agents, _model, _routingAgent, _agentHistory, _AgentNetwork_instances, addToAgentHistory_fn, clearNetworkHistoryBeforeRun_fn;
+var _AgentNetwork = class _AgentNetwork extends chunkSUWCCDLE_cjs.MastraBase {
   constructor(config) {
-    super({ component: chunkCGUKSEPG_cjs.RegisteredLogger.NETWORK, name: "AgentNetwork" });
-    this.#instructions = config.instructions;
-    this.#agents = config.agents;
-    this.#model = config.model;
-    this.#routingAgent = new chunkU7LAN3FB_cjs.Agent({
+    super({ component: chunkQVQCHA2A_cjs.RegisteredLogger.NETWORK, name: "AgentNetwork" });
+    chunk7D636BPD_cjs.__privateAdd(this, _AgentNetwork_instances);
+    chunk7D636BPD_cjs.__privateAdd(this, _instructions);
+    chunk7D636BPD_cjs.__privateAdd(this, _agents);
+    chunk7D636BPD_cjs.__privateAdd(this, _model);
+    chunk7D636BPD_cjs.__privateAdd(this, _routingAgent);
+    chunk7D636BPD_cjs.__privateAdd(this, _agentHistory, {});
+    chunk7D636BPD_cjs.__privateSet(this, _instructions, config.instructions);
+    chunk7D636BPD_cjs.__privateSet(this, _agents, config.agents);
+    chunk7D636BPD_cjs.__privateSet(this, _model, config.model);
+    chunk7D636BPD_cjs.__privateSet(this, _routingAgent, new chunkLV5CPU2X_cjs.Agent({
       name: config.name,
       instructions: this.getInstructions(),
-      model: this.#model,
+      model: chunk7D636BPD_cjs.__privateGet(this, _model),
       tools: this.getTools()
-    });
+    }));
   }
   formatAgentId(name) {
     return name.replace(/[^a-zA-Z0-9_-]/g, "_");
   }
   getTools() {
     return {
-      transmit: chunk2W2GYEYQ_cjs.createTool({
+      transmit: chunkOJDVHIBJ_cjs.createTool({
         id: "transmit",
         description: "Call one or more specialized agents to handle specific tasks",
         inputSchema: zod.z.object({
@@ -41,7 +44,7 @@ var AgentNetwork = class extends chunkUV2QUUKW_cjs.MastraBase {
             })
           )
         }),
-        execute: async ({ context }) => {
+        execute: /* @__PURE__ */ chunk7D636BPD_cjs.__name(async ({ context }) => {
           try {
             const actions = context.actions;
             this.logger.debug(`Executing ${actions.length} specialized agents`);
@@ -52,7 +55,7 @@ var AgentNetwork = class extends chunkUV2QUUKW_cjs.MastraBase {
             );
             this.logger.debug("Results:", { results });
             actions.forEach((action, index) => {
-              this.#addToAgentHistory(action.agent, {
+              chunk7D636BPD_cjs.__privateMethod(this, _AgentNetwork_instances, addToAgentHistory_fn).call(this, action.agent, {
                 input: action.input,
                 output: results[index] || ""
                 // Ensure output is always a string
@@ -64,38 +67,26 @@ var AgentNetwork = class extends chunkUV2QUUKW_cjs.MastraBase {
             this.logger.error("Error in transmit tool:", { error });
             return `Error executing agents: ${error.message}`;
           }
-        }
+        }, "execute")
       })
     };
   }
-  #addToAgentHistory(agentId, interaction) {
-    if (!this.#agentHistory[agentId]) {
-      this.#agentHistory[agentId] = [];
-    }
-    this.#agentHistory[agentId].push({
-      ...interaction,
-      timestamp: (/* @__PURE__ */ new Date()).toISOString()
-    });
-  }
   getAgentHistory(agentId) {
-    return this.#agentHistory[agentId] || [];
-  }
-  #clearNetworkHistoryBeforeRun() {
-    this.#agentHistory = {};
+    return chunk7D636BPD_cjs.__privateGet(this, _agentHistory)[agentId] || [];
   }
   /**
    * Get the history of all agent interactions that have occurred in this network
    * @returns A record of agent interactions, keyed by agent ID
    */
   getAgentInteractionHistory() {
-    return { ...this.#agentHistory };
+    return { ...chunk7D636BPD_cjs.__privateGet(this, _agentHistory) };
   }
   /**
    * Get a summary of agent interactions in a more readable format, displayed chronologically
    * @returns A formatted string with all agent interactions in chronological order
    */
   getAgentInteractionSummary() {
-    const history = this.#agentHistory;
+    const history = chunk7D636BPD_cjs.__privateGet(this, _agentHistory);
     const agentIds = Object.keys(history);
     if (agentIds.length === 0) {
       return "No agent interactions have occurred yet.";
@@ -132,15 +123,15 @@ var AgentNetwork = class extends chunkUV2QUUKW_cjs.MastraBase {
   }
   async executeAgent(agentId, input, includeHistory = false) {
     try {
-      const agent = this.#agents.find((agent2) => this.formatAgentId(agent2.name) === agentId);
+      const agent = chunk7D636BPD_cjs.__privateGet(this, _agents).find((agent2) => this.formatAgentId(agent2.name) === agentId);
       if (!agent) {
         throw new Error(
-          `Agent "${agentId}" not found. Available agents: ${this.#agents.map((a) => this.formatAgentId(a.name)).join(", ")}`
+          `Agent "${agentId}" not found. Available agents: ${chunk7D636BPD_cjs.__privateGet(this, _agents).map((a) => this.formatAgentId(a.name)).join(", ")}`
         );
       }
       let messagesWithContext = [...input];
       if (includeHistory) {
-        const allHistory = Object.entries(this.#agentHistory);
+        const allHistory = Object.entries(chunk7D636BPD_cjs.__privateGet(this, _agentHistory));
         if (allHistory.length > 0) {
           const contextMessage = {
             role: "system",
@@ -167,7 +158,7 @@ ${interactions.map(
     }
   }
   getInstructions() {
-    const agentList = this.#agents.map((agent) => {
+    const agentList = chunk7D636BPD_cjs.__privateGet(this, _agents).map((agent) => {
       const id = this.formatAgentId(agent.name);
       return ` - **${id}**: ${agent.name}`;
     }).join("\n");
@@ -176,7 +167,7 @@ ${interactions.map(
             Your job is to decide which agent should handle each step of a task.
             
             ## System Instructions
-            ${this.#instructions}
+            ${chunk7D636BPD_cjs.__privateGet(this, _instructions)}
             
             ## Available Specialized Agents
             You can call these agents using the "transmit" tool:
@@ -250,21 +241,21 @@ ${interactions.map(
         `;
   }
   getRoutingAgent() {
-    return this.#routingAgent;
+    return chunk7D636BPD_cjs.__privateGet(this, _routingAgent);
   }
   getAgents() {
-    return this.#agents;
+    return chunk7D636BPD_cjs.__privateGet(this, _agents);
   }
   async generate(messages, args) {
-    this.#clearNetworkHistoryBeforeRun();
-    this.logger.debug(`AgentNetwork: Starting generation with ${this.#agents.length} available agents`);
+    chunk7D636BPD_cjs.__privateMethod(this, _AgentNetwork_instances, clearNetworkHistoryBeforeRun_fn).call(this);
+    this.logger.debug(`AgentNetwork: Starting generation with ${chunk7D636BPD_cjs.__privateGet(this, _agents).length} available agents`);
     const ops = {
-      maxSteps: this.#agents?.length * 10,
+      maxSteps: chunk7D636BPD_cjs.__privateGet(this, _agents)?.length * 10,
       // Default to 10 steps per agent
       ...args
     };
     this.logger.debug(`AgentNetwork: Routing with max steps: ${ops.maxSteps}`);
-    const result = await this.#routingAgent.generate(
+    const result = await chunk7D636BPD_cjs.__privateGet(this, _routingAgent).generate(
       messages,
       ops
     );
@@ -272,15 +263,15 @@ ${interactions.map(
     return result;
   }
   async stream(messages, args) {
-    this.#clearNetworkHistoryBeforeRun();
-    this.logger.debug(`AgentNetwork: Starting generation with ${this.#agents.length} available agents`);
+    chunk7D636BPD_cjs.__privateMethod(this, _AgentNetwork_instances, clearNetworkHistoryBeforeRun_fn).call(this);
+    this.logger.debug(`AgentNetwork: Starting generation with ${chunk7D636BPD_cjs.__privateGet(this, _agents).length} available agents`);
     const ops = {
-      maxSteps: this.#agents?.length * 10,
+      maxSteps: chunk7D636BPD_cjs.__privateGet(this, _agents)?.length * 10,
       // Default to 10 steps per agent
       ...args
     };
     this.logger.debug(`AgentNetwork: Routing with max steps: ${ops.maxSteps}`);
-    const result = await this.#routingAgent.stream(
+    const result = await chunk7D636BPD_cjs.__privateGet(this, _routingAgent).stream(
       messages,
       ops
     );
@@ -288,13 +279,35 @@ ${interactions.map(
   }
   __registerMastra(p) {
     this.__setLogger(p.getLogger());
-    this.#routingAgent.__registerMastra(p);
-    for (const agent of this.#agents) {
+    chunk7D636BPD_cjs.__privateGet(this, _routingAgent).__registerMastra(p);
+    for (const agent of chunk7D636BPD_cjs.__privateGet(this, _agents)) {
       if (typeof agent.__registerMastra === "function") {
         agent.__registerMastra(p);
       }
     }
   }
 };
+_instructions = new WeakMap();
+_agents = new WeakMap();
+_model = new WeakMap();
+_routingAgent = new WeakMap();
+_agentHistory = new WeakMap();
+_AgentNetwork_instances = new WeakSet();
+addToAgentHistory_fn = /* @__PURE__ */ chunk7D636BPD_cjs.__name(function(agentId, interaction) {
+  if (!chunk7D636BPD_cjs.__privateGet(this, _agentHistory)[agentId]) {
+    chunk7D636BPD_cjs.__privateGet(this, _agentHistory)[agentId] = [];
+  }
+  chunk7D636BPD_cjs.__privateGet(this, _agentHistory)[agentId].push({
+    ...interaction,
+    timestamp: (/* @__PURE__ */ new Date()).toISOString()
+  });
+}, "#addToAgentHistory");
+clearNetworkHistoryBeforeRun_fn = /* @__PURE__ */ chunk7D636BPD_cjs.__name(function() {
+  chunk7D636BPD_cjs.__privateSet(this, _agentHistory, {});
+}, "#clearNetworkHistoryBeforeRun");
+chunk7D636BPD_cjs.__name(_AgentNetwork, "AgentNetwork");
+var AgentNetwork = _AgentNetwork;
 
 exports.AgentNetwork = AgentNetwork;
+//# sourceMappingURL=index.cjs.map
+//# sourceMappingURL=index.cjs.map

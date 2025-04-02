@@ -1,10 +1,12 @@
 'use strict';
 
-var chunkCEU7VHOT_cjs = require('../chunk-CEU7VHOT.cjs');
+var chunkSWYZHOFJ_cjs = require('../chunk-SWYZHOFJ.cjs');
 
 
 
 Object.defineProperty(exports, "MastraVector", {
   enumerable: true,
-  get: function () { return chunkCEU7VHOT_cjs.MastraVector; }
+  get: function () { return chunkSWYZHOFJ_cjs.MastraVector; }
 });
+//# sourceMappingURL=index.cjs.map
+//# sourceMappingURL=index.cjs.map

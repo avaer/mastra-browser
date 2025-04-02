@@ -1,9 +1,10 @@
-import { BaseFilterTranslator } from '../../chunk-LGERQTJM.js';
-import { MastraVector } from '../../chunk-B6WXWFN6.js';
+import { BaseFilterTranslator } from '../../chunk-W3JW2AUS.js';
+import { MastraVector } from '../../chunk-I4XYJ73M.js';
+import { __name, __publicField } from '../../chunk-WH5OY6PO.js';
 import { isAbsolute, join, resolve } from 'path';
 
 // src/vector/libsql/filter.ts
-var LibSQLFilterTranslator = class extends BaseFilterTranslator {
+var _LibSQLFilterTranslator = class _LibSQLFilterTranslator extends BaseFilterTranslator {
   getSupportedOperators() {
     return {
       ...BaseFilterTranslator.DEFAULT_OPERATORS,
@@ -22,7 +23,7 @@ var LibSQLFilterTranslator = class extends BaseFilterTranslator {
     if (this.isRegex(node)) {
       throw new Error("Direct regex pattern format is not supported in LibSQL");
     }
-    const withPath = (result2) => currentPath ? { [currentPath]: result2 } : result2;
+    const withPath = /* @__PURE__ */ __name((result2) => currentPath ? { [currentPath]: result2 } : result2, "withPath");
     if (this.isPrimitive(node)) {
       return withPath({ $eq: this.normalizeComparisonValue(node) });
     }
@@ -69,28 +70,30 @@ var LibSQLFilterTranslator = class extends BaseFilterTranslator {
   //   };
   // }
 };
+__name(_LibSQLFilterTranslator, "LibSQLFilterTranslator");
+var LibSQLFilterTranslator = _LibSQLFilterTranslator;
 
 // src/vector/libsql/sql-builder.ts
-var createBasicOperator = (symbol) => {
+var createBasicOperator = /* @__PURE__ */ __name((symbol) => {
   return (key) => ({
     sql: `CASE 
       WHEN ? IS NULL THEN json_extract(metadata, '$."${handleKey(key)}"') IS ${symbol === "=" ? "" : "NOT"} NULL
       ELSE json_extract(metadata, '$."${handleKey(key)}"') ${symbol} ?
     END`,
     needsValue: true,
-    transformValue: (value) => {
+    transformValue: /* @__PURE__ */ __name((value) => {
       return [value, value];
-    }
+    }, "transformValue")
   });
-};
-var createNumericOperator = (symbol) => {
+}, "createBasicOperator");
+var createNumericOperator = /* @__PURE__ */ __name((symbol) => {
   return (key) => ({
     sql: `CAST(json_extract(metadata, '$."${handleKey(key)}"') AS NUMERIC) ${symbol} ?`,
     needsValue: true
   });
-};
-var validateJsonArray = (key) => `json_valid(json_extract(metadata, '$."${handleKey(key)}"'))
-   AND json_type(json_extract(metadata, '$."${handleKey(key)}"')) = 'array'`;
+}, "createNumericOperator");
+var validateJsonArray = /* @__PURE__ */ __name((key) => `json_valid(json_extract(metadata, '$."${handleKey(key)}"'))
+   AND json_type(json_extract(metadata, '$."${handleKey(key)}"')) = 'array'`, "validateJsonArray");
 var FILTER_OPERATORS = {
   $eq: createBasicOperator("="),
   $ne: createBasicOperator("!="),
@@ -99,18 +102,18 @@ var FILTER_OPERATORS = {
   $lt: createNumericOperator("<"),
   $lte: createNumericOperator("<="),
   // Array Operators
-  $in: (key, value) => ({
+  $in: /* @__PURE__ */ __name((key, value) => ({
     sql: `json_extract(metadata, '$."${handleKey(key)}"') IN (${value.map(() => "?").join(",")})`,
     needsValue: true
-  }),
-  $nin: (key, value) => ({
+  }), "$in"),
+  $nin: /* @__PURE__ */ __name((key, value) => ({
     sql: `json_extract(metadata, '$."${handleKey(key)}"') NOT IN (${value.map(() => "?").join(",")})`,
     needsValue: true
-  }),
-  $all: (key) => ({
+  }), "$nin"),
+  $all: /* @__PURE__ */ __name((key) => ({
     sql: `json_extract(metadata, '$."${handleKey(key)}"') = ?`,
     needsValue: true,
-    transformValue: (value) => {
+    transformValue: /* @__PURE__ */ __name((value) => {
       const arrayValue = Array.isArray(value) ? value : [value];
       if (arrayValue.length === 0) {
         return {
@@ -135,12 +138,12 @@ var FILTER_OPERATORS = {
         )`,
         values: [JSON.stringify(arrayValue)]
       };
-    }
-  }),
-  $elemMatch: (key) => ({
+    }, "transformValue")
+  }), "$all"),
+  $elemMatch: /* @__PURE__ */ __name((key) => ({
     sql: `json_extract(metadata, '$."${handleKey(key)}"') = ?`,
     needsValue: true,
-    transformValue: (value) => {
+    transformValue: /* @__PURE__ */ __name((value) => {
       if (typeof value !== "object" || Array.isArray(value)) {
         throw new Error("$elemMatch requires an object with conditions");
       }
@@ -176,28 +179,28 @@ var FILTER_OPERATORS = {
         )`,
         values: conditions.flatMap((c) => c.values)
       };
-    }
-  }),
+    }, "transformValue")
+  }), "$elemMatch"),
   // Element Operators
-  $exists: (key) => ({
+  $exists: /* @__PURE__ */ __name((key) => ({
     sql: `json_extract(metadata, '$."${handleKey(key)}"') IS NOT NULL`,
     needsValue: false
-  }),
+  }), "$exists"),
   // Logical Operators
-  $and: (key) => ({
+  $and: /* @__PURE__ */ __name((key) => ({
     sql: `(${key})`,
     needsValue: false
-  }),
-  $or: (key) => ({
+  }), "$and"),
+  $or: /* @__PURE__ */ __name((key) => ({
     sql: `(${key})`,
     needsValue: false
-  }),
-  $not: (key) => ({ sql: `NOT (${key})`, needsValue: false }),
-  $nor: (key) => ({
+  }), "$or"),
+  $not: /* @__PURE__ */ __name((key) => ({ sql: `NOT (${key})`, needsValue: false }), "$not"),
+  $nor: /* @__PURE__ */ __name((key) => ({
     sql: `NOT (${key})`,
     needsValue: false
-  }),
-  $size: (key, paramIndex) => ({
+  }), "$nor"),
+  $size: /* @__PURE__ */ __name((key, paramIndex) => ({
     sql: `(
     CASE
       WHEN json_type(json_extract(metadata, '$."${handleKey(key)}"')) = 'array' THEN 
@@ -206,7 +209,7 @@ var FILTER_OPERATORS = {
     END
   )`,
     needsValue: true
-  }),
+  }), "$size"),
   //   /**
   //    * Regex Operators
   //    * Supports case insensitive and multiline
@@ -266,10 +269,10 @@ var FILTER_OPERATORS = {
   //       };
   //     },
   //   }),
-  $contains: (key) => ({
+  $contains: /* @__PURE__ */ __name((key) => ({
     sql: `json_extract(metadata, '$."${handleKey(key)}"') = ?`,
     needsValue: true,
-    transformValue: (value) => {
+    transformValue: /* @__PURE__ */ __name((value) => {
       if (Array.isArray(value)) {
         return {
           sql: `(
@@ -295,6 +298,7 @@ var FILTER_OPERATORS = {
             }
           }
         };
+        __name(traverse2, "traverse");
         const paths = [];
         const values = [];
         traverse2(value);
@@ -304,12 +308,12 @@ var FILTER_OPERATORS = {
         };
       }
       return value;
-    }
-  })
+    }, "transformValue")
+  }), "$contains")
 };
-var handleKey = (key) => {
+var handleKey = /* @__PURE__ */ __name((key) => {
   return key.replace(/\./g, '"."');
-};
+}, "handleKey");
 function buildFilterQuery(filter) {
   if (!filter) {
     return { sql: "", values: [] };
@@ -325,6 +329,7 @@ function buildFilterQuery(filter) {
     values
   };
 }
+__name(buildFilterQuery, "buildFilterQuery");
 function buildCondition(key, value, parentPath) {
   if (["$and", "$or", "$not", "$nor"].includes(key)) {
     return handleLogicalOperator(key, value);
@@ -337,6 +342,7 @@ function buildCondition(key, value, parentPath) {
   }
   return handleOperator(key, value);
 }
+__name(buildCondition, "buildCondition");
 function handleLogicalOperator(key, value, parentPath) {
   if (!value || value.length === 0) {
     switch (key) {
@@ -374,6 +380,7 @@ function handleLogicalOperator(key, value, parentPath) {
     values
   };
 }
+__name(handleLogicalOperator, "handleLogicalOperator");
 function handleOperator(key, value) {
   if (typeof value === "object" && !Array.isArray(value)) {
     const entries = Object.entries(value);
@@ -393,7 +400,8 @@ function handleOperator(key, value) {
   const [[operator, operatorValue] = []] = Object.entries(value);
   return processOperator(key, operator, operatorValue);
 }
-var processOperator = (key, operator, operatorValue) => {
+__name(handleOperator, "handleOperator");
+var processOperator = /* @__PURE__ */ __name((key, operator, operatorValue) => {
   if (!operator.startsWith("$") || !FILTER_OPERATORS[operator]) {
     throw new Error(`Invalid operator: ${operator}`);
   }
@@ -410,11 +418,10 @@ var processOperator = (key, operator, operatorValue) => {
     sql: operatorResult.sql,
     values: Array.isArray(transformed) ? transformed : [transformed]
   };
-};
+}, "processOperator");
 
 // src/vector/libsql/index.ts
-var LibSQLVector = class extends MastraVector {
-  turso;
+var _LibSQLVector = class _LibSQLVector extends MastraVector {
   constructor({
     connectionUrl,
     authToken,
@@ -422,6 +429,7 @@ var LibSQLVector = class extends MastraVector {
     syncInterval
   }) {
     super();
+    __publicField(this, "turso");
     this.turso = null;
   }
   // If we're in the .mastra/output directory, use the dir outside .mastra dir
@@ -679,5 +687,9 @@ var LibSQLVector = class extends MastraVector {
     });
   }
 };
+__name(_LibSQLVector, "LibSQLVector");
+var LibSQLVector = _LibSQLVector;
 
 export { LibSQLVector as DefaultVectorDB, LibSQLVector };
+//# sourceMappingURL=index.js.map
+//# sourceMappingURL=index.js.map

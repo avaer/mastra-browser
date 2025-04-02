@@ -1,8 +1,10 @@
 'use strict';
 
-var chunkIX6VOIR7_cjs = require('../../chunk-IX6VOIR7.cjs');
-var chunkF5UYWPV4_cjs = require('../../chunk-F5UYWPV4.cjs');
+var chunkI3R2VONK_cjs = require('../../chunk-I3R2VONK.cjs');
+var chunkJOQIBQ7H_cjs = require('../../chunk-JOQIBQ7H.cjs');
+var chunk7D636BPD_cjs = require('../../chunk-7D636BPD.cjs');
 var path = require('path');
+var client = require('@libsql/client');
 
 function safelyParseJSON(jsonString) {
   try {
@@ -11,14 +13,18 @@ function safelyParseJSON(jsonString) {
     return {};
   }
 }
-var LibSQLStore = class extends chunkIX6VOIR7_cjs.MastraStorage {
-  client;
+chunk7D636BPD_cjs.__name(safelyParseJSON, "safelyParseJSON");
+var _LibSQLStore = class _LibSQLStore extends chunkI3R2VONK_cjs.MastraStorage {
   constructor({ config }) {
     super({ name: `LibSQLStore` });
+    chunk7D636BPD_cjs.__publicField(this, "client");
     if (config.url === ":memory:" || config.url.startsWith("file::memory:")) {
       this.shouldCacheInit = false;
     }
-    this.client = null;
+    this.client = client.createClient({
+      url: this.rewriteDbUrl(config.url),
+      authToken: config.authToken
+    });
   }
   // If we're in the .mastra/output directory, use the dir outside .mastra dir
   // reason we need to do this is libsql relative file paths are based on cwd, not current file path
@@ -58,7 +64,7 @@ var LibSQLStore = class extends chunkIX6VOIR7_cjs.MastraStorage {
       const primaryKey = col.primaryKey ? "PRIMARY KEY" : "";
       return `${name} ${type} ${nullable} ${primaryKey}`.trim();
     });
-    if (tableName === chunkF5UYWPV4_cjs.TABLE_WORKFLOW_SNAPSHOT) {
+    if (tableName === chunkJOQIBQ7H_cjs.TABLE_WORKFLOW_SNAPSHOT) {
       const stmnt = `CREATE TABLE IF NOT EXISTS ${tableName} (
                 ${columns.join(",\n")},
                 PRIMARY KEY (workflow_name, run_id)
@@ -153,7 +159,7 @@ var LibSQLStore = class extends chunkIX6VOIR7_cjs.MastraStorage {
   }
   async getThreadById({ threadId }) {
     const result = await this.load({
-      tableName: chunkF5UYWPV4_cjs.TABLE_THREADS,
+      tableName: chunkJOQIBQ7H_cjs.TABLE_THREADS,
       keys: { id: threadId }
     });
     if (!result) {
@@ -166,7 +172,7 @@ var LibSQLStore = class extends chunkIX6VOIR7_cjs.MastraStorage {
   }
   async getThreadsByResourceId({ resourceId }) {
     const result = await this.client.execute({
-      sql: `SELECT * FROM ${chunkF5UYWPV4_cjs.TABLE_THREADS} WHERE resourceId = ?`,
+      sql: `SELECT * FROM ${chunkJOQIBQ7H_cjs.TABLE_THREADS} WHERE resourceId = ?`,
       args: [resourceId]
     });
     if (!result.rows) {
@@ -183,7 +189,7 @@ var LibSQLStore = class extends chunkIX6VOIR7_cjs.MastraStorage {
   }
   async saveThread({ thread }) {
     await this.insert({
-      tableName: chunkF5UYWPV4_cjs.TABLE_THREADS,
+      tableName: chunkJOQIBQ7H_cjs.TABLE_THREADS,
       record: {
         ...thread,
         metadata: JSON.stringify(thread.metadata)
@@ -209,14 +215,14 @@ var LibSQLStore = class extends chunkIX6VOIR7_cjs.MastraStorage {
       }
     };
     await this.client.execute({
-      sql: `UPDATE ${chunkF5UYWPV4_cjs.TABLE_THREADS} SET title = ?, metadata = ? WHERE id = ?`,
+      sql: `UPDATE ${chunkJOQIBQ7H_cjs.TABLE_THREADS} SET title = ?, metadata = ? WHERE id = ?`,
       args: [title, JSON.stringify(updatedThread.metadata), id]
     });
     return updatedThread;
   }
   async deleteThread({ threadId }) {
     await this.client.execute({
-      sql: `DELETE FROM ${chunkF5UYWPV4_cjs.TABLE_THREADS} WHERE id = ?`,
+      sql: `DELETE FROM ${chunkJOQIBQ7H_cjs.TABLE_THREADS} WHERE id = ?`,
       args: [threadId]
     });
   }
@@ -254,7 +260,7 @@ var LibSQLStore = class extends chunkIX6VOIR7_cjs.MastraStorage {
                 "createdAt",
                 thread_id,
                 ROW_NUMBER() OVER (ORDER BY "createdAt" ASC) as row_num
-              FROM "${chunkF5UYWPV4_cjs.TABLE_MESSAGES}"
+              FROM "${chunkJOQIBQ7H_cjs.TABLE_MESSAGES}"
               WHERE thread_id = ?
             ),
             target_positions AS (
@@ -283,7 +289,7 @@ var LibSQLStore = class extends chunkIX6VOIR7_cjs.MastraStorage {
           type,
           "createdAt", 
           thread_id
-        FROM "${chunkF5UYWPV4_cjs.TABLE_MESSAGES}"
+        FROM "${chunkJOQIBQ7H_cjs.TABLE_MESSAGES}"
         WHERE thread_id = ?
         ${excludeIds.length ? `AND id NOT IN (${excludeIds.map(() => "?").join(", ")})` : ""}
         ORDER BY "createdAt" DESC
@@ -315,7 +321,7 @@ var LibSQLStore = class extends chunkIX6VOIR7_cjs.MastraStorage {
       for (const message of messages) {
         const time = message.createdAt || /* @__PURE__ */ new Date();
         await tx.execute({
-          sql: `INSERT INTO ${chunkF5UYWPV4_cjs.TABLE_MESSAGES} (id, thread_id, content, role, type, createdAt) 
+          sql: `INSERT INTO ${chunkJOQIBQ7H_cjs.TABLE_MESSAGES} (id, thread_id, content, role, type, createdAt) 
                               VALUES (?, ?, ?, ?, ?, ?)`,
           args: [
             message.id,
@@ -356,7 +362,7 @@ var LibSQLStore = class extends chunkIX6VOIR7_cjs.MastraStorage {
   }
   async getEvalsByAgentName(agentName, type) {
     try {
-      const baseQuery = `SELECT * FROM ${chunkF5UYWPV4_cjs.TABLE_EVALS} WHERE agent_name = ?`;
+      const baseQuery = `SELECT * FROM ${chunkJOQIBQ7H_cjs.TABLE_EVALS} WHERE agent_name = ?`;
       const typeCondition = type === "test" ? " AND test_info IS NOT NULL AND test_info->>'testPath' IS NOT NULL" : type === "live" ? " AND (test_info IS NULL OR test_info->>'testPath' IS NULL)" : "";
       const result = await this.client.execute({
         sql: `${baseQuery}${typeCondition} ORDER BY created_at DESC`,
@@ -411,7 +417,7 @@ var LibSQLStore = class extends chunkIX6VOIR7_cjs.MastraStorage {
     }
     args.push(limit, offset);
     const result = await this.client.execute({
-      sql: `SELECT * FROM ${chunkF5UYWPV4_cjs.TABLE_TRACES} ${whereClause} ORDER BY "startTime" DESC LIMIT ? OFFSET ?`,
+      sql: `SELECT * FROM ${chunkJOQIBQ7H_cjs.TABLE_TRACES} ${whereClause} ORDER BY "startTime" DESC LIMIT ? OFFSET ?`,
       args
     });
     if (!result.rows) {
@@ -435,6 +441,10 @@ var LibSQLStore = class extends chunkIX6VOIR7_cjs.MastraStorage {
     }));
   }
 };
+chunk7D636BPD_cjs.__name(_LibSQLStore, "LibSQLStore");
+var LibSQLStore = _LibSQLStore;
 
 exports.DefaultStorage = LibSQLStore;
 exports.LibSQLStore = LibSQLStore;
+//# sourceMappingURL=index.cjs.map
+//# sourceMappingURL=index.cjs.map

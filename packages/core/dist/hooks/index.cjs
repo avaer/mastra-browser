@@ -1,18 +1,20 @@
 'use strict';
 
-var chunkST5RMVLG_cjs = require('../chunk-ST5RMVLG.cjs');
+var chunk4FUCJCP2_cjs = require('../chunk-4FUCJCP2.cjs');
 
 
 
 Object.defineProperty(exports, "AvailableHooks", {
   enumerable: true,
-  get: function () { return chunkST5RMVLG_cjs.AvailableHooks; }
+  get: function () { return chunk4FUCJCP2_cjs.AvailableHooks; }
 });
 Object.defineProperty(exports, "executeHook", {
   enumerable: true,
-  get: function () { return chunkST5RMVLG_cjs.executeHook; }
+  get: function () { return chunk4FUCJCP2_cjs.executeHook; }
 });
 Object.defineProperty(exports, "registerHook", {
   enumerable: true,
-  get: function () { return chunkST5RMVLG_cjs.registerHook; }
+  get: function () { return chunk4FUCJCP2_cjs.registerHook; }
 });
+//# sourceMappingURL=index.cjs.map
+//# sourceMappingURL=index.cjs.map
