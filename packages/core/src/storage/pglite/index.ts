@@ -144,7 +144,7 @@ export class PGliteStore extends MastraStorage {
       const nullable = col.nullable ? '' : 'NOT NULL';
       const primaryKey = col.primaryKey ? 'PRIMARY KEY' : '';
 
-      return `${name} ${type} ${nullable} ${primaryKey}`.trim();
+      return `"${name}" ${type} ${nullable} ${primaryKey}`.trim();
     });
 
     // For workflow_snapshot table, create a composite primary key
@@ -214,10 +214,13 @@ export class PGliteStore extends MastraStorage {
       const params = this.prepareParams(record);
       const values = Object.values(params);
 
+      // Quote all column names to preserve case
+      const quotedColumns = columns.map(col => `"${col}"`);
+      
       await client.query(
-        `INSERT INTO ${tableName} (${columns.join(', ')}) VALUES (${placeholders}) 
+        `INSERT INTO ${tableName} (${quotedColumns.join(', ')}) VALUES (${placeholders}) 
          ON CONFLICT (${this.getPrimaryKeys(tableName)}) DO UPDATE SET 
-         ${columns.map((col, i) => `${col} = $${i + 1}`).join(', ')}`,
+         ${columns.map((col, i) => `"${col}" = $${i + 1}`).join(', ')}`,
         values
       );
     } catch (error) {
@@ -232,11 +235,11 @@ export class PGliteStore extends MastraStorage {
       case TABLE_THREADS:
       case TABLE_MESSAGES:
       case TABLE_TRACES:
-        return 'id';
+        return '"id"';
       case TABLE_WORKFLOW_SNAPSHOT:
-        return 'workflow_name, run_id';
+        return '"workflow_name", "run_id"';
       default:
-        return 'id'; // Default to 'id' for other tables
+        return '"id"'; // Default to 'id' for other tables
     }
   }
 
@@ -253,11 +256,14 @@ export class PGliteStore extends MastraStorage {
           const placeholders = columns.map((_, i) => `$${i + 1}`).join(', ');
           const params = this.prepareParams(record);
           const values = Object.values(params);
+          
+          // Quote all column names to preserve case
+          const quotedColumns = columns.map(col => `"${col}"`);
 
           await tx.query(
-            `INSERT INTO ${tableName} (${columns.join(', ')}) VALUES (${placeholders}) 
+            `INSERT INTO ${tableName} (${quotedColumns.join(', ')}) VALUES (${placeholders}) 
              ON CONFLICT (${this.getPrimaryKeys(tableName)}) DO UPDATE SET 
-             ${columns.map((col, i) => `${col} = $${i + 1}`).join(', ')}`,
+             ${columns.map((col, i) => `"${col}" = $${i + 1}`).join(', ')}`,
             values
           );
         }
@@ -269,32 +275,37 @@ export class PGliteStore extends MastraStorage {
   }
 
   async load<R>({ tableName, keys }: { tableName: TABLE_NAMES; keys: Record<string, string> }): Promise<R | null> {
-    const conditions = Object.keys(keys).map((key, i) => `${key} = $${i + 1}`).join(' AND ');
+    const conditions = Object.keys(keys).map((key, i) => `"${key}" = $${i + 1}`).join(' AND ');
     const values = Object.values(keys);
 
     const client = await this.getClient();
-    const result = await client.query(
-      `SELECT * FROM ${tableName} WHERE ${conditions} ORDER BY "createdAt" DESC LIMIT 1`,
-      values
-    );
+    try {
+      const result = await client.query(
+        `SELECT * FROM ${tableName} WHERE ${conditions} ORDER BY "createdAt" DESC LIMIT 1`,
+        values
+      );
 
-    if (!result.rows || result.rows.length === 0) {
-      return null;
+      if (!result.rows || result.rows.length === 0) {
+        return null;
+      }
+
+      const row = result.rows[0];
+      // Parse JSON strings in the result
+      const parsed = Object.fromEntries(
+        Object.entries(row || {}).map(([k, v]) => {
+          try {
+            return [k, typeof v === 'string' ? (v.startsWith('{') || v.startsWith('[') ? JSON.parse(v) : v) : v];
+          } catch {
+            return [k, v];
+          }
+        }),
+      );
+
+      return parsed as R;
+    } catch (error) {
+      this.logger.error(`Error querying table ${tableName}: ${error}`);
+      throw error;
     }
-
-    const row = result.rows[0];
-    // Parse JSON strings in the result
-    const parsed = Object.fromEntries(
-      Object.entries(row || {}).map(([k, v]) => {
-        try {
-          return [k, typeof v === 'string' ? (v.startsWith('{') || v.startsWith('[') ? JSON.parse(v) : v) : v];
-        } catch {
-          return [k, v];
-        }
-      }),
-    );
-
-    return parsed as R;
   }
 
   async getThreadById({ threadId }: { threadId: string }): Promise<StorageThreadType | null> {
@@ -419,7 +430,6 @@ export class PGliteStore extends MastraStorage {
         const maxNext = Math.max(...selectBy.include.map(i => i.withNextMessages || 0));
 
         // Get messages around all specified IDs using a window function
-        // Adapting the query for PGlite syntax
         const includeResult = await client.query(
           `
           WITH numbered_messages AS (
@@ -493,7 +503,7 @@ export class PGliteStore extends MastraStorage {
       }
 
       const remainingResult = await client.query(remainingSql, remainingArgs);
-
+      
       if (remainingResult.rows && remainingResult.rows.length > 0) {
         messages.push(...remainingResult.rows.map((row: any) => this.parseRow(row)));
       }
