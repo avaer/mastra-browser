@@ -58,7 +58,6 @@ export default defineConfig({
     preset: 'smallest',
   },
   plugins: [treeshakeDecorators],
-  noExternal: ['@electric-sql/pglite'],
   loader: {
     '.wasm': 'file',
     '.data': 'file',
@@ -90,8 +89,8 @@ export default defineConfig({
     // Directories to copy to
     const targetDirs = [
       './dist',                     // Root dist folder
-      './dist/storage',             // Storage folder
-      './dist/storage/pglite',      // PGlite implementation folder
+      // './dist/storage',             // Storage folder
+      // './dist/storage/pglite',      // PGlite implementation folder
     ];
     
     // Create directories if needed
