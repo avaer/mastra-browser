@@ -39,6 +39,16 @@
         "default": "./dist/storage/libsql/index.cjs"
       }
     },
+    "./storage/pglite": {
+      "import": {
+        "types": "./dist/storage/pglite/index.d.ts",
+        "default": "./dist/storage/pglite/index.js"
+      },
+      "require": {
+        "types": "./dist/storage/pglite/index.d.cts",
+        "default": "./dist/storage/pglite/index.cjs"
+      }
+    },
     "./vector/libsql": {
       "import": {
         "types": "./dist/vector/libsql/index.d.ts",
