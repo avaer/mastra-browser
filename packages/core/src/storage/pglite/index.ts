@@ -1,5 +1,6 @@
 import { join, resolve, isAbsolute } from 'path';
 import { PGlite } from '@electric-sql/pglite';
+import { MemoryFS } from '@electric-sql/pglite';
 
 import type { MetricResult, TestInfo } from '../../eval';
 import type { MessageType, StorageThreadType } from '../../memory/types';
@@ -82,7 +83,9 @@ export class PGliteStore extends MastraStorage {
       //   parsers?: ParserOptions;
       //   serializers?: SerializerOptions;
       // }
-      const client = await PGlite.create(url, {});
+      const client = await PGlite.create(url, {
+        fs: new MemoryFS(),
+      });
       this.client = client;
       return client;
     } catch (error) {
