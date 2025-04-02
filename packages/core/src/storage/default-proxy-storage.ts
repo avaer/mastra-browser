@@ -1,18 +1,19 @@
 import type { MessageType, StorageThreadType } from '../memory/types';
 import { MastraStorage } from './base';
 import type { TABLE_NAMES } from './constants';
-import type { DefaultStorage, LibSQLConfig } from './libsql';
+// import type { DefaultStorage, LibSQLConfig } from './libsql';
+import type { DefaultStorage, PGliteConfig } from './pglite';
 import type { EvalRow, StorageColumn, StorageGetMessagesArg } from './types';
 
 /**
- * A proxy for the DefaultStorage (LibSQLStore) to allow for dynamically loading the storage in a constructor
+ * A proxy for the DefaultStorage (now PGliteStore) to allow for dynamically loading the storage in a constructor
  */
 export class DefaultProxyStorage extends MastraStorage {
   private storage: DefaultStorage | null = null;
-  private storageConfig: LibSQLConfig;
+  private storageConfig: PGliteConfig;
   private isInitializingPromise: Promise<void> | null = null;
 
-  constructor({ config }: { config: LibSQLConfig }) {
+  constructor({ config }: { config: PGliteConfig }) {
     super({ name: 'DefaultStorage' });
     this.storageConfig = config;
   }
@@ -20,7 +21,7 @@ export class DefaultProxyStorage extends MastraStorage {
   private setupStorage() {
     if (!this.isInitializingPromise) {
       this.isInitializingPromise = new Promise((resolve, reject) => {
-        import('./libsql')
+        import('./pglite')
           .then(({ DefaultStorage }) => {
             this.storage = new DefaultStorage({ config: this.storageConfig });
             resolve();
