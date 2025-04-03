@@ -1253,6 +1253,10 @@ declare class Machine<TSteps extends Step<any, any, any>[] = any, TTriggerSchema
             }, xstate.AnyEventObject>;
         }) => {
             mastra?: MastraUnion | undefined;
+            isResume?: {
+                runId: string;
+                stepId: string;
+            } | undefined;
             steps: {
                 [x: string]: {
                     status: "failed";
@@ -1277,10 +1281,6 @@ declare class Machine<TSteps extends Step<any, any, any>[] = any, TTriggerSchema
                     output?: any;
                 };
             };
-            isResume?: {
-                runId: string;
-                stepId: string;
-            } | undefined;
             triggerData: any;
             inputData: Record<string, any>;
             attempts: Record<string, number>;
@@ -1465,24 +1465,24 @@ declare class AgentNetwork extends MastraBase {
                 input: z.ZodString;
                 includeHistory: z.ZodOptional<z.ZodBoolean>;
             }, "strip", z.ZodTypeAny, {
-                agent: string;
                 input: string;
+                agent: string;
                 includeHistory?: boolean | undefined;
             }, {
-                agent: string;
                 input: string;
+                agent: string;
                 includeHistory?: boolean | undefined;
             }>, "many">;
         }, "strip", z.ZodTypeAny, {
             actions: {
-                agent: string;
                 input: string;
+                agent: string;
                 includeHistory?: boolean | undefined;
             }[];
         }, {
             actions: {
-                agent: string;
                 input: string;
+                agent: string;
                 includeHistory?: boolean | undefined;
             }[];
         }>, undefined, ToolExecutionContext<z.ZodObject<{
@@ -1491,24 +1491,24 @@ declare class AgentNetwork extends MastraBase {
                 input: z.ZodString;
                 includeHistory: z.ZodOptional<z.ZodBoolean>;
             }, "strip", z.ZodTypeAny, {
-                agent: string;
                 input: string;
+                agent: string;
                 includeHistory?: boolean | undefined;
             }, {
-                agent: string;
                 input: string;
+                agent: string;
                 includeHistory?: boolean | undefined;
             }>, "many">;
         }, "strip", z.ZodTypeAny, {
             actions: {
-                agent: string;
                 input: string;
+                agent: string;
                 includeHistory?: boolean | undefined;
             }[];
         }, {
             actions: {
-                agent: string;
                 input: string;
+                agent: string;
                 includeHistory?: boolean | undefined;
             }[];
         }>>>;
@@ -2033,4 +2033,4 @@ declare abstract class MastraStorage extends MastraBase {
     __getEvalsByAgentName(agentName: string, type?: 'test' | 'live'): Promise<EvalRow[]>;
 }
 
-export { createTool as $, Agent as A, type BaseStructuredOutputType as B, type CoreTool as C, type StructuredOutput as D, type EvalRow as E, type StreamReturn as F, type GenerateReturn as G, type DefaultLLMTextOptions as H, type DefaultLLMTextObjectOptions as I, type DefaultLLMStreamOptions as J, type DefaultLLMStreamObjectOptions as K, type LanguageModel as L, Mastra as M, type LLMTextOptions as N, type OutputType as O, type LLMTextObjectOptions as P, type LLMStreamOptions as Q, type LLMInnerStreamOptions as R, Step as S, type ToolAction as T, type LLMStreamObjectOptions as U, type VercelTool as V, Workflow as W, type Config as X, type MessageResponse as Y, type MemoryConfig as Z, type SharedMemoryConfig as _, type ToolsInput as a, type StepAction as a0, type StepVariableType as a1, type StepNode as a2, type StepGraph as a3, type RetryConfig as a4, type VariableReference as a5, type BaseCondition as a6, type ActionContext as a7, WhenConditionReturnValue as a8, type StepDef as a9, type VoiceEventType as aA, type VoiceEventMap as aB, type VoiceConfig as aC, MastraVoice as aD, CompositeVoice as aE, type AgentNetworkConfig as aF, type ToolsetsInput as aG, type AgentGenerateOptions as aH, type AgentStreamOptions as aI, TABLE_WORKFLOW_SNAPSHOT as aJ, TABLE_EVALS as aK, TABLE_MESSAGES as aL, TABLE_THREADS as aM, TABLE_TRACES as aN, type StepCondition as aa, type StepConfig as ab, type StepResult as ac, type StepsRecord as ad, type WorkflowRunResult as ae, type WorkflowLogMessage as af, type WorkflowEvent as ag, type ResolverFunctionInput as ah, type ResolverFunctionOutput as ai, type SubscriberFunctionOutput as aj, type DependencyCheckOutput as ak, type StepResolverOutput as al, type WorkflowActors as am, type WorkflowActionParams as an, type WorkflowActions as ao, type WorkflowState as ap, type StepId as aq, type ExtractSchemaFromStep as ar, type ExtractStepResult as as, type StepInputType as at, type ExtractSchemaType as au, type PathsToStringProps as av, type WorkflowRunState as aw, type WorkflowResumeResult as ax, createStep as ay, type MastraLanguageModel as az, type MastraPrimitives as b, MastraMemory as c, type StepExecutionContext as d, type WorkflowContext as e, AgentNetwork as f, MastraStorage as g, type TABLE_NAMES as h, type StorageColumn as i, type StorageThreadType as j, type MessageType as k, type StorageGetMessagesArg as l, type AgentConfig as m, type ToolExecutionContext as n, Tool as o, type WorkflowOptions as p, type WorkflowRow as q, type CoreMessage as r, type CoreSystemMessage as s, type CoreAssistantMessage as t, type CoreUserMessage as u, type CoreToolMessage as v, type EmbedResult as w, type EmbedManyResult as x, type StructuredOutputType as y, type StructuredOutputArrayItem as z };
+export { createTool as $, Agent as A, type BaseStructuredOutputType as B, type CoreTool as C, type StructuredOutput as D, type EvalRow as E, type StreamReturn as F, type GenerateReturn as G, type DefaultLLMTextOptions as H, type DefaultLLMTextObjectOptions as I, type DefaultLLMStreamOptions as J, type DefaultLLMStreamObjectOptions as K, type LanguageModel as L, Mastra as M, type LLMTextOptions as N, type OutputType as O, type LLMTextObjectOptions as P, type LLMStreamOptions as Q, type LLMInnerStreamOptions as R, Step as S, type ToolAction as T, type LLMStreamObjectOptions as U, type VercelTool as V, Workflow as W, type Config as X, type MessageResponse as Y, type MemoryConfig as Z, type SharedMemoryConfig as _, type ToolsInput as a, type StepAction as a0, type StepVariableType as a1, type StepNode as a2, type StepGraph as a3, type RetryConfig as a4, type VariableReference as a5, type BaseCondition as a6, type ActionContext as a7, WhenConditionReturnValue as a8, type StepDef as a9, type MastraLanguageModel as aA, type VoiceEventType as aB, type VoiceEventMap as aC, type VoiceConfig as aD, MastraVoice as aE, CompositeVoice as aF, type ToolsetsInput as aG, type AgentGenerateOptions as aH, type AgentStreamOptions as aI, TABLE_WORKFLOW_SNAPSHOT as aJ, TABLE_EVALS as aK, TABLE_MESSAGES as aL, TABLE_THREADS as aM, TABLE_TRACES as aN, type StepCondition as aa, type StepConfig as ab, type StepResult as ac, type StepsRecord as ad, type WorkflowRunResult as ae, type WorkflowLogMessage as af, type WorkflowEvent as ag, type ResolverFunctionInput as ah, type ResolverFunctionOutput as ai, type SubscriberFunctionOutput as aj, type DependencyCheckOutput as ak, type StepResolverOutput as al, type WorkflowActors as am, type WorkflowActionParams as an, type WorkflowActions as ao, type WorkflowState as ap, type StepId as aq, type ExtractSchemaFromStep as ar, type ExtractStepResult as as, type StepInputType as at, type ExtractSchemaType as au, type PathsToStringProps as av, type WorkflowRunState as aw, type WorkflowResumeResult as ax, createStep as ay, type AgentNetworkConfig as az, type MastraPrimitives as b, MastraMemory as c, type StepExecutionContext as d, type WorkflowContext as e, AgentNetwork as f, MastraStorage as g, type TABLE_NAMES as h, type StorageColumn as i, type StorageThreadType as j, type MessageType as k, type StorageGetMessagesArg as l, type AgentConfig as m, type ToolExecutionContext as n, Tool as o, type WorkflowOptions as p, type WorkflowRow as q, type CoreMessage as r, type CoreSystemMessage as s, type CoreAssistantMessage as t, type CoreUserMessage as u, type CoreToolMessage as v, type EmbedResult as w, type EmbedManyResult as x, type StructuredOutputType as y, type StructuredOutputArrayItem as z };

@@ -1,4 +1,4 @@
-export { aE as CompositeVoice, aD as MastraVoice, aC as VoiceConfig, aB as VoiceEventMap, aA as VoiceEventType } from '../base-CN0inugO.js';
+export { aF as CompositeVoice, aE as MastraVoice, aD as VoiceConfig, aC as VoiceEventMap, aB as VoiceEventType } from '../base-hRgvGkC2.js';
 import 'ai';
 import '../base-Dq_cxikD.js';
 import '@opentelemetry/api';
