@@ -1,4 +1,3 @@
-import { Tool } from './chunk-YNOU42YW.js';
 import { __name } from './chunk-WH5OY6PO.js';
 import { createHash } from 'crypto';
 import { convertToCoreMessages } from 'ai';
@@ -190,7 +189,7 @@ function resolveSerializedZodOutput(schema) {
 }
 __name(resolveSerializedZodOutput, "resolveSerializedZodOutput");
 function isVercelTool(tool) {
-  return !(tool instanceof Tool);
+  return "parameters" in tool;
 }
 __name(isVercelTool, "isVercelTool");
 function createLogMessageOptions({ agentName, toolName, tool, type }) {
@@ -426,5 +425,5 @@ ${JSON.stringify(message, null, 2)}
 __name(ensureAllMessagesAreCoreMessages, "ensureAllMessagesAreCoreMessages");
 
 export { checkEvalStorageFields, createMastraProxy, deepMerge, delay, ensureAllMessagesAreCoreMessages, ensureToolProperties, isVercelTool, jsonSchemaPropertiesToTSTypes, jsonSchemaToModel, makeCoreTool, maskStreamTags, resolveSerializedZodOutput };
-//# sourceMappingURL=chunk-DP4RSXR5.js.map
-//# sourceMappingURL=chunk-DP4RSXR5.js.map
+//# sourceMappingURL=chunk-HXRGB7YQ.js.map
+//# sourceMappingURL=chunk-HXRGB7YQ.js.map

@@ -1,12 +1,12 @@
 'use strict';
 
-var chunkLV5CPU2X_cjs = require('../chunk-LV5CPU2X.cjs');
+var chunkSWSJNNXO_cjs = require('../chunk-SWSJNNXO.cjs');
 
 
 
 Object.defineProperty(exports, "Agent", {
   enumerable: true,
-  get: function () { return chunkLV5CPU2X_cjs.Agent; }
+  get: function () { return chunkSWSJNNXO_cjs.Agent; }
 });
 //# sourceMappingURL=index.cjs.map
 //# sourceMappingURL=index.cjs.map

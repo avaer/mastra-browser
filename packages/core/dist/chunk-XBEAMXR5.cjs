@@ -1,7 +1,7 @@
 'use strict';
 
-var chunkZZSLONUU_cjs = require('./chunk-ZZSLONUU.cjs');
 var chunkSUWCCDLE_cjs = require('./chunk-SUWCCDLE.cjs');
+var chunkIXT3T67O_cjs = require('./chunk-IXT3T67O.cjs');
 var chunk7D636BPD_cjs = require('./chunk-7D636BPD.cjs');
 var api = require('@opentelemetry/api');
 var zod = require('zod');
@@ -524,7 +524,7 @@ getDefaultActors_fn = /* @__PURE__ */ chunk7D636BPD_cjs.__name(function() {
       const logger = this.logger;
       let mastraProxy = void 0;
       if (chunk7D636BPD_cjs.__privateGet(this, _mastra)) {
-        mastraProxy = chunkZZSLONUU_cjs.createMastraProxy({ mastra: chunk7D636BPD_cjs.__privateGet(this, _mastra), logger });
+        mastraProxy = chunkIXT3T67O_cjs.createMastraProxy({ mastra: chunk7D636BPD_cjs.__privateGet(this, _mastra), logger });
       }
       let result = void 0;
       try {
@@ -2330,5 +2330,5 @@ exports.recursivelyCheckForFinalState = recursivelyCheckForFinalState;
 exports.resolveVariables = resolveVariables;
 exports.updateStepInHierarchy = updateStepInHierarchy;
 exports.workflowToStep = workflowToStep;
-//# sourceMappingURL=chunk-ILWMZFHB.cjs.map
-//# sourceMappingURL=chunk-ILWMZFHB.cjs.map
+//# sourceMappingURL=chunk-XBEAMXR5.cjs.map
+//# sourceMappingURL=chunk-XBEAMXR5.cjs.map

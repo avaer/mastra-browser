@@ -2,24 +2,24 @@
 
 var chunkLUYBA3WN_cjs = require('./chunk-LUYBA3WN.cjs');
 var chunkSWYZHOFJ_cjs = require('./chunk-SWYZHOFJ.cjs');
-var chunkILWMZFHB_cjs = require('./chunk-ILWMZFHB.cjs');
-var chunkIYB4E5SF_cjs = require('./chunk-IYB4E5SF.cjs');
+var chunkXBEAMXR5_cjs = require('./chunk-XBEAMXR5.cjs');
 var chunk2HLDXBUY_cjs = require('./chunk-2HLDXBUY.cjs');
-var chunkIEGMYQ5N_cjs = require('./chunk-IEGMYQ5N.cjs');
+var chunkSI6PHYGD_cjs = require('./chunk-SI6PHYGD.cjs');
 var chunkI3R2VONK_cjs = require('./chunk-I3R2VONK.cjs');
-var chunkBGCWUWVX_cjs = require('./chunk-BGCWUWVX.cjs');
-var chunkLV5CPU2X_cjs = require('./chunk-LV5CPU2X.cjs');
+var chunkR4LKHL67_cjs = require('./chunk-R4LKHL67.cjs');
+var chunkSWSJNNXO_cjs = require('./chunk-SWSJNNXO.cjs');
 var chunkXXM463NA_cjs = require('./chunk-XXM463NA.cjs');
-var chunkZZSLONUU_cjs = require('./chunk-ZZSLONUU.cjs');
-var chunkOJDVHIBJ_cjs = require('./chunk-OJDVHIBJ.cjs');
 var chunkSUWCCDLE_cjs = require('./chunk-SUWCCDLE.cjs');
 var chunkQVQCHA2A_cjs = require('./chunk-QVQCHA2A.cjs');
+var chunkIXT3T67O_cjs = require('./chunk-IXT3T67O.cjs');
 var chunkMZW7EZIY_cjs = require('./chunk-MZW7EZIY.cjs');
 var chunk4FUCJCP2_cjs = require('./chunk-4FUCJCP2.cjs');
+var chunkIYB4E5SF_cjs = require('./chunk-IYB4E5SF.cjs');
+var chunkOJDVHIBJ_cjs = require('./chunk-OJDVHIBJ.cjs');
 var chunk7D636BPD_cjs = require('./chunk-7D636BPD.cjs');
 
 // src/agent/index.warning.ts
-var _Agent = class _Agent extends chunkLV5CPU2X_cjs.Agent {
+var _Agent = class _Agent extends chunkSWSJNNXO_cjs.Agent {
   constructor(config) {
     super(config);
     this.logger.warn('Please import "Agent from "@mastra/core/agent" instead of "@mastra/core"');
@@ -78,7 +78,7 @@ function createLogger2(options) {
 chunk7D636BPD_cjs.__name(createLogger2, "createLogger");
 
 // src/memory/index.warning.ts
-var _MastraMemory = class _MastraMemory extends chunkIEGMYQ5N_cjs.MastraMemory {
+var _MastraMemory = class _MastraMemory extends chunkSI6PHYGD_cjs.MastraMemory {
   constructor(_arg) {
     super({ name: `Deprecated memory` });
     this.logger.warn('Please import "MastraMemory" from "@mastra/core/memory" instead of "@mastra/core"');
@@ -118,7 +118,7 @@ chunk7D636BPD_cjs.__name(_MastraVector, "MastraVector");
 var MastraVector2 = _MastraVector;
 
 // src/workflows/workflow.warning.ts
-var _Workflow = class _Workflow extends chunkILWMZFHB_cjs.Workflow {
+var _Workflow = class _Workflow extends chunkXBEAMXR5_cjs.Workflow {
   constructor(args) {
     super(args);
     this.logger.warn('Please import "Workflow" from "@mastra/core/workflows" instead of "@mastra/core"');
@@ -129,75 +129,75 @@ var Workflow2 = _Workflow;
 
 Object.defineProperty(exports, "Step", {
   enumerable: true,
-  get: function () { return chunkILWMZFHB_cjs.Step; }
+  get: function () { return chunkXBEAMXR5_cjs.Step; }
 });
 Object.defineProperty(exports, "WhenConditionReturnValue", {
   enumerable: true,
-  get: function () { return chunkILWMZFHB_cjs.WhenConditionReturnValue; }
+  get: function () { return chunkXBEAMXR5_cjs.WhenConditionReturnValue; }
 });
 Object.defineProperty(exports, "createStep", {
   enumerable: true,
-  get: function () { return chunkILWMZFHB_cjs.createStep; }
+  get: function () { return chunkXBEAMXR5_cjs.createStep; }
 });
 Object.defineProperty(exports, "getActivePathsAndStatus", {
   enumerable: true,
-  get: function () { return chunkILWMZFHB_cjs.getActivePathsAndStatus; }
+  get: function () { return chunkXBEAMXR5_cjs.getActivePathsAndStatus; }
 });
 Object.defineProperty(exports, "getResultActivePaths", {
   enumerable: true,
-  get: function () { return chunkILWMZFHB_cjs.getResultActivePaths; }
+  get: function () { return chunkXBEAMXR5_cjs.getResultActivePaths; }
 });
 Object.defineProperty(exports, "getStepResult", {
   enumerable: true,
-  get: function () { return chunkILWMZFHB_cjs.getStepResult; }
+  get: function () { return chunkXBEAMXR5_cjs.getStepResult; }
 });
 Object.defineProperty(exports, "getSuspendedPaths", {
   enumerable: true,
-  get: function () { return chunkILWMZFHB_cjs.getSuspendedPaths; }
+  get: function () { return chunkXBEAMXR5_cjs.getSuspendedPaths; }
 });
 Object.defineProperty(exports, "isErrorEvent", {
   enumerable: true,
-  get: function () { return chunkILWMZFHB_cjs.isErrorEvent; }
+  get: function () { return chunkXBEAMXR5_cjs.isErrorEvent; }
 });
 Object.defineProperty(exports, "isFinalState", {
   enumerable: true,
-  get: function () { return chunkILWMZFHB_cjs.isFinalState; }
+  get: function () { return chunkXBEAMXR5_cjs.isFinalState; }
 });
 Object.defineProperty(exports, "isLimboState", {
   enumerable: true,
-  get: function () { return chunkILWMZFHB_cjs.isLimboState; }
+  get: function () { return chunkXBEAMXR5_cjs.isLimboState; }
 });
 Object.defineProperty(exports, "isTransitionEvent", {
   enumerable: true,
-  get: function () { return chunkILWMZFHB_cjs.isTransitionEvent; }
+  get: function () { return chunkXBEAMXR5_cjs.isTransitionEvent; }
 });
 Object.defineProperty(exports, "isVariableReference", {
   enumerable: true,
-  get: function () { return chunkILWMZFHB_cjs.isVariableReference; }
+  get: function () { return chunkXBEAMXR5_cjs.isVariableReference; }
 });
 Object.defineProperty(exports, "isWorkflow", {
   enumerable: true,
-  get: function () { return chunkILWMZFHB_cjs.isWorkflow; }
+  get: function () { return chunkXBEAMXR5_cjs.isWorkflow; }
 });
 Object.defineProperty(exports, "mergeChildValue", {
   enumerable: true,
-  get: function () { return chunkILWMZFHB_cjs.mergeChildValue; }
+  get: function () { return chunkXBEAMXR5_cjs.mergeChildValue; }
 });
 Object.defineProperty(exports, "recursivelyCheckForFinalState", {
   enumerable: true,
-  get: function () { return chunkILWMZFHB_cjs.recursivelyCheckForFinalState; }
+  get: function () { return chunkXBEAMXR5_cjs.recursivelyCheckForFinalState; }
 });
 Object.defineProperty(exports, "resolveVariables", {
   enumerable: true,
-  get: function () { return chunkILWMZFHB_cjs.resolveVariables; }
+  get: function () { return chunkXBEAMXR5_cjs.resolveVariables; }
 });
 Object.defineProperty(exports, "updateStepInHierarchy", {
   enumerable: true,
-  get: function () { return chunkILWMZFHB_cjs.updateStepInHierarchy; }
+  get: function () { return chunkXBEAMXR5_cjs.updateStepInHierarchy; }
 });
 Object.defineProperty(exports, "workflowToStep", {
   enumerable: true,
-  get: function () { return chunkILWMZFHB_cjs.workflowToStep; }
+  get: function () { return chunkXBEAMXR5_cjs.workflowToStep; }
 });
 Object.defineProperty(exports, "Mastra", {
   enumerable: true,
@@ -205,15 +205,15 @@ Object.defineProperty(exports, "Mastra", {
 });
 Object.defineProperty(exports, "CohereRelevanceScorer", {
   enumerable: true,
-  get: function () { return chunkBGCWUWVX_cjs.CohereRelevanceScorer; }
+  get: function () { return chunkR4LKHL67_cjs.CohereRelevanceScorer; }
 });
 Object.defineProperty(exports, "MastraAgentRelevanceScorer", {
   enumerable: true,
-  get: function () { return chunkBGCWUWVX_cjs.MastraAgentRelevanceScorer; }
+  get: function () { return chunkR4LKHL67_cjs.MastraAgentRelevanceScorer; }
 });
 Object.defineProperty(exports, "createSimilarityPrompt", {
   enumerable: true,
-  get: function () { return chunkBGCWUWVX_cjs.createSimilarityPrompt; }
+  get: function () { return chunkR4LKHL67_cjs.createSimilarityPrompt; }
 });
 Object.defineProperty(exports, "InstrumentClass", {
   enumerable: true,
@@ -234,58 +234,6 @@ Object.defineProperty(exports, "hasActiveTelemetry", {
 Object.defineProperty(exports, "withSpan", {
   enumerable: true,
   get: function () { return chunkXXM463NA_cjs.withSpan; }
-});
-Object.defineProperty(exports, "checkEvalStorageFields", {
-  enumerable: true,
-  get: function () { return chunkZZSLONUU_cjs.checkEvalStorageFields; }
-});
-Object.defineProperty(exports, "createMastraProxy", {
-  enumerable: true,
-  get: function () { return chunkZZSLONUU_cjs.createMastraProxy; }
-});
-Object.defineProperty(exports, "deepMerge", {
-  enumerable: true,
-  get: function () { return chunkZZSLONUU_cjs.deepMerge; }
-});
-Object.defineProperty(exports, "delay", {
-  enumerable: true,
-  get: function () { return chunkZZSLONUU_cjs.delay; }
-});
-Object.defineProperty(exports, "ensureAllMessagesAreCoreMessages", {
-  enumerable: true,
-  get: function () { return chunkZZSLONUU_cjs.ensureAllMessagesAreCoreMessages; }
-});
-Object.defineProperty(exports, "ensureToolProperties", {
-  enumerable: true,
-  get: function () { return chunkZZSLONUU_cjs.ensureToolProperties; }
-});
-Object.defineProperty(exports, "isVercelTool", {
-  enumerable: true,
-  get: function () { return chunkZZSLONUU_cjs.isVercelTool; }
-});
-Object.defineProperty(exports, "jsonSchemaPropertiesToTSTypes", {
-  enumerable: true,
-  get: function () { return chunkZZSLONUU_cjs.jsonSchemaPropertiesToTSTypes; }
-});
-Object.defineProperty(exports, "jsonSchemaToModel", {
-  enumerable: true,
-  get: function () { return chunkZZSLONUU_cjs.jsonSchemaToModel; }
-});
-Object.defineProperty(exports, "makeCoreTool", {
-  enumerable: true,
-  get: function () { return chunkZZSLONUU_cjs.makeCoreTool; }
-});
-Object.defineProperty(exports, "maskStreamTags", {
-  enumerable: true,
-  get: function () { return chunkZZSLONUU_cjs.maskStreamTags; }
-});
-Object.defineProperty(exports, "resolveSerializedZodOutput", {
-  enumerable: true,
-  get: function () { return chunkZZSLONUU_cjs.resolveSerializedZodOutput; }
-});
-Object.defineProperty(exports, "createTool", {
-  enumerable: true,
-  get: function () { return chunkOJDVHIBJ_cjs.createTool; }
 });
 Object.defineProperty(exports, "LogLevel", {
   enumerable: true,
@@ -315,6 +263,54 @@ Object.defineProperty(exports, "noopLogger", {
   enumerable: true,
   get: function () { return chunkQVQCHA2A_cjs.noopLogger; }
 });
+Object.defineProperty(exports, "checkEvalStorageFields", {
+  enumerable: true,
+  get: function () { return chunkIXT3T67O_cjs.checkEvalStorageFields; }
+});
+Object.defineProperty(exports, "createMastraProxy", {
+  enumerable: true,
+  get: function () { return chunkIXT3T67O_cjs.createMastraProxy; }
+});
+Object.defineProperty(exports, "deepMerge", {
+  enumerable: true,
+  get: function () { return chunkIXT3T67O_cjs.deepMerge; }
+});
+Object.defineProperty(exports, "delay", {
+  enumerable: true,
+  get: function () { return chunkIXT3T67O_cjs.delay; }
+});
+Object.defineProperty(exports, "ensureAllMessagesAreCoreMessages", {
+  enumerable: true,
+  get: function () { return chunkIXT3T67O_cjs.ensureAllMessagesAreCoreMessages; }
+});
+Object.defineProperty(exports, "ensureToolProperties", {
+  enumerable: true,
+  get: function () { return chunkIXT3T67O_cjs.ensureToolProperties; }
+});
+Object.defineProperty(exports, "isVercelTool", {
+  enumerable: true,
+  get: function () { return chunkIXT3T67O_cjs.isVercelTool; }
+});
+Object.defineProperty(exports, "jsonSchemaPropertiesToTSTypes", {
+  enumerable: true,
+  get: function () { return chunkIXT3T67O_cjs.jsonSchemaPropertiesToTSTypes; }
+});
+Object.defineProperty(exports, "jsonSchemaToModel", {
+  enumerable: true,
+  get: function () { return chunkIXT3T67O_cjs.jsonSchemaToModel; }
+});
+Object.defineProperty(exports, "makeCoreTool", {
+  enumerable: true,
+  get: function () { return chunkIXT3T67O_cjs.makeCoreTool; }
+});
+Object.defineProperty(exports, "maskStreamTags", {
+  enumerable: true,
+  get: function () { return chunkIXT3T67O_cjs.maskStreamTags; }
+});
+Object.defineProperty(exports, "resolveSerializedZodOutput", {
+  enumerable: true,
+  get: function () { return chunkIXT3T67O_cjs.resolveSerializedZodOutput; }
+});
 Object.defineProperty(exports, "Metric", {
   enumerable: true,
   get: function () { return chunkMZW7EZIY_cjs.Metric; }
@@ -334,6 +330,10 @@ Object.defineProperty(exports, "executeHook", {
 Object.defineProperty(exports, "registerHook", {
   enumerable: true,
   get: function () { return chunk4FUCJCP2_cjs.registerHook; }
+});
+Object.defineProperty(exports, "createTool", {
+  enumerable: true,
+  get: function () { return chunkOJDVHIBJ_cjs.createTool; }
 });
 exports.Agent = Agent2;
 exports.Integration = Integration2;

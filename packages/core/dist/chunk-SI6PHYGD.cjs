@@ -1,8 +1,8 @@
 'use strict';
 
 var chunkAUCYZR4G_cjs = require('./chunk-AUCYZR4G.cjs');
-var chunkZZSLONUU_cjs = require('./chunk-ZZSLONUU.cjs');
 var chunkSUWCCDLE_cjs = require('./chunk-SUWCCDLE.cjs');
+var chunkIXT3T67O_cjs = require('./chunk-IXT3T67O.cjs');
 var chunk7D636BPD_cjs = require('./chunk-7D636BPD.cjs');
 
 // src/memory/memory.ts
@@ -79,7 +79,7 @@ var _MastraMemory = class _MastraMemory extends chunkSUWCCDLE_cjs.MastraBase {
     return { indexName };
   }
   getMergedThreadConfig(config) {
-    return chunkZZSLONUU_cjs.deepMerge(this.threadConfig, config || {});
+    return chunkIXT3T67O_cjs.deepMerge(this.threadConfig, config || {});
   }
   estimateTokens(text) {
     return Math.ceil(text.split(" ").length * 1.3);
@@ -232,5 +232,5 @@ chunk7D636BPD_cjs.__name(_MastraMemory, "MastraMemory");
 var MastraMemory = _MastraMemory;
 
 exports.MastraMemory = MastraMemory;
-//# sourceMappingURL=chunk-IEGMYQ5N.cjs.map
-//# sourceMappingURL=chunk-IEGMYQ5N.cjs.map
+//# sourceMappingURL=chunk-SI6PHYGD.cjs.map
+//# sourceMappingURL=chunk-SI6PHYGD.cjs.map

@@ -1,9 +1,9 @@
 'use strict';
 
-var chunkLV5CPU2X_cjs = require('../chunk-LV5CPU2X.cjs');
-var chunkOJDVHIBJ_cjs = require('../chunk-OJDVHIBJ.cjs');
+var chunkSWSJNNXO_cjs = require('../chunk-SWSJNNXO.cjs');
 var chunkSUWCCDLE_cjs = require('../chunk-SUWCCDLE.cjs');
 var chunkQVQCHA2A_cjs = require('../chunk-QVQCHA2A.cjs');
+var chunkOJDVHIBJ_cjs = require('../chunk-OJDVHIBJ.cjs');
 var chunk7D636BPD_cjs = require('../chunk-7D636BPD.cjs');
 var zod = require('zod');
 
@@ -20,7 +20,7 @@ var _AgentNetwork = class _AgentNetwork extends chunkSUWCCDLE_cjs.MastraBase {
     chunk7D636BPD_cjs.__privateSet(this, _instructions, config.instructions);
     chunk7D636BPD_cjs.__privateSet(this, _agents, config.agents);
     chunk7D636BPD_cjs.__privateSet(this, _model, config.model);
-    chunk7D636BPD_cjs.__privateSet(this, _routingAgent, new chunkLV5CPU2X_cjs.Agent({
+    chunk7D636BPD_cjs.__privateSet(this, _routingAgent, new chunkSWSJNNXO_cjs.Agent({
       name: config.name,
       instructions: this.getInstructions(),
       model: chunk7D636BPD_cjs.__privateGet(this, _model),

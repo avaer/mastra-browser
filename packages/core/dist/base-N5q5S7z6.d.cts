@@ -1,17 +1,17 @@
 import * as ai from 'ai';
 import { Tool as Tool$1, ToolExecutionOptions, CoreMessage as CoreMessage$1, TelemetrySettings, generateText, generateObject, streamText, GenerateTextResult, GenerateObjectResult, streamObject, StreamTextResult, StreamObjectResult, CoreSystemMessage as CoreSystemMessage$1, CoreAssistantMessage as CoreAssistantMessage$1, CoreUserMessage as CoreUserMessage$1, CoreToolMessage as CoreToolMessage$1, EmbedResult as EmbedResult$1, EmbedManyResult as EmbedManyResult$1, EmbeddingModel, Message, UserContent, AssistantContent, LanguageModelV1, GenerateTextOnStepFinishCallback, StreamTextOnFinishCallback, StreamObjectOnFinishCallback, StreamTextOnStepFinishCallback, LanguageModel as LanguageModel$1, DeepPartial, ToolContent } from 'ai';
-import { M as MastraBase, T as Telemetry, O as OtelConfig } from './base-Dq_cxikD.js';
-import { M as Metric, a as MetricResult, T as TestInfo } from './types-CwTG2XyQ.js';
+import { M as MastraBase, T as Telemetry, O as OtelConfig } from './base-D_N8PfP5.cjs';
+import { M as Metric, a as MetricResult, T as TestInfo } from './types-CwTG2XyQ.cjs';
 import { Query } from 'sift';
 import { z, ZodSchema } from 'zod';
 import { JSONSchema7 } from 'json-schema';
-import { d as Run, B as BaseLogMessage, R as RegisteredLogger, L as Logger } from './index-BXwGr3N7.js';
+import { d as Run, B as BaseLogMessage, R as RegisteredLogger, L as Logger } from './index-BXwGr3N7.cjs';
 import { Span } from '@opentelemetry/api';
 import * as xstate from 'xstate';
 import { Snapshot } from 'xstate';
 import EventEmitter from 'events';
-import { MastraVector } from './vector/index.js';
-import { MastraTTS } from './tts/index.js';
+import { MastraVector } from './vector/index.cjs';
+import { MastraTTS } from './tts/index.cjs';
 
 type VercelTool = Tool$1;
 type CoreTool = {
@@ -1253,10 +1253,6 @@ declare class Machine<TSteps extends Step<any, any, any>[] = any, TTriggerSchema
             }, xstate.AnyEventObject>;
         }) => {
             mastra?: MastraUnion | undefined;
-            isResume?: {
-                runId: string;
-                stepId: string;
-            } | undefined;
             steps: {
                 [x: string]: {
                     status: "failed";
@@ -1281,6 +1277,10 @@ declare class Machine<TSteps extends Step<any, any, any>[] = any, TTriggerSchema
                     output?: any;
                 };
             };
+            isResume?: {
+                runId: string;
+                stepId: string;
+            } | undefined;
             triggerData: any;
             inputData: Record<string, any>;
             attempts: Record<string, number>;
@@ -1465,24 +1465,24 @@ declare class AgentNetwork extends MastraBase {
                 input: z.ZodString;
                 includeHistory: z.ZodOptional<z.ZodBoolean>;
             }, "strip", z.ZodTypeAny, {
-                input: string;
                 agent: string;
+                input: string;
                 includeHistory?: boolean | undefined;
             }, {
-                input: string;
                 agent: string;
+                input: string;
                 includeHistory?: boolean | undefined;
             }>, "many">;
         }, "strip", z.ZodTypeAny, {
             actions: {
-                input: string;
                 agent: string;
+                input: string;
                 includeHistory?: boolean | undefined;
             }[];
         }, {
             actions: {
-                input: string;
                 agent: string;
+                input: string;
                 includeHistory?: boolean | undefined;
             }[];
         }>, undefined, ToolExecutionContext<z.ZodObject<{
@@ -1491,24 +1491,24 @@ declare class AgentNetwork extends MastraBase {
                 input: z.ZodString;
                 includeHistory: z.ZodOptional<z.ZodBoolean>;
             }, "strip", z.ZodTypeAny, {
-                input: string;
                 agent: string;
+                input: string;
                 includeHistory?: boolean | undefined;
             }, {
-                input: string;
                 agent: string;
+                input: string;
                 includeHistory?: boolean | undefined;
             }>, "many">;
         }, "strip", z.ZodTypeAny, {
             actions: {
-                input: string;
                 agent: string;
+                input: string;
                 includeHistory?: boolean | undefined;
             }[];
         }, {
             actions: {
-                input: string;
                 agent: string;
+                input: string;
                 includeHistory?: boolean | undefined;
             }[];
         }>>>;

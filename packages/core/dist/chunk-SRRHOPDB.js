@@ -1,14 +1,12 @@
-'use strict';
-
-var chunkLV5CPU2X_cjs = require('./chunk-LV5CPU2X.cjs');
-var chunk7D636BPD_cjs = require('./chunk-7D636BPD.cjs');
-var cohereAi = require('cohere-ai');
+import { Agent } from './chunk-D2FQW5XK.js';
+import { __name, __publicField } from './chunk-WH5OY6PO.js';
+import { CohereClient } from 'cohere-ai';
 
 var _CohereRelevanceScorer = class _CohereRelevanceScorer {
   constructor(model, apiKey) {
-    chunk7D636BPD_cjs.__publicField(this, "client");
-    chunk7D636BPD_cjs.__publicField(this, "model");
-    this.client = new cohereAi.CohereClient({
+    __publicField(this, "client");
+    __publicField(this, "model");
+    this.client = new CohereClient({
       token: apiKey || process.env.COHERE_API_KEY || ""
     });
     this.model = model;
@@ -23,7 +21,7 @@ var _CohereRelevanceScorer = class _CohereRelevanceScorer {
     return response.results[0].relevanceScore;
   }
 };
-chunk7D636BPD_cjs.__name(_CohereRelevanceScorer, "CohereRelevanceScorer");
+__name(_CohereRelevanceScorer, "CohereRelevanceScorer");
 var CohereRelevanceScorer = _CohereRelevanceScorer;
 
 // src/relevance/relevance-score-provider.ts
@@ -36,13 +34,13 @@ Text: ${text}
 
 Relevance score (0-1):`;
 }
-chunk7D636BPD_cjs.__name(createSimilarityPrompt, "createSimilarityPrompt");
+__name(createSimilarityPrompt, "createSimilarityPrompt");
 
 // src/relevance/mastra-agent/index.ts
 var _MastraAgentRelevanceScorer = class _MastraAgentRelevanceScorer {
   constructor(name, model) {
-    chunk7D636BPD_cjs.__publicField(this, "agent");
-    this.agent = new chunkLV5CPU2X_cjs.Agent({
+    __publicField(this, "agent");
+    this.agent = new Agent({
       name: `Relevance Scorer ${name}`,
       instructions: `You are a specialized agent for evaluating the relevance of text to queries.
 Your task is to rate how well a text passage answers a given query.
@@ -63,11 +61,9 @@ Always return just the number, no explanation.`,
     return parseFloat(response.text);
   }
 };
-chunk7D636BPD_cjs.__name(_MastraAgentRelevanceScorer, "MastraAgentRelevanceScorer");
+__name(_MastraAgentRelevanceScorer, "MastraAgentRelevanceScorer");
 var MastraAgentRelevanceScorer = _MastraAgentRelevanceScorer;
 
-exports.CohereRelevanceScorer = CohereRelevanceScorer;
-exports.MastraAgentRelevanceScorer = MastraAgentRelevanceScorer;
-exports.createSimilarityPrompt = createSimilarityPrompt;
-//# sourceMappingURL=chunk-BGCWUWVX.cjs.map
-//# sourceMappingURL=chunk-BGCWUWVX.cjs.map
+export { CohereRelevanceScorer, MastraAgentRelevanceScorer, createSimilarityPrompt };
+//# sourceMappingURL=chunk-SRRHOPDB.js.map
+//# sourceMappingURL=chunk-SRRHOPDB.js.map

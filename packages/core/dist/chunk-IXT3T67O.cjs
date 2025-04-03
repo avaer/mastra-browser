@@ -1,6 +1,5 @@
 'use strict';
 
-var chunkOJDVHIBJ_cjs = require('./chunk-OJDVHIBJ.cjs');
 var chunk7D636BPD_cjs = require('./chunk-7D636BPD.cjs');
 var crypto = require('crypto');
 var ai = require('ai');
@@ -196,7 +195,7 @@ function resolveSerializedZodOutput(schema) {
 }
 chunk7D636BPD_cjs.__name(resolveSerializedZodOutput, "resolveSerializedZodOutput");
 function isVercelTool(tool) {
-  return !(tool instanceof chunkOJDVHIBJ_cjs.Tool);
+  return "parameters" in tool;
 }
 chunk7D636BPD_cjs.__name(isVercelTool, "isVercelTool");
 function createLogMessageOptions({ agentName, toolName, tool, type }) {
@@ -443,5 +442,5 @@ exports.jsonSchemaToModel = jsonSchemaToModel;
 exports.makeCoreTool = makeCoreTool;
 exports.maskStreamTags = maskStreamTags;
 exports.resolveSerializedZodOutput = resolveSerializedZodOutput;
-//# sourceMappingURL=chunk-ZZSLONUU.cjs.map
-//# sourceMappingURL=chunk-ZZSLONUU.cjs.map
+//# sourceMappingURL=chunk-IXT3T67O.cjs.map
+//# sourceMappingURL=chunk-IXT3T67O.cjs.map
