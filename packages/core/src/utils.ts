@@ -303,7 +303,7 @@ export function resolveSerializedZodOutput(schema: string): z.ZodType {
  */
 export function isVercelTool(tool?: ToolToConvert): tool is VercelTool {
   // Checks if this tool is not an instance of Tool
-  return !(tool instanceof Tool);
+  return ('parameters' in (tool as object));
 }
 
 interface ToolOptions {
