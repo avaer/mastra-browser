@@ -10,12 +10,64 @@ import type { Protocol } from '@modelcontextprotocol/sdk/shared/protocol.js';
 import type { Transport } from '@modelcontextprotocol/sdk/shared/transport.js';
 import type { ClientCapabilities } from '@modelcontextprotocol/sdk/types.js';
 import { CallToolResultSchema, ListResourcesResultSchema } from '@modelcontextprotocol/sdk/types.js';
+import { z } from 'zod';
 
 // import { asyncExitHook, gracefulExit } from 'exit-hook';
 
 type SSEClientParameters = {
   url: URL;
 } & ConstructorParameters<typeof SSEClientTransport>[1];
+
+function deepRequiredInner<T extends z.ZodTypeAny>(schema: T): z.ZodTypeAny {
+  const typeName = schema._def.typeName;
+
+  // Remove optional wrappers by unwrapping the inner type.
+  if (typeName === 'ZodOptional' || typeName === 'ZodNullable') {
+    return deepRequiredInner(schema._def.innerType);
+  }
+
+  // If it's an object, process each property recursively.
+  if (typeName === 'ZodObject') {
+    // Some objects use a lazy shape (a function) so we call it if needed.
+    const shape = typeof schema._def.shape === 'function'
+      ? schema._def.shape()
+      : schema._def.shape;
+    const newShape: Record<string, z.ZodTypeAny> = {};
+    for (const key in shape) {
+      newShape[key] = deepRequiredInner(shape[key]);
+    }
+    return z.object(newShape);
+  }
+
+  // For arrays, process the element type.
+  if (typeName === 'ZodArray') {
+    return z.array(deepRequiredInner((schema as any).element || schema._def.type));
+  }
+
+  // For unions, process every option.
+  if (typeName === 'ZodUnion') {
+    return z.union(schema._def.options.map(deepRequiredInner));
+  }
+
+  // For intersections, process both sides.
+  if (typeName === 'ZodIntersection') {
+    return z.intersection(
+      deepRequiredInner(schema._def.left),
+      deepRequiredInner(schema._def.right)
+    );
+  }
+
+  // For records, process the value type.
+  if (typeName === 'ZodRecord') {
+    return z.record(deepRequiredInner(schema._def.valueType));
+  }
+
+  // Other schema types are returned as-is.
+  return schema;
+}
+function deepRequired<T extends z.ZodTypeAny>(schema: T): z.ZodTypeAny {
+  return deepRequiredInner(schema);
+}
 
 export type MastraMCPServerDefinition = any | SSEClientParameters;
 
@@ -116,7 +168,7 @@ export class MastraMCPClient extends MastraBase {
       const mastraTool = createTool({
         id: `${this.name}_${tool.name}`,
         description: tool.description || '',
-        inputSchema: s,
+        inputSchema: deepRequired(s),
         execute: async ({ context }) => {
           try {
             const res = await this.client.callTool(
