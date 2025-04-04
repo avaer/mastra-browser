@@ -1,4 +1,4 @@
-import { Document } from 'llamaindex';
+import type { Document } from '../types';
 
 import { Language } from '../types';
 
@@ -50,7 +50,7 @@ export class MarkdownHeaderTransformer {
           .filter(l => l.trim() !== '' || this.headersToSplitOn.some(([sep]) => l.trim().startsWith(sep)))
           .map(
             l =>
-              new Document({
+              ({
                 text: l.trim(),
                 metadata: line.metadata,
               }),
@@ -88,8 +88,7 @@ export class MarkdownHeaderTransformer {
     }
 
     return aggregatedChunks.map(
-      chunk =>
-        new Document({
+      chunk => ({
           text: chunk.content,
           metadata: chunk.metadata,
         }),
@@ -218,12 +217,10 @@ export class MarkdownHeaderTransformer {
     texts.forEach((text, i) => {
       this.splitText({ text }).forEach(chunk => {
         const metadata = { ..._metadatas[i], ...chunk.metadata };
-        documents.push(
-          new Document({
+        documents.push({
             text: chunk.text,
             metadata,
-          }),
-        );
+          });
       });
     });
 

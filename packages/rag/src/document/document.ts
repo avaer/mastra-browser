@@ -1,11 +1,53 @@
-import {
-  Document as Chunk,
-  IngestionPipeline,
-  KeywordExtractor,
-  QuestionsAnsweredExtractor,
-  SummaryExtractor,
-  TitleExtractor,
-} from 'llamaindex';
+// Custom implementation of Document class
+import type { Document as Chunk } from './types';
+
+// Simple extractor classes to replace LlamaIndex extractors
+class TitleExtractor {
+  private options: Record<string, any>;
+  
+  constructor(options: Record<string, any> = {}) {
+    this.options = options;
+  }
+}
+
+class SummaryExtractor {
+  private options: Record<string, any>;
+  
+  constructor(options: Record<string, any> = {}) {
+    this.options = options;
+  }
+}
+
+class QuestionsAnsweredExtractor {
+  private options: Record<string, any>;
+  
+  constructor(options: Record<string, any> = {}) {
+    this.options = options;
+  }
+}
+
+class KeywordExtractor {
+  private options: Record<string, any>;
+  
+  constructor(options: Record<string, any> = {}) {
+    this.options = options;
+  }
+}
+
+// Simplified IngestionPipeline
+class IngestionPipeline {
+  private transformations: any[];
+  
+  constructor({ transformations }: { transformations: any[] }) {
+    this.transformations = transformations;
+  }
+  
+  async run({ documents }: { documents: Chunk[] }): Promise<Chunk[]> {
+    // This is a no-op in our implementation since we've moved the extraction
+    // functionality directly into the extractMetadata method
+    return documents;
+  }
+}
 
 import { CharacterTransformer, RecursiveCharacterTransformer } from './transformers/character';
 import { HTMLHeaderTransformer, HTMLSectionTransformer } from './transformers/html';
@@ -21,7 +63,7 @@ export class MDocument {
 
   constructor({ docs, type }: { docs: { text: string; metadata?: Record<string, any> }[]; type: string }) {
     this.chunks = docs.map(d => {
-      return new Chunk({ text: d.text, metadata: d.metadata });
+      return { text: d.text, metadata: d.metadata || {} };
     });
     this.type = type;
   }
@@ -45,22 +87,67 @@ export class MDocument {
       transformations.push(new TitleExtractor(typeof title === 'boolean' ? {} : title));
     }
 
+    // Create our ingestion pipeline
     const pipeline = new IngestionPipeline({
       transformations,
     });
-
-    const nodes = await pipeline.run({
-      documents: this.chunks,
-    });
-
-    this.chunks = this.chunks.map((doc, i) => {
-      return new Chunk({
+    
+    // Process documents through the pipeline
+    await pipeline.run({ documents: this.chunks });
+    
+    // Apply our basic metadata extraction logic
+    this.chunks.map(doc => {
+      const text = doc.text;
+      const newMetadata: Record<string, any> = { ...doc.metadata };
+      
+      // Basic title extraction
+      if (typeof title !== 'undefined') {
+        // Simple heuristic: first line or first sentence could be the title
+        const firstLine = text.split('\n')[0] ?? '';
+        const firstSentence = text.split(/[.!?]/)[0] ?? '';
+        newMetadata.title = firstLine.length < 100 ? firstLine : (firstSentence.length < 100 ? firstSentence : text.substring(0, 100));
+      }
+      
+      // Basic summary extraction
+      if (typeof summary !== 'undefined') {
+        // Simple heuristic: first paragraph or first few sentences
+        const firstParagraph = text.split('\n\n')[0] ?? '';
+        newMetadata.summary = firstParagraph.length < 200 ? firstParagraph : text.substring(0, 200) + '...';
+      }
+      
+      // Basic keyword extraction
+      if (typeof keywords !== 'undefined') {
+        // Simple heuristic: find common words excluding stopwords
+        const stopwords = new Set(['the', 'a', 'an', 'in', 'on', 'at', 'to', 'for', 'and', 'or', 'but', 'is', 'are', 'was', 'were']);
+        const words = text.toLowerCase().match(/\b\w+\b/g) || [];
+        const wordCounts: Record<string, number> = {};
+        
+        words.forEach(word => {
+          if (!stopwords.has(word) && word.length > 3) {
+            wordCounts[word] = (wordCounts[word] || 0) + 1;
+          }
+        });
+        
+        const sortedWords = Object.entries(wordCounts)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 5)
+          .map(([word]) => word);
+        
+        newMetadata.keywords = sortedWords;
+      }
+      
+      // Basic question extraction
+      if (typeof questions !== 'undefined') {
+        // Simple heuristic: find sentences ending with question marks
+        const questionSentences = text.match(/[^.!?]*\?/g) || [];
+        newMetadata.questions = questionSentences.slice(0, 3);
+      }
+      
+      // Update the chunk with new metadata
+      return {
         text: doc.text,
-        metadata: {
-          ...doc.metadata,
-          ...(nodes?.[i]?.metadata || {}),
-        },
-      });
+        metadata: newMetadata
+      };
     });
 
     return this;

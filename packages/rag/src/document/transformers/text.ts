@@ -1,7 +1,4 @@
-import { Document } from 'llamaindex';
-
-import type { ChunkOptions } from '../types';
-
+import type { Document, ChunkOptions } from '../types';
 import type { Transformer } from './transformer';
 
 export abstract class TextTransformer implements Transformer {
@@ -53,12 +50,10 @@ export abstract class TextTransformer implements Transformer {
           metadata.startIndex = index;
           previousChunkLen = chunk.length;
         }
-        documents.push(
-          new Document({
-            text: chunk,
-            metadata,
-          }),
-        );
+        documents.push({
+          text: chunk,
+          metadata,
+        });
       });
     });
 

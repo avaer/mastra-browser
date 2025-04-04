@@ -1,4 +1,4 @@
-import { Document } from 'llamaindex';
+import type { Document } from '../types';
 
 export class RecursiveJsonTransformer {
   private maxSize: number;
@@ -491,12 +491,10 @@ export class RecursiveJsonTransformer {
       const chunks = this.splitText({ jsonData: JSON.parse(text), convertLists, ensureAscii });
       chunks.forEach(chunk => {
         const metadata = { ...(_metadatas[i] || {}) };
-        documents.push(
-          new Document({
+        documents.push({
             text: chunk,
             metadata,
-          }),
-        );
+          });
       });
     });
 

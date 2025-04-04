@@ -1,4 +1,4 @@
-import { Document } from 'llamaindex';
+import type { Document } from '../types';
 import { parse } from 'node-html-better-parser';
 
 import { RecursiveCharacterTransformer } from './character';
@@ -66,11 +66,10 @@ export class HTMLHeaderTransformer {
 
     return this.returnEachElement
       ? elements.map(
-          el =>
-            new Document({
+          el => ({
               text: el.content,
-              metadata: { ...el.metadata, xpath: el.xpath },
-            }),
+              metadata: { ...el.metadata, xpath: el.xpath }
+            })
         )
       : this.aggregateElementsToChunks(elements);
   }
@@ -142,11 +141,10 @@ export class HTMLHeaderTransformer {
     }
 
     return aggregatedChunks.map(
-      chunk =>
-        new Document({
+      chunk => ({
           text: chunk.content,
-          metadata: { ...chunk.metadata, xpath: chunk.xpath },
-        }),
+          metadata: { ...chunk.metadata, xpath: chunk.xpath }
+        })
     );
   }
 
@@ -168,12 +166,10 @@ export class HTMLHeaderTransformer {
           }
         }
 
-        documents.push(
-          new Document({
+        documents.push({
             text: chunk.text!,
-            metadata: { ...metadata, ...chunkMetadata },
-          }),
-        );
+            metadata: { ...metadata, ...chunkMetadata }
+          });
       }
     }
 
@@ -206,14 +202,13 @@ export class HTMLSectionTransformer {
     const sections = this.splitHtmlByHeaders(text);
 
     return sections.map(
-      section =>
-        new Document({
+      section => ({
           text: section.content,
           metadata: {
             [this.headersToSplitOn[section.tagName.toLowerCase()]!]: section.header,
             xpath: section.xpath,
-          },
-        }),
+          }
+        })
     );
   }
 
@@ -320,12 +315,10 @@ export class HTMLSectionTransformer {
           }
         }
 
-        documents.push(
-          new Document({
+        documents.push({
             text: chunk.text!,
-            metadata: { ...metadata, ...chunkMetadata },
-          }),
-        );
+            metadata: { ...metadata, ...chunkMetadata }
+          });
       }
     }
 
