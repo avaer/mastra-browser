@@ -1,12 +1,12 @@
 'use strict';
 
-var chunkILZVMOPS_cjs = require('../chunk-ILZVMOPS.cjs');
+var chunk6JRSDXSG_cjs = require('../chunk-6JRSDXSG.cjs');
 
 
 
 Object.defineProperty(exports, "AgentNetwork", {
   enumerable: true,
-  get: function () { return chunkILZVMOPS_cjs.AgentNetwork; }
+  get: function () { return chunk6JRSDXSG_cjs.AgentNetwork; }
 });
 //# sourceMappingURL=index.cjs.map
 //# sourceMappingURL=index.cjs.map

@@ -1,26 +1,26 @@
 'use strict';
 
 var chunkLUYBA3WN_cjs = require('./chunk-LUYBA3WN.cjs');
-var chunkSWYZHOFJ_cjs = require('./chunk-SWYZHOFJ.cjs');
-var chunkXBEAMXR5_cjs = require('./chunk-XBEAMXR5.cjs');
+var chunkC2FGJRDV_cjs = require('./chunk-C2FGJRDV.cjs');
+var chunkIYB4E5SF_cjs = require('./chunk-IYB4E5SF.cjs');
 var chunk2HLDXBUY_cjs = require('./chunk-2HLDXBUY.cjs');
-var chunkSI6PHYGD_cjs = require('./chunk-SI6PHYGD.cjs');
-var chunkILZVMOPS_cjs = require('./chunk-ILZVMOPS.cjs');
-var chunkR4LKHL67_cjs = require('./chunk-R4LKHL67.cjs');
+var chunkGZ2TYBIZ_cjs = require('./chunk-GZ2TYBIZ.cjs');
+var chunkSWYZHOFJ_cjs = require('./chunk-SWYZHOFJ.cjs');
 var chunkI3R2VONK_cjs = require('./chunk-I3R2VONK.cjs');
-var chunkSWSJNNXO_cjs = require('./chunk-SWSJNNXO.cjs');
+var chunk6JRSDXSG_cjs = require('./chunk-6JRSDXSG.cjs');
+var chunkATZYUG5Z_cjs = require('./chunk-ATZYUG5Z.cjs');
+var chunkJO77SZ6N_cjs = require('./chunk-JO77SZ6N.cjs');
 var chunkXXM463NA_cjs = require('./chunk-XXM463NA.cjs');
+var chunkIXT3T67O_cjs = require('./chunk-IXT3T67O.cjs');
+var chunkOJDVHIBJ_cjs = require('./chunk-OJDVHIBJ.cjs');
 var chunkSUWCCDLE_cjs = require('./chunk-SUWCCDLE.cjs');
 var chunkQVQCHA2A_cjs = require('./chunk-QVQCHA2A.cjs');
-var chunkIXT3T67O_cjs = require('./chunk-IXT3T67O.cjs');
 var chunkMZW7EZIY_cjs = require('./chunk-MZW7EZIY.cjs');
 var chunk4FUCJCP2_cjs = require('./chunk-4FUCJCP2.cjs');
-var chunkIYB4E5SF_cjs = require('./chunk-IYB4E5SF.cjs');
-var chunkOJDVHIBJ_cjs = require('./chunk-OJDVHIBJ.cjs');
 var chunk7D636BPD_cjs = require('./chunk-7D636BPD.cjs');
 
 // src/agent/index.warning.ts
-var _Agent = class _Agent extends chunkSWSJNNXO_cjs.Agent {
+var _Agent = class _Agent extends chunkJO77SZ6N_cjs.Agent {
   constructor(config) {
     super(config);
     this.logger.warn('Please import "Agent from "@mastra/core/agent" instead of "@mastra/core"');
@@ -79,7 +79,7 @@ function createLogger2(options) {
 chunk7D636BPD_cjs.__name(createLogger2, "createLogger");
 
 // src/memory/index.warning.ts
-var _MastraMemory = class _MastraMemory extends chunkSI6PHYGD_cjs.MastraMemory {
+var _MastraMemory = class _MastraMemory extends chunkGZ2TYBIZ_cjs.MastraMemory {
   constructor(_arg) {
     super({ name: `Deprecated memory` });
     this.logger.warn('Please import "MastraMemory" from "@mastra/core/memory" instead of "@mastra/core"');
@@ -119,7 +119,7 @@ chunk7D636BPD_cjs.__name(_MastraVector, "MastraVector");
 var MastraVector2 = _MastraVector;
 
 // src/workflows/workflow.warning.ts
-var _Workflow = class _Workflow extends chunkXBEAMXR5_cjs.Workflow {
+var _Workflow = class _Workflow extends chunkC2FGJRDV_cjs.Workflow {
   constructor(args) {
     super(args);
     this.logger.warn('Please import "Workflow" from "@mastra/core/workflows" instead of "@mastra/core"');
@@ -130,95 +130,103 @@ var Workflow2 = _Workflow;
 
 Object.defineProperty(exports, "Step", {
   enumerable: true,
-  get: function () { return chunkXBEAMXR5_cjs.Step; }
+  get: function () { return chunkC2FGJRDV_cjs.Step; }
 });
 Object.defineProperty(exports, "WhenConditionReturnValue", {
   enumerable: true,
-  get: function () { return chunkXBEAMXR5_cjs.WhenConditionReturnValue; }
+  get: function () { return chunkC2FGJRDV_cjs.WhenConditionReturnValue; }
 });
 Object.defineProperty(exports, "createStep", {
   enumerable: true,
-  get: function () { return chunkXBEAMXR5_cjs.createStep; }
+  get: function () { return chunkC2FGJRDV_cjs.createStep; }
 });
 Object.defineProperty(exports, "getActivePathsAndStatus", {
   enumerable: true,
-  get: function () { return chunkXBEAMXR5_cjs.getActivePathsAndStatus; }
+  get: function () { return chunkC2FGJRDV_cjs.getActivePathsAndStatus; }
 });
 Object.defineProperty(exports, "getResultActivePaths", {
   enumerable: true,
-  get: function () { return chunkXBEAMXR5_cjs.getResultActivePaths; }
+  get: function () { return chunkC2FGJRDV_cjs.getResultActivePaths; }
 });
 Object.defineProperty(exports, "getStepResult", {
   enumerable: true,
-  get: function () { return chunkXBEAMXR5_cjs.getStepResult; }
+  get: function () { return chunkC2FGJRDV_cjs.getStepResult; }
 });
 Object.defineProperty(exports, "getSuspendedPaths", {
   enumerable: true,
-  get: function () { return chunkXBEAMXR5_cjs.getSuspendedPaths; }
+  get: function () { return chunkC2FGJRDV_cjs.getSuspendedPaths; }
 });
 Object.defineProperty(exports, "isErrorEvent", {
   enumerable: true,
-  get: function () { return chunkXBEAMXR5_cjs.isErrorEvent; }
+  get: function () { return chunkC2FGJRDV_cjs.isErrorEvent; }
 });
 Object.defineProperty(exports, "isFinalState", {
   enumerable: true,
-  get: function () { return chunkXBEAMXR5_cjs.isFinalState; }
+  get: function () { return chunkC2FGJRDV_cjs.isFinalState; }
 });
 Object.defineProperty(exports, "isLimboState", {
   enumerable: true,
-  get: function () { return chunkXBEAMXR5_cjs.isLimboState; }
+  get: function () { return chunkC2FGJRDV_cjs.isLimboState; }
 });
 Object.defineProperty(exports, "isTransitionEvent", {
   enumerable: true,
-  get: function () { return chunkXBEAMXR5_cjs.isTransitionEvent; }
+  get: function () { return chunkC2FGJRDV_cjs.isTransitionEvent; }
 });
 Object.defineProperty(exports, "isVariableReference", {
   enumerable: true,
-  get: function () { return chunkXBEAMXR5_cjs.isVariableReference; }
+  get: function () { return chunkC2FGJRDV_cjs.isVariableReference; }
 });
 Object.defineProperty(exports, "isWorkflow", {
   enumerable: true,
-  get: function () { return chunkXBEAMXR5_cjs.isWorkflow; }
+  get: function () { return chunkC2FGJRDV_cjs.isWorkflow; }
 });
 Object.defineProperty(exports, "mergeChildValue", {
   enumerable: true,
-  get: function () { return chunkXBEAMXR5_cjs.mergeChildValue; }
+  get: function () { return chunkC2FGJRDV_cjs.mergeChildValue; }
 });
 Object.defineProperty(exports, "recursivelyCheckForFinalState", {
   enumerable: true,
-  get: function () { return chunkXBEAMXR5_cjs.recursivelyCheckForFinalState; }
+  get: function () { return chunkC2FGJRDV_cjs.recursivelyCheckForFinalState; }
 });
 Object.defineProperty(exports, "resolveVariables", {
   enumerable: true,
-  get: function () { return chunkXBEAMXR5_cjs.resolveVariables; }
+  get: function () { return chunkC2FGJRDV_cjs.resolveVariables; }
 });
 Object.defineProperty(exports, "updateStepInHierarchy", {
   enumerable: true,
-  get: function () { return chunkXBEAMXR5_cjs.updateStepInHierarchy; }
+  get: function () { return chunkC2FGJRDV_cjs.updateStepInHierarchy; }
 });
 Object.defineProperty(exports, "workflowToStep", {
   enumerable: true,
-  get: function () { return chunkXBEAMXR5_cjs.workflowToStep; }
+  get: function () { return chunkC2FGJRDV_cjs.workflowToStep; }
 });
 Object.defineProperty(exports, "Mastra", {
   enumerable: true,
   get: function () { return chunk2HLDXBUY_cjs.Mastra; }
 });
+Object.defineProperty(exports, "DefaultVectorDB", {
+  enumerable: true,
+  get: function () { return chunkGZ2TYBIZ_cjs.PGliteVector; }
+});
+Object.defineProperty(exports, "PGliteVector", {
+  enumerable: true,
+  get: function () { return chunkGZ2TYBIZ_cjs.PGliteVector; }
+});
 Object.defineProperty(exports, "AgentNetwork", {
   enumerable: true,
-  get: function () { return chunkILZVMOPS_cjs.AgentNetwork; }
+  get: function () { return chunk6JRSDXSG_cjs.AgentNetwork; }
 });
 Object.defineProperty(exports, "CohereRelevanceScorer", {
   enumerable: true,
-  get: function () { return chunkR4LKHL67_cjs.CohereRelevanceScorer; }
+  get: function () { return chunkATZYUG5Z_cjs.CohereRelevanceScorer; }
 });
 Object.defineProperty(exports, "MastraAgentRelevanceScorer", {
   enumerable: true,
-  get: function () { return chunkR4LKHL67_cjs.MastraAgentRelevanceScorer; }
+  get: function () { return chunkATZYUG5Z_cjs.MastraAgentRelevanceScorer; }
 });
 Object.defineProperty(exports, "createSimilarityPrompt", {
   enumerable: true,
-  get: function () { return chunkR4LKHL67_cjs.createSimilarityPrompt; }
+  get: function () { return chunkATZYUG5Z_cjs.createSimilarityPrompt; }
 });
 Object.defineProperty(exports, "InstrumentClass", {
   enumerable: true,
@@ -239,34 +247,6 @@ Object.defineProperty(exports, "hasActiveTelemetry", {
 Object.defineProperty(exports, "withSpan", {
   enumerable: true,
   get: function () { return chunkXXM463NA_cjs.withSpan; }
-});
-Object.defineProperty(exports, "LogLevel", {
-  enumerable: true,
-  get: function () { return chunkQVQCHA2A_cjs.LogLevel; }
-});
-Object.defineProperty(exports, "Logger", {
-  enumerable: true,
-  get: function () { return chunkQVQCHA2A_cjs.Logger; }
-});
-Object.defineProperty(exports, "LoggerTransport", {
-  enumerable: true,
-  get: function () { return chunkQVQCHA2A_cjs.LoggerTransport; }
-});
-Object.defineProperty(exports, "MultiLogger", {
-  enumerable: true,
-  get: function () { return chunkQVQCHA2A_cjs.MultiLogger; }
-});
-Object.defineProperty(exports, "RegisteredLogger", {
-  enumerable: true,
-  get: function () { return chunkQVQCHA2A_cjs.RegisteredLogger; }
-});
-Object.defineProperty(exports, "combineLoggers", {
-  enumerable: true,
-  get: function () { return chunkQVQCHA2A_cjs.combineLoggers; }
-});
-Object.defineProperty(exports, "noopLogger", {
-  enumerable: true,
-  get: function () { return chunkQVQCHA2A_cjs.noopLogger; }
 });
 Object.defineProperty(exports, "checkEvalStorageFields", {
   enumerable: true,
@@ -316,6 +296,38 @@ Object.defineProperty(exports, "resolveSerializedZodOutput", {
   enumerable: true,
   get: function () { return chunkIXT3T67O_cjs.resolveSerializedZodOutput; }
 });
+Object.defineProperty(exports, "createTool", {
+  enumerable: true,
+  get: function () { return chunkOJDVHIBJ_cjs.createTool; }
+});
+Object.defineProperty(exports, "LogLevel", {
+  enumerable: true,
+  get: function () { return chunkQVQCHA2A_cjs.LogLevel; }
+});
+Object.defineProperty(exports, "Logger", {
+  enumerable: true,
+  get: function () { return chunkQVQCHA2A_cjs.Logger; }
+});
+Object.defineProperty(exports, "LoggerTransport", {
+  enumerable: true,
+  get: function () { return chunkQVQCHA2A_cjs.LoggerTransport; }
+});
+Object.defineProperty(exports, "MultiLogger", {
+  enumerable: true,
+  get: function () { return chunkQVQCHA2A_cjs.MultiLogger; }
+});
+Object.defineProperty(exports, "RegisteredLogger", {
+  enumerable: true,
+  get: function () { return chunkQVQCHA2A_cjs.RegisteredLogger; }
+});
+Object.defineProperty(exports, "combineLoggers", {
+  enumerable: true,
+  get: function () { return chunkQVQCHA2A_cjs.combineLoggers; }
+});
+Object.defineProperty(exports, "noopLogger", {
+  enumerable: true,
+  get: function () { return chunkQVQCHA2A_cjs.noopLogger; }
+});
 Object.defineProperty(exports, "Metric", {
   enumerable: true,
   get: function () { return chunkMZW7EZIY_cjs.Metric; }
@@ -335,10 +347,6 @@ Object.defineProperty(exports, "executeHook", {
 Object.defineProperty(exports, "registerHook", {
   enumerable: true,
   get: function () { return chunk4FUCJCP2_cjs.registerHook; }
-});
-Object.defineProperty(exports, "createTool", {
-  enumerable: true,
-  get: function () { return chunkOJDVHIBJ_cjs.createTool; }
 });
 exports.Agent = Agent2;
 exports.Integration = Integration2;

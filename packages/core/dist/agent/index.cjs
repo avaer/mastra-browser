@@ -1,12 +1,12 @@
 'use strict';
 
-var chunkSWSJNNXO_cjs = require('../chunk-SWSJNNXO.cjs');
+var chunkJO77SZ6N_cjs = require('../chunk-JO77SZ6N.cjs');
 
 
 
 Object.defineProperty(exports, "Agent", {
   enumerable: true,
-  get: function () { return chunkSWSJNNXO_cjs.Agent; }
+  get: function () { return chunkJO77SZ6N_cjs.Agent; }
 });
 //# sourceMappingURL=index.cjs.map
 //# sourceMappingURL=index.cjs.map

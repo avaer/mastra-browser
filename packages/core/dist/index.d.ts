@@ -13,11 +13,12 @@ export { InstrumentClass, OTLPStorageExporter, hasActiveTelemetry, withSpan } fr
 import { z } from 'zod';
 import { MastraTTS as MastraTTS$1, TTSConfig } from './tts/index.js';
 export { TagMaskOptions, checkEvalStorageFields, createMastraProxy, deepMerge, delay, ensureAllMessagesAreCoreMessages, ensureToolProperties, isVercelTool, jsonSchemaPropertiesToTSTypes, jsonSchemaToModel, makeCoreTool, maskStreamTags, resolveSerializedZodOutput } from './utils.js';
-import { MastraVector as MastraVector$1 } from './vector/index.js';
-export { CreateIndexArgs, CreateIndexParams, IndexStats, ParamsToArgs, QueryResult, QueryVectorArgs, QueryVectorParams, UpsertVectorArgs, UpsertVectorParams } from './vector/index.js';
+import { MastraVector as MastraVector$1, ParamsToArgs, QueryVectorParams, QueryVectorArgs, QueryResult, UpsertVectorParams, CreateIndexParams, IndexStats } from './vector/index.js';
+export { CreateIndexArgs, UpsertVectorArgs } from './vector/index.js';
 export { getActivePathsAndStatus, getResultActivePaths, getStepResult, getSuspendedPaths, isErrorEvent, isFinalState, isLimboState, isTransitionEvent, isVariableReference, isWorkflow, mergeChildValue, recursivelyCheckForFinalState, resolveVariables, updateStepInHierarchy, workflowToStep } from './workflows/index.js';
 export { AvailableHooks, executeHook, registerHook } from './hooks/index.js';
 export { Message as AiMessageType } from 'ai';
+import { VectorFilter } from './vector/filter/index.js';
 import 'sift';
 import 'json-schema';
 import '@opentelemetry/api';
@@ -26,7 +27,6 @@ import 'events';
 import '@opentelemetry/sdk-trace-base';
 import 'stream';
 import '@opentelemetry/core';
-import './vector/filter/index.js';
 
 declare class Agent<TTools extends Record<string, ToolAction<any, any, any>> = Record<string, ToolAction<any, any, any>>, TMetrics extends Record<string, Metric> = Record<string, Metric>> extends Agent$1<TTools, TMetrics> {
     constructor(config: AgentConfig<TTools, TMetrics>);
@@ -71,6 +71,37 @@ declare abstract class MastraTTS extends MastraTTS$1 {
     constructor(args: TTSConfig);
 }
 
+interface PGliteQueryParams extends QueryVectorParams {
+    minScore?: number;
+}
+type PGliteQueryArgs = [...QueryVectorArgs, number?];
+declare class PGliteVector extends MastraVector$1 {
+    private client;
+    private clientPromise;
+    constructor({ connectionUrl, authToken, syncUrl, syncInterval, }: {
+        connectionUrl: string;
+        authToken?: string;
+        syncUrl?: string;
+        syncInterval?: number;
+    });
+    private initClient;
+    protected rewriteDbUrl(url: string): string;
+    private getClient;
+    transformFilter(filter?: VectorFilter): VectorFilter;
+    query(...args: ParamsToArgs<PGliteQueryParams> | PGliteQueryArgs): Promise<QueryResult[]>;
+    upsert(...args: ParamsToArgs<UpsertVectorParams>): Promise<string[]>;
+    createIndex(...args: ParamsToArgs<CreateIndexParams>): Promise<void>;
+    deleteIndex(indexName: string): Promise<void>;
+    listIndexes(): Promise<string[]>;
+    describeIndex(indexName: string): Promise<IndexStats>;
+    updateIndexById(indexName: string, id: string, update: {
+        vector?: number[];
+        metadata?: Record<string, any>;
+    }): Promise<void>;
+    deleteIndexById(indexName: string, id: string): Promise<void>;
+    truncateIndex(indexName: string): Promise<void>;
+}
+
 declare abstract class MastraVector extends MastraVector$1 {
     constructor();
 }
@@ -79,4 +110,4 @@ declare class Workflow<TSteps extends Step<any, any, any>[] = any, TTriggerSchem
     constructor(args: WorkflowOptions<string, TSteps, TTriggerSchema>);
 }
 
-export { Agent, Integration, LogLevel, Logger, MastraBase, MastraMemory, MastraStorage, MastraTTS, MastraVector, Metric, OpenAPIToolset, RegisteredLogger, Step, TTSConfig, Tool, ToolAction, ToolExecutionContext, TransportMap, Workflow, WorkflowOptions, createLogger };
+export { Agent, CreateIndexParams, PGliteVector as DefaultVectorDB, IndexStats, Integration, LogLevel, Logger, MastraBase, MastraMemory, MastraStorage, MastraTTS, MastraVector, Metric, OpenAPIToolset, PGliteVector, ParamsToArgs, QueryResult, QueryVectorArgs, QueryVectorParams, RegisteredLogger, Step, TTSConfig, Tool, ToolAction, ToolExecutionContext, TransportMap, UpsertVectorParams, Workflow, WorkflowOptions, createLogger };

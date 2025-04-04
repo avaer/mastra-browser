@@ -1,84 +1,84 @@
 'use strict';
 
-var chunkXBEAMXR5_cjs = require('../chunk-XBEAMXR5.cjs');
+var chunkC2FGJRDV_cjs = require('../chunk-C2FGJRDV.cjs');
 
 
 
 Object.defineProperty(exports, "Step", {
   enumerable: true,
-  get: function () { return chunkXBEAMXR5_cjs.Step; }
+  get: function () { return chunkC2FGJRDV_cjs.Step; }
 });
 Object.defineProperty(exports, "WhenConditionReturnValue", {
   enumerable: true,
-  get: function () { return chunkXBEAMXR5_cjs.WhenConditionReturnValue; }
+  get: function () { return chunkC2FGJRDV_cjs.WhenConditionReturnValue; }
 });
 Object.defineProperty(exports, "Workflow", {
   enumerable: true,
-  get: function () { return chunkXBEAMXR5_cjs.Workflow; }
+  get: function () { return chunkC2FGJRDV_cjs.Workflow; }
 });
 Object.defineProperty(exports, "createStep", {
   enumerable: true,
-  get: function () { return chunkXBEAMXR5_cjs.createStep; }
+  get: function () { return chunkC2FGJRDV_cjs.createStep; }
 });
 Object.defineProperty(exports, "getActivePathsAndStatus", {
   enumerable: true,
-  get: function () { return chunkXBEAMXR5_cjs.getActivePathsAndStatus; }
+  get: function () { return chunkC2FGJRDV_cjs.getActivePathsAndStatus; }
 });
 Object.defineProperty(exports, "getResultActivePaths", {
   enumerable: true,
-  get: function () { return chunkXBEAMXR5_cjs.getResultActivePaths; }
+  get: function () { return chunkC2FGJRDV_cjs.getResultActivePaths; }
 });
 Object.defineProperty(exports, "getStepResult", {
   enumerable: true,
-  get: function () { return chunkXBEAMXR5_cjs.getStepResult; }
+  get: function () { return chunkC2FGJRDV_cjs.getStepResult; }
 });
 Object.defineProperty(exports, "getSuspendedPaths", {
   enumerable: true,
-  get: function () { return chunkXBEAMXR5_cjs.getSuspendedPaths; }
+  get: function () { return chunkC2FGJRDV_cjs.getSuspendedPaths; }
 });
 Object.defineProperty(exports, "isErrorEvent", {
   enumerable: true,
-  get: function () { return chunkXBEAMXR5_cjs.isErrorEvent; }
+  get: function () { return chunkC2FGJRDV_cjs.isErrorEvent; }
 });
 Object.defineProperty(exports, "isFinalState", {
   enumerable: true,
-  get: function () { return chunkXBEAMXR5_cjs.isFinalState; }
+  get: function () { return chunkC2FGJRDV_cjs.isFinalState; }
 });
 Object.defineProperty(exports, "isLimboState", {
   enumerable: true,
-  get: function () { return chunkXBEAMXR5_cjs.isLimboState; }
+  get: function () { return chunkC2FGJRDV_cjs.isLimboState; }
 });
 Object.defineProperty(exports, "isTransitionEvent", {
   enumerable: true,
-  get: function () { return chunkXBEAMXR5_cjs.isTransitionEvent; }
+  get: function () { return chunkC2FGJRDV_cjs.isTransitionEvent; }
 });
 Object.defineProperty(exports, "isVariableReference", {
   enumerable: true,
-  get: function () { return chunkXBEAMXR5_cjs.isVariableReference; }
+  get: function () { return chunkC2FGJRDV_cjs.isVariableReference; }
 });
 Object.defineProperty(exports, "isWorkflow", {
   enumerable: true,
-  get: function () { return chunkXBEAMXR5_cjs.isWorkflow; }
+  get: function () { return chunkC2FGJRDV_cjs.isWorkflow; }
 });
 Object.defineProperty(exports, "mergeChildValue", {
   enumerable: true,
-  get: function () { return chunkXBEAMXR5_cjs.mergeChildValue; }
+  get: function () { return chunkC2FGJRDV_cjs.mergeChildValue; }
 });
 Object.defineProperty(exports, "recursivelyCheckForFinalState", {
   enumerable: true,
-  get: function () { return chunkXBEAMXR5_cjs.recursivelyCheckForFinalState; }
+  get: function () { return chunkC2FGJRDV_cjs.recursivelyCheckForFinalState; }
 });
 Object.defineProperty(exports, "resolveVariables", {
   enumerable: true,
-  get: function () { return chunkXBEAMXR5_cjs.resolveVariables; }
+  get: function () { return chunkC2FGJRDV_cjs.resolveVariables; }
 });
 Object.defineProperty(exports, "updateStepInHierarchy", {
   enumerable: true,
-  get: function () { return chunkXBEAMXR5_cjs.updateStepInHierarchy; }
+  get: function () { return chunkC2FGJRDV_cjs.updateStepInHierarchy; }
 });
 Object.defineProperty(exports, "workflowToStep", {
   enumerable: true,
-  get: function () { return chunkXBEAMXR5_cjs.workflowToStep; }
+  get: function () { return chunkC2FGJRDV_cjs.workflowToStep; }
 });
 //# sourceMappingURL=index.cjs.map
 //# sourceMappingURL=index.cjs.map
