@@ -1,17 +1,10 @@
 import { createTool } from '@mastra/core/tools';
-import { Document as Document_2 } from 'llamaindex';
 import type { EmbeddingModel } from 'ai';
-import type { KeywordExtractPrompt } from 'llamaindex';
-import type { LLM } from 'llamaindex';
 import type { MastraLanguageModel } from '@mastra/core/agent';
 import type { MastraVector } from '@mastra/core/vector';
 import type { QueryResult } from '@mastra/core/vector';
-import type { QuestionExtractPrompt } from 'llamaindex';
-import type { SummaryPrompt } from 'llamaindex';
 import type { TiktokenEncoding } from 'js-tiktoken';
 import type { TiktokenModel } from 'js-tiktoken';
-import type { TitleCombinePrompt } from 'llamaindex';
-import type { TitleExtractorPrompt } from 'llamaindex';
 import type { VectorFilter } from '@mastra/core/vector/filter';
 
 /**
@@ -134,6 +127,13 @@ export { defaultVectorQueryDescription }
 export { defaultVectorQueryDescription as defaultVectorQueryDescription_alias_1 }
 export { defaultVectorQueryDescription as defaultVectorQueryDescription_alias_2 }
 
+declare interface Document {
+    text: string;
+    metadata: Record<string, any>;
+}
+export { Document }
+export { Document as Document_alias_1 }
+
 declare type ExtractParams = {
     title?: TitleExtractorsArgs | boolean;
     summary?: SummaryExtractArgs | boolean;
@@ -205,30 +205,30 @@ export declare class HTMLHeaderTransformer {
     constructor(headersToSplitOn: [string, string][], returnEachElement?: boolean);
     splitText({ text }: {
         text: string;
-    }): Document_2[];
+    }): Document[];
     private getXPath;
     private getTextContent;
     private aggregateElementsToChunks;
-    createDocuments(texts: string[], metadatas?: Record<string, any>[]): Document_2[];
-    transformDocuments(documents: Document_2[]): Document_2[];
+    createDocuments(texts: string[], metadatas?: Record<string, any>[]): Document[];
+    transformDocuments(documents: Document[]): Document[];
 }
 
 export declare class HTMLSectionTransformer {
     private headersToSplitOn;
     private options;
     constructor(headersToSplitOn: [string, string][], options?: Record<string, any>);
-    splitText(text: string): Document_2[];
+    splitText(text: string): Document[];
     private getXPath;
     private splitHtmlByHeaders;
-    splitDocuments(documents: Document_2[]): Promise<Document_2[]>;
-    createDocuments(texts: string[], metadatas?: Record<string, any>[]): Document_2[];
-    transformDocuments(documents: Document_2[]): Document_2[];
+    splitDocuments(documents: Document[]): Promise<Document[]>;
+    createDocuments(texts: string[], metadatas?: Record<string, any>[]): Document[];
+    transformDocuments(documents: Document[]): Document[];
 }
 
 declare type KeywordExtractArgs = {
-    llm?: LLM;
+    llm?: any;
     keywords?: number;
-    promptTemplate?: KeywordExtractPrompt['template'];
+    promptTemplate?: string;
 };
 export { KeywordExtractArgs }
 export { KeywordExtractArgs as KeywordExtractArgs_alias_1 }
@@ -287,9 +287,9 @@ export declare class MarkdownHeaderTransformer {
     private aggregateLinesToChunks;
     splitText({ text }: {
         text: string;
-    }): Document_2[];
-    createDocuments(texts: string[], metadatas?: Record<string, any>[]): Document_2[];
-    transformDocuments(documents: Document_2[]): Document_2[];
+    }): Document[];
+    createDocuments(texts: string[], metadatas?: Record<string, any>[]): Document[];
+    transformDocuments(documents: Document[]): Document[];
 }
 
 export declare class MarkdownTransformer extends RecursiveCharacterTransformer {
@@ -327,8 +327,8 @@ declare class MDocument {
     chunkLatex(options?: ChunkOptions): Promise<void>;
     chunkToken(options?: ChunkOptions): Promise<void>;
     chunkMarkdown(options?: ChunkOptions): Promise<void>;
-    chunk(params?: ChunkParams): Promise<Document_2[]>;
-    getDocs(): Document_2[];
+    chunk(params?: ChunkParams): Promise<Document[]>;
+    getDocs(): Document[];
     getText(): string[];
     getMetadata(): Record<string, any>[];
 }
@@ -344,6 +344,12 @@ declare const PINECONE_PROMPT = "When querying Pinecone, you can ONLY use the op
 export { PINECONE_PROMPT }
 export { PINECONE_PROMPT as PINECONE_PROMPT_alias_1 }
 
+declare type PromptTemplate = {
+    template: string;
+};
+export { PromptTemplate }
+export { PromptTemplate as PromptTemplate_alias_1 }
+
 declare const QDRANT_PROMPT = "When querying Qdrant, you can ONLY use the operators listed below. Any other operators will be rejected.\nImportant: Don't explain how to construct the filter - use the specified operators and fields to search the content and return relevant results.\nIf a user tries to give an explicit operator that is not supported, reject the filter entirely and let them know that the operator is not supported.\n\nBasic Comparison Operators:\n- $eq: Exact match (default when using field: value)\n  Example: { \"category\": \"electronics\" }\n- $ne: Not equal\n  Example: { \"category\": { \"$ne\": \"electronics\" } }\n- $gt: Greater than\n  Example: { \"price\": { \"$gt\": 100 } }\n- $gte: Greater than or equal\n  Example: { \"price\": { \"$gte\": 100 } }\n- $lt: Less than\n  Example: { \"price\": { \"$lt\": 100 } }\n- $lte: Less than or equal\n  Example: { \"price\": { \"$lte\": 100 } }\n\nArray Operators:\n- $in: Match any value in array\n  Example: { \"category\": { \"$in\": [\"electronics\", \"books\"] } }\n- $nin: Does not match any value in array\n  Example: { \"category\": { \"$nin\": [\"electronics\", \"books\"] } }\n\nLogical Operators:\n- $and: Logical AND (implicit when using multiple conditions)\n  Example: { \"$and\": [{ \"price\": { \"$gt\": 100 } }, { \"category\": \"electronics\" }] }\n- $or: Logical OR\n  Example: { \"$or\": [{ \"price\": { \"$lt\": 50 } }, { \"category\": \"books\" }] }\n- $not: Logical NOT\n  Example: { \"$not\": { \"category\": \"electronics\" } }\n\nElement Operators:\n- $exists: Check if field exists\n  Example: { \"rating\": { \"$exists\": true } }\n\nSpecial Operators:\n- $regex: Pattern matching\n  Example: { \"name\": { \"$regex\": \"iphone.*\" } }\n- $count: Array length/value count\n  Example: { \"tags\": { \"$count\": { \"$gt\": 2 } } }\n- $geo: Geographical filters (supports radius, box, polygon)\n  Example: {\n    \"location\": {\n      \"$geo\": {\n        \"type\": \"radius\",\n        \"center\": { \"lat\": 52.5, \"lon\": 13.4 },\n        \"radius\": 10000\n      }\n    }\n  }\n- $hasId: Match specific document IDs\n  Example: { \"$hasId\": [\"doc1\", \"doc2\"] }\n- $hasVector: Check vector existence\n  Example: { \"$hasVector\": \"\" }\n- $datetime: RFC 3339 datetime range\n  Example: {\n    \"created_at\": {\n      \"$datetime\": {\n        \"range\": {\n          \"gt\": \"2024-01-01T00:00:00Z\",\n          \"lt\": \"2024-12-31T23:59:59Z\"\n        }\n      }\n    }\n  }\n- $null: Check for null values\n  Example: { \"field\": { \"$null\": true } }\n- $empty: Check for empty values\n  Example: { \"array\": { \"$empty\": true } }\n- $nested: Nested object filters\n  Example: {\n    \"items[]\": {\n      \"$nested\": {\n        \"price\": { \"$gt\": 100 },\n        \"stock\": { \"$gt\": 0 }\n      }\n    }\n  }\n\nRestrictions:\n- Only logical operators ($and, $or, $not) and collection operators ($hasId, $hasVector) can be used at the top level\n- All other operators must be used within a field condition\n  Valid: { \"field\": { \"$gt\": 100 } }\n  Valid: { \"$and\": [...] }\n  Valid: { \"$hasId\": [...] }\n  Invalid: { \"$gt\": 100 }\n- Nested fields are supported using dot notation\n- Array fields with nested objects use [] suffix: \"items[]\"\n- Geo filtering requires specific format for radius, box, or polygon\n- Datetime values must be in RFC 3339 format\n- Empty arrays in conditions are handled as empty values\n- Null values are handled with $null operator\n- Empty values are handled with $empty operator\n- $regex uses standard regex syntax\n- $count can only be used with numeric comparison operators\n- $nested requires an object with conditions\n- Logical operators must contain field conditions, not direct operators\n  Valid: { \"$and\": [{ \"field\": { \"$gt\": 100 } }] }\n  Invalid: { \"$and\": [{ \"$gt\": 100 }] }\n- $not operator:\n  - Must be an object\n  - Cannot be empty\n  - Can be used at field level or top level\n  - Valid: { \"$not\": { \"field\": \"value\" } }\n  - Valid: { \"field\": { \"$not\": { \"$eq\": \"value\" } } }\n- Other logical operators ($and, $or):\n  - Can only be used at top level or nested within other logical operators\n  - Can not be used on a field level, or be nested inside a field\n  - Can not be used inside an operator\n  - Valid: { \"$and\": [{ \"field\": { \"$gt\": 100 } }] }\n  - Valid: { \"$or\": [{ \"$and\": [{ \"field\": { \"$gt\": 100 } }] }] }\n  - Invalid: { \"field\": { \"$and\": [{ \"$gt\": 100 }] } }\n  - Invalid: { \"field\": { \"$or\": [{ \"$gt\": 100 }] } }\n  - Invalid: { \"field\": { \"$gt\": { \"$and\": [{...}] } } }\nExample Complex Query:\n{\n  \"$and\": [\n    { \"category\": { \"$in\": [\"electronics\"] } },\n    { \"price\": { \"$gt\": 100 } },\n    { \"location\": {\n      \"$geo\": {\n        \"type\": \"radius\",\n        \"center\": { \"lat\": 52.5, \"lon\": 13.4 },\n        \"radius\": 5000\n      }\n    }},\n    { \"items[]\": {\n      \"$nested\": {\n        \"price\": { \"$gt\": 50 },\n        \"stock\": { \"$gt\": 0 }\n      }\n    }},\n    { \"created_at\": {\n      \"$datetime\": {\n        \"range\": {\n          \"gt\": \"2024-01-01T00:00:00Z\"\n        }\n      }\n    }},\n    { \"$or\": [\n      { \"status\": { \"$ne\": \"discontinued\" } },\n      { \"clearance\": true }\n    ]}\n  ]\n}";
 export { QDRANT_PROMPT }
 export { QDRANT_PROMPT as QDRANT_PROMPT_alias_1 }
@@ -354,9 +360,9 @@ export { queryTextDescription as queryTextDescription_alias_1 }
 export { queryTextDescription as queryTextDescription_alias_2 }
 
 declare type QuestionAnswerExtractArgs = {
-    llm?: LLM;
+    llm?: any;
     questions?: number;
-    promptTemplate?: QuestionExtractPrompt['template'];
+    promptTemplate?: string;
     embeddingOnly?: boolean;
 };
 export { QuestionAnswerExtractArgs }
@@ -471,12 +477,12 @@ export declare class RecursiveJsonTransformer {
         convertLists?: boolean;
         ensureAscii?: boolean;
         metadatas?: Record<string, any>[];
-    }): Document_2[];
+    }): Document[];
     transformDocuments({ ensureAscii, documents, convertLists, }: {
         ensureAscii?: boolean;
         convertLists?: boolean;
-        documents: Document_2[];
-    }): Document_2[];
+        documents: Document[];
+    }): Document[];
 }
 
 declare function rerank(results: QueryResult[], query: string, model: MastraLanguageModel, options: RerankerFunctionOptions): Promise<RerankResult[]>;
@@ -529,9 +535,9 @@ export declare function splitTextOnTokens({ text, tokenizer }: {
 }): string[];
 
 declare type SummaryExtractArgs = {
-    llm?: LLM;
+    llm?: any;
     summaries?: string[];
-    promptTemplate?: SummaryPrompt['template'];
+    promptTemplate?: string;
 };
 export { SummaryExtractArgs }
 export { SummaryExtractArgs as SummaryExtractArgs_alias_1 }
@@ -545,7 +551,7 @@ export { SummaryExtractArgs as SummaryExtractArgs_alias_1 }
  */
 declare type SupportedEdgeType = 'semantic';
 
-export declare abstract class TextTransformer implements Transformer_2 {
+export declare abstract class TextTransformer implements Transformer {
     protected size: number;
     protected overlap: number;
     protected lengthFunction: (text: string) => number;
@@ -557,18 +563,18 @@ export declare abstract class TextTransformer implements Transformer_2 {
     abstract splitText({ text }: {
         text: string;
     }): string[];
-    createDocuments(texts: string[], metadatas?: Record<string, any>[]): Document_2[];
-    splitDocuments(documents: Document_2[]): Document_2[];
-    transformDocuments(documents: Document_2[]): Document_2[];
+    createDocuments(texts: string[], metadatas?: Record<string, any>[]): Document[];
+    splitDocuments(documents: Document[]): Document[];
+    transformDocuments(documents: Document[]): Document[];
     protected joinDocs(docs: string[], separator: string): string | null;
     protected mergeSplits(splits: string[], separator: string): string[];
 }
 
 declare type TitleExtractorsArgs = {
-    llm?: LLM;
+    llm?: any;
     nodes?: number;
-    nodeTemplate?: TitleExtractorPrompt['template'];
-    combineTemplate?: TitleCombinePrompt['template'];
+    nodeTemplate?: string;
+    combineTemplate?: string;
 };
 export { TitleExtractorsArgs }
 export { TitleExtractorsArgs as TitleExtractorsArgs_alias_1 }
@@ -618,10 +624,9 @@ export { topKDescription }
 export { topKDescription as topKDescription_alias_1 }
 export { topKDescription as topKDescription_alias_2 }
 
-declare interface Transformer_2 {
-    transformDocuments(documents: Document_2[]): Document_2[];
+export declare interface Transformer {
+    transformDocuments(documents: Document[]): Document[];
 }
-export { Transformer_2 as Transformer }
 
 declare const UPSTASH_PROMPT = "When querying Upstash Vector, you can ONLY use the operators listed below. Any other operators will be rejected.\nImportant: Don't explain how to construct the filter - use the specified operators and fields to search the content and return relevant results.\nIf a user tries to give an explicit operator that is not supported, reject the filter entirely and let them know that the operator is not supported.\n\nBasic Comparison Operators:\n- $eq: Exact match (default when using field: value)\n  Example: { \"category\": \"electronics\" } or { \"category\": { \"$eq\": \"electronics\" } }\n- $ne: Not equal\n  Example: { \"category\": { \"$ne\": \"electronics\" } }\n- $gt: Greater than\n  Example: { \"price\": { \"$gt\": 100 } }\n- $gte: Greater than or equal\n  Example: { \"price\": { \"$gte\": 100 } }\n- $lt: Less than\n  Example: { \"price\": { \"$lt\": 100 } }\n- $lte: Less than or equal\n  Example: { \"price\": { \"$lte\": 100 } }\n\nArray Operators:\n- $in: Match any value in array\n  Example: { \"category\": { \"$in\": [\"electronics\", \"books\"] } }\n- $nin: Does not match any value in array\n  Example: { \"category\": { \"$nin\": [\"electronics\", \"books\"] } }\n- $all: Matches all values in array\n  Example: { \"tags\": { \"$all\": [\"premium\", \"new\"] } }\n\nLogical Operators:\n- $and: Logical AND (implicit when using multiple conditions)\n  Example: { \"$and\": [{ \"price\": { \"$gt\": 100 } }, { \"category\": \"electronics\" }] }\n- $or: Logical OR\n  Example: { \"$or\": [{ \"price\": { \"$lt\": 50 } }, { \"category\": \"books\" }] }\n- $not: Logical NOT\n  Example: { \"$not\": { \"category\": \"electronics\" } }\n- $nor: Logical NOR\n  Example: { \"$nor\": [{ \"price\": { \"$lt\": 50 } }, { \"category\": \"books\" }] }\n\nElement Operators:\n- $exists: Check if field exists\n  Example: { \"rating\": { \"$exists\": true } }\n\nSpecial Operators:\n- $regex: Pattern matching using glob syntax (only as operator, not direct RegExp)\n  Example: { \"name\": { \"$regex\": \"iphone*\" } }\n- $contains: Check if array/string contains value\n  Example: { \"tags\": { \"$contains\": \"premium\" } }\n\nRestrictions:\n- Null/undefined values are not supported in any operator\n- Empty arrays are only supported in $in/$nin operators\n- Direct RegExp patterns are not supported, use $regex with glob syntax\n- Nested fields are supported using dot notation\n- Multiple conditions on same field are combined with AND\n- String values with quotes are automatically escaped\n- Only logical operators ($and, $or, $not, $nor) can be used at the top level\n- All other operators must be used within a field condition\n  Valid: { \"field\": { \"$gt\": 100 } }\n  Valid: { \"$and\": [...] }\n  Invalid: { \"$gt\": 100 }\n- $regex uses glob syntax (*, ?) not standard regex patterns\n- $contains works on both arrays and string fields\n- Logical operators must contain field conditions, not direct operators\n  Valid: { \"$and\": [{ \"field\": { \"$gt\": 100 } }] }\n  Invalid: { \"$and\": [{ \"$gt\": 100 }] }\n- $not operator:\n  - Must be an object\n  - Cannot be empty\n  - Can be used at field level or top level\n  - Valid: { \"$not\": { \"field\": \"value\" } }\n  - Valid: { \"field\": { \"$not\": { \"$eq\": \"value\" } } }\n- Other logical operators ($and, $or, $nor):\n  - Can only be used at top level or nested within other logical operators\n  - Can not be used on a field level, or be nested inside a field\n  - Can not be used inside an operator\n  - Valid: { \"$and\": [{ \"field\": { \"$gt\": 100 } }] }\n  - Valid: { \"$or\": [{ \"$and\": [{ \"field\": { \"$gt\": 100 } }] }] }\n  - Invalid: { \"field\": { \"$and\": [{ \"$gt\": 100 }] } }\n  - Invalid: { \"field\": { \"$or\": [{ \"$gt\": 100 }] } }\n  - Invalid: { \"field\": { \"$gt\": { \"$and\": [{...}] } } }\nExample Complex Query:\n{\n  \"$and\": [\n    { \"category\": { \"$in\": [\"electronics\", \"computers\"] } },\n    { \"price\": { \"$gt\": 100, \"$lt\": 1000 } },\n    { \"tags\": { \"$all\": [\"premium\", \"new\"] } },\n    { \"name\": { \"$regex\": \"iphone*\" } },\n    { \"description\": { \"$contains\": \"latest\" } },\n    { \"$or\": [\n      { \"brand\": \"Apple\" },\n      { \"rating\": { \"$gte\": 4.5 } }\n    ]}\n  ]\n}";
 export { UPSTASH_PROMPT }

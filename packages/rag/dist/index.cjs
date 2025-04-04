@@ -1,14 +1,11 @@
 'use strict';
 
-var llamaindex = require('llamaindex');
 var nodeHtmlBetterParser = require('node-html-better-parser');
 var jsTiktoken = require('js-tiktoken');
 var relevance = require('@mastra/core/relevance');
 var tools = require('@mastra/core/tools');
 var zod = require('zod');
 var ai = require('ai');
-
-// src/document/document.ts
 
 // src/document/types.ts
 var Language = /* @__PURE__ */ ((Language2) => {
@@ -40,6 +37,8 @@ var Language = /* @__PURE__ */ ((Language2) => {
   Language2["POWERSHELL"] = "powershell";
   return Language2;
 })(Language || {});
+
+// src/document/transformers/text.ts
 var TextTransformer = class {
   size;
   overlap;
@@ -82,12 +81,10 @@ var TextTransformer = class {
           metadata.startIndex = index;
           previousChunkLen = chunk.length;
         }
-        documents.push(
-          new llamaindex.Document({
-            text: chunk,
-            metadata
-          })
-        );
+        documents.push({
+          text: chunk,
+          metadata
+        });
       });
     });
     return documents;
@@ -413,7 +410,7 @@ var HTMLHeaderTransformer = class {
       });
     });
     return this.returnEachElement ? elements.map(
-      (el) => new llamaindex.Document({
+      (el) => ({
         text: el.content,
         metadata: { ...el.metadata, xpath: el.xpath }
       })
@@ -465,7 +462,7 @@ var HTMLHeaderTransformer = class {
       }
     }
     return aggregatedChunks.map(
-      (chunk) => new llamaindex.Document({
+      (chunk) => ({
         text: chunk.content,
         metadata: { ...chunk.metadata, xpath: chunk.xpath }
       })
@@ -486,12 +483,10 @@ var HTMLHeaderTransformer = class {
             }
           }
         }
-        documents.push(
-          new llamaindex.Document({
-            text: chunk.text,
-            metadata: { ...metadata, ...chunkMetadata }
-          })
-        );
+        documents.push({
+          text: chunk.text,
+          metadata: { ...metadata, ...chunkMetadata }
+        });
       }
     }
     return documents;
@@ -516,7 +511,7 @@ var HTMLSectionTransformer = class {
   splitText(text) {
     const sections = this.splitHtmlByHeaders(text);
     return sections.map(
-      (section) => new llamaindex.Document({
+      (section) => ({
         text: section.content,
         metadata: {
           [this.headersToSplitOn[section.tagName.toLowerCase()]]: section.header,
@@ -598,12 +593,10 @@ var HTMLSectionTransformer = class {
             }
           }
         }
-        documents.push(
-          new llamaindex.Document({
-            text: chunk.text,
-            metadata: { ...metadata, ...chunkMetadata }
-          })
-        );
+        documents.push({
+          text: chunk.text,
+          metadata: { ...metadata, ...chunkMetadata }
+        });
       }
     }
     return documents;
@@ -618,6 +611,8 @@ var HTMLSectionTransformer = class {
     return this.createDocuments(texts, metadatas);
   }
 };
+
+// src/document/transformers/json.ts
 var RecursiveJsonTransformer = class _RecursiveJsonTransformer {
   maxSize;
   minSize;
@@ -988,12 +983,10 @@ var RecursiveJsonTransformer = class _RecursiveJsonTransformer {
       const chunks = this.splitText({ jsonData: JSON.parse(text), convertLists, ensureAscii });
       chunks.forEach((chunk) => {
         const metadata = { ..._metadatas[i] || {} };
-        documents.push(
-          new llamaindex.Document({
-            text: chunk,
-            metadata
-          })
-        );
+        documents.push({
+          text: chunk,
+          metadata
+        });
       });
     });
     return documents;
@@ -1025,6 +1018,8 @@ var LatexTransformer = class extends RecursiveCharacterTransformer {
     super({ separators, isSeparatorRegex: true, options });
   }
 };
+
+// src/document/transformers/markdown.ts
 var MarkdownTransformer = class extends RecursiveCharacterTransformer {
   constructor(options = {}) {
     const separators = RecursiveCharacterTransformer.getSeparatorsForLanguage("markdown" /* MARKDOWN */);
@@ -1045,7 +1040,7 @@ var MarkdownHeaderTransformer = class {
       return lines.flatMap((line) => {
         const contentLines = line.content.split("\n");
         return contentLines.filter((l) => l.trim() !== "" || this.headersToSplitOn.some(([sep]) => l.trim().startsWith(sep))).map(
-          (l) => new llamaindex.Document({
+          (l) => ({
             text: l.trim(),
             metadata: line.metadata
           })
@@ -1070,7 +1065,7 @@ var MarkdownHeaderTransformer = class {
       }
     }
     return aggregatedChunks.map(
-      (chunk) => new llamaindex.Document({
+      (chunk) => ({
         text: chunk.content,
         metadata: chunk.metadata
       })
@@ -1171,12 +1166,10 @@ var MarkdownHeaderTransformer = class {
     texts.forEach((text, i) => {
       this.splitText({ text }).forEach((chunk) => {
         const metadata = { ..._metadatas[i], ...chunk.metadata };
-        documents.push(
-          new llamaindex.Document({
-            text: chunk.text,
-            metadata
-          })
-        );
+        documents.push({
+          text: chunk.text,
+          metadata
+        });
       });
     });
     return documents;
@@ -1282,44 +1275,99 @@ var TokenTransformer = class _TokenTransformer extends TextTransformer {
 };
 
 // src/document/document.ts
+var TitleExtractor = class {
+  options;
+  constructor(options = {}) {
+    this.options = options;
+  }
+};
+var SummaryExtractor = class {
+  options;
+  constructor(options = {}) {
+    this.options = options;
+  }
+};
+var QuestionsAnsweredExtractor = class {
+  options;
+  constructor(options = {}) {
+    this.options = options;
+  }
+};
+var KeywordExtractor = class {
+  options;
+  constructor(options = {}) {
+    this.options = options;
+  }
+};
+var IngestionPipeline = class {
+  transformations;
+  constructor({ transformations }) {
+    this.transformations = transformations;
+  }
+  async run({ documents }) {
+    return documents;
+  }
+};
 var MDocument = class _MDocument {
   chunks;
   type;
   // e.g., 'text', 'html', 'markdown', 'json'
   constructor({ docs, type }) {
     this.chunks = docs.map((d) => {
-      return new llamaindex.Document({ text: d.text, metadata: d.metadata });
+      return { text: d.text, metadata: d.metadata || {} };
     });
     this.type = type;
   }
   async extractMetadata({ title, summary, questions, keywords }) {
     const transformations = [];
     if (typeof summary !== "undefined") {
-      transformations.push(new llamaindex.SummaryExtractor(typeof summary === "boolean" ? {} : summary));
+      transformations.push(new SummaryExtractor(typeof summary === "boolean" ? {} : summary));
     }
     if (typeof questions !== "undefined") {
-      transformations.push(new llamaindex.QuestionsAnsweredExtractor(typeof questions === "boolean" ? {} : questions));
+      transformations.push(new QuestionsAnsweredExtractor(typeof questions === "boolean" ? {} : questions));
     }
     if (typeof keywords !== "undefined") {
-      transformations.push(new llamaindex.KeywordExtractor(typeof keywords === "boolean" ? {} : keywords));
+      transformations.push(new KeywordExtractor(typeof keywords === "boolean" ? {} : keywords));
     }
     if (typeof title !== "undefined") {
-      transformations.push(new llamaindex.TitleExtractor(typeof title === "boolean" ? {} : title));
+      transformations.push(new TitleExtractor(typeof title === "boolean" ? {} : title));
     }
-    const pipeline = new llamaindex.IngestionPipeline({
+    const pipeline = new IngestionPipeline({
       transformations
     });
-    const nodes = await pipeline.run({
-      documents: this.chunks
-    });
-    this.chunks = this.chunks.map((doc, i) => {
-      return new llamaindex.Document({
+    await pipeline.run({ documents: this.chunks });
+    this.chunks.map((doc) => {
+      const text = doc.text;
+      const newMetadata = { ...doc.metadata };
+      if (typeof title !== "undefined") {
+        const firstLine = text.split("\n")[0] ?? "";
+        const firstSentence = text.split(/[.!?]/)[0] ?? "";
+        newMetadata.title = firstLine.length < 100 ? firstLine : firstSentence.length < 100 ? firstSentence : text.substring(0, 100);
+      }
+      if (typeof summary !== "undefined") {
+        const firstParagraph = text.split("\n\n")[0] ?? "";
+        newMetadata.summary = firstParagraph.length < 200 ? firstParagraph : text.substring(0, 200) + "...";
+      }
+      if (typeof keywords !== "undefined") {
+        const stopwords = /* @__PURE__ */ new Set(["the", "a", "an", "in", "on", "at", "to", "for", "and", "or", "but", "is", "are", "was", "were"]);
+        const words = text.toLowerCase().match(/\b\w+\b/g) || [];
+        const wordCounts = {};
+        words.forEach((word) => {
+          if (!stopwords.has(word) && word.length > 3) {
+            wordCounts[word] = (wordCounts[word] || 0) + 1;
+          }
+        });
+        const sortedWords = Object.entries(wordCounts).sort((a, b) => b[1] - a[1]).slice(0, 5).map(([word]) => word);
+        newMetadata.keywords = sortedWords;
+      }
+      if (typeof questions !== "undefined") {
+        const questionSentences = text.match(/[^.!?]*\?/g) || [];
+        newMetadata.questions = questionSentences.slice(0, 3);
+      }
+      return {
         text: doc.text,
-        metadata: {
-          ...doc.metadata,
-          ...nodes?.[i]?.metadata || {}
-        }
-      });
+        metadata: newMetadata
+      };
     });
     return this;
   }
