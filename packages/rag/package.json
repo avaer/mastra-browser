@@ -1,6 +1,6 @@
 {
-  "name": "@mastra/rag",
-  "version": "0.1.14-alpha.3",
+  "name": "mastra-browser-rag",
+  "version": "0.0.1",
   "description": "",
   "type": "module",
   "main": "dist/index.js",
@@ -29,7 +29,7 @@
   "dependencies": {
     "@llamaindex/core": "^0.4.23",
     "@llamaindex/env": "^0.1.29",
-    "@mastra/core": "workspace:^",
+    "@mastra/core": "npm:mastra-browser-core",
     "@paralleldrive/cuid2": "^2.2.2",
     "js-tiktoken": "^1.0.19",
     "llamaindex": "^0.8.37",
