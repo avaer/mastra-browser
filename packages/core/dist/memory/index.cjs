@@ -1,12 +1,12 @@
 'use strict';
 
-var chunkGZ2TYBIZ_cjs = require('../chunk-GZ2TYBIZ.cjs');
+var chunkFNEF4E2Y_cjs = require('../chunk-FNEF4E2Y.cjs');
 
 
 
 Object.defineProperty(exports, "MastraMemory", {
   enumerable: true,
-  get: function () { return chunkGZ2TYBIZ_cjs.MastraMemory; }
+  get: function () { return chunkFNEF4E2Y_cjs.MastraMemory; }
 });
 //# sourceMappingURL=index.cjs.map
 //# sourceMappingURL=index.cjs.map

@@ -3,12 +3,12 @@
 var chunkLUYBA3WN_cjs = require('./chunk-LUYBA3WN.cjs');
 var chunkC2FGJRDV_cjs = require('./chunk-C2FGJRDV.cjs');
 var chunkIYB4E5SF_cjs = require('./chunk-IYB4E5SF.cjs');
-var chunk2HLDXBUY_cjs = require('./chunk-2HLDXBUY.cjs');
-var chunkGZ2TYBIZ_cjs = require('./chunk-GZ2TYBIZ.cjs');
+var chunkFNEF4E2Y_cjs = require('./chunk-FNEF4E2Y.cjs');
 var chunkSWYZHOFJ_cjs = require('./chunk-SWYZHOFJ.cjs');
-var chunkI3R2VONK_cjs = require('./chunk-I3R2VONK.cjs');
 var chunk6JRSDXSG_cjs = require('./chunk-6JRSDXSG.cjs');
+var chunk2HLDXBUY_cjs = require('./chunk-2HLDXBUY.cjs');
 var chunkATZYUG5Z_cjs = require('./chunk-ATZYUG5Z.cjs');
+var chunkI3R2VONK_cjs = require('./chunk-I3R2VONK.cjs');
 var chunkJO77SZ6N_cjs = require('./chunk-JO77SZ6N.cjs');
 var chunkXXM463NA_cjs = require('./chunk-XXM463NA.cjs');
 var chunkIXT3T67O_cjs = require('./chunk-IXT3T67O.cjs');
@@ -79,7 +79,7 @@ function createLogger2(options) {
 chunk7D636BPD_cjs.__name(createLogger2, "createLogger");
 
 // src/memory/index.warning.ts
-var _MastraMemory = class _MastraMemory extends chunkGZ2TYBIZ_cjs.MastraMemory {
+var _MastraMemory = class _MastraMemory extends chunkFNEF4E2Y_cjs.MastraMemory {
   constructor(_arg) {
     super({ name: `Deprecated memory` });
     this.logger.warn('Please import "MastraMemory" from "@mastra/core/memory" instead of "@mastra/core"');
@@ -200,21 +200,13 @@ Object.defineProperty(exports, "workflowToStep", {
   enumerable: true,
   get: function () { return chunkC2FGJRDV_cjs.workflowToStep; }
 });
-Object.defineProperty(exports, "Mastra", {
-  enumerable: true,
-  get: function () { return chunk2HLDXBUY_cjs.Mastra; }
-});
-Object.defineProperty(exports, "DefaultVectorDB", {
-  enumerable: true,
-  get: function () { return chunkGZ2TYBIZ_cjs.PGliteVector; }
-});
-Object.defineProperty(exports, "PGliteVector", {
-  enumerable: true,
-  get: function () { return chunkGZ2TYBIZ_cjs.PGliteVector; }
-});
 Object.defineProperty(exports, "AgentNetwork", {
   enumerable: true,
   get: function () { return chunk6JRSDXSG_cjs.AgentNetwork; }
+});
+Object.defineProperty(exports, "Mastra", {
+  enumerable: true,
+  get: function () { return chunk2HLDXBUY_cjs.Mastra; }
 });
 Object.defineProperty(exports, "CohereRelevanceScorer", {
   enumerable: true,

@@ -1,20 +1,18 @@
-'use strict';
-
-var chunkNXHJJ76H_cjs = require('./chunk-NXHJJ76H.cjs');
-var chunkSWYZHOFJ_cjs = require('./chunk-SWYZHOFJ.cjs');
-var chunkAUCYZR4G_cjs = require('./chunk-AUCYZR4G.cjs');
-var chunkIXT3T67O_cjs = require('./chunk-IXT3T67O.cjs');
-var chunkSUWCCDLE_cjs = require('./chunk-SUWCCDLE.cjs');
-var chunk7D636BPD_cjs = require('./chunk-7D636BPD.cjs');
-var path = require('path');
-var pglite = require('@electric-sql/pglite');
-var vector = require('@electric-sql/pglite/vector');
+import { BaseFilterTranslator } from './chunk-W3JW2AUS.js';
+import { MastraVector } from './chunk-I4XYJ73M.js';
+import { DefaultProxyStorage } from './chunk-BTX6PTDN.js';
+import { deepMerge } from './chunk-HXRGB7YQ.js';
+import { MastraBase } from './chunk-LE72NI7K.js';
+import { __name, __publicField } from './chunk-WH5OY6PO.js';
+import { isAbsolute, join, resolve } from 'path';
+import { PGlite, MemoryFS } from '@electric-sql/pglite';
+import { vector } from '@electric-sql/pglite/vector';
 
 // src/vector/pglite/filter.ts
-var _PGliteFilterTranslator = class _PGliteFilterTranslator extends chunkNXHJJ76H_cjs.BaseFilterTranslator {
+var _PGliteFilterTranslator = class _PGliteFilterTranslator extends BaseFilterTranslator {
   getSupportedOperators() {
     return {
-      ...chunkNXHJJ76H_cjs.BaseFilterTranslator.DEFAULT_OPERATORS,
+      ...BaseFilterTranslator.DEFAULT_OPERATORS,
       regex: [],
       custom: ["$contains", "$size"]
     };
@@ -30,7 +28,7 @@ var _PGliteFilterTranslator = class _PGliteFilterTranslator extends chunkNXHJJ76
     if (this.isRegex(node)) {
       throw new Error("Direct regex pattern format is not supported in PGlite");
     }
-    const withPath = /* @__PURE__ */ chunk7D636BPD_cjs.__name((result2) => currentPath ? { [currentPath]: result2 } : result2, "withPath");
+    const withPath = /* @__PURE__ */ __name((result2) => currentPath ? { [currentPath]: result2 } : result2, "withPath");
     if (this.isPrimitive(node)) {
       return withPath({ $eq: this.normalizeComparisonValue(node) });
     }
@@ -65,11 +63,11 @@ var _PGliteFilterTranslator = class _PGliteFilterTranslator extends chunkNXHJJ76
     return result;
   }
 };
-chunk7D636BPD_cjs.__name(_PGliteFilterTranslator, "PGliteFilterTranslator");
+__name(_PGliteFilterTranslator, "PGliteFilterTranslator");
 var PGliteFilterTranslator = _PGliteFilterTranslator;
 
 // src/vector/pglite/sql-builder.ts
-var createBasicOperator = /* @__PURE__ */ chunk7D636BPD_cjs.__name((symbol) => {
+var createBasicOperator = /* @__PURE__ */ __name((symbol) => {
   return (key) => ({
     sql: `CASE 
       WHEN $1 IS NULL THEN metadata->>'${handleKey(key)}' IS ${symbol === "=" ? "" : "NOT"} NULL
@@ -78,13 +76,13 @@ var createBasicOperator = /* @__PURE__ */ chunk7D636BPD_cjs.__name((symbol) => {
     needsValue: true
   });
 }, "createBasicOperator");
-var createNumericOperator = /* @__PURE__ */ chunk7D636BPD_cjs.__name((symbol) => {
+var createNumericOperator = /* @__PURE__ */ __name((symbol) => {
   return (key) => ({
     sql: `CAST(metadata->>'${handleKey(key)}' AS NUMERIC) ${symbol} $1`,
     needsValue: true
   });
 }, "createNumericOperator");
-var validateJsonArray = /* @__PURE__ */ chunk7D636BPD_cjs.__name((key) => `jsonb_typeof(metadata->'${handleKey(key)}') = 'array'`, "validateJsonArray");
+var validateJsonArray = /* @__PURE__ */ __name((key) => `jsonb_typeof(metadata->'${handleKey(key)}') = 'array'`, "validateJsonArray");
 var FILTER_OPERATORS = {
   $eq: createBasicOperator("="),
   $ne: createBasicOperator("!="),
@@ -93,18 +91,18 @@ var FILTER_OPERATORS = {
   $lt: createNumericOperator("<"),
   $lte: createNumericOperator("<="),
   // Array Operators
-  $in: /* @__PURE__ */ chunk7D636BPD_cjs.__name((key, value) => ({
+  $in: /* @__PURE__ */ __name((key, value) => ({
     sql: `metadata->>'${handleKey(key)}' IN (${value.map((_, i) => `$${i + 1}`).join(",")})`,
     needsValue: true
   }), "$in"),
-  $nin: /* @__PURE__ */ chunk7D636BPD_cjs.__name((key, value) => ({
+  $nin: /* @__PURE__ */ __name((key, value) => ({
     sql: `metadata->>'${handleKey(key)}' NOT IN (${value.map((_, i) => `$${i + 1}`).join(",")})`,
     needsValue: true
   }), "$nin"),
-  $all: /* @__PURE__ */ chunk7D636BPD_cjs.__name((key) => ({
+  $all: /* @__PURE__ */ __name((key) => ({
     sql: `metadata->>'${handleKey(key)}' = $1`,
     needsValue: true,
-    transformValue: /* @__PURE__ */ chunk7D636BPD_cjs.__name((value) => {
+    transformValue: /* @__PURE__ */ __name((value) => {
       const arrayValue = Array.isArray(value) ? value : [value];
       if (arrayValue.length === 0) {
         return {
@@ -131,10 +129,10 @@ var FILTER_OPERATORS = {
       };
     }, "transformValue")
   }), "$all"),
-  $elemMatch: /* @__PURE__ */ chunk7D636BPD_cjs.__name((key) => ({
+  $elemMatch: /* @__PURE__ */ __name((key) => ({
     sql: `metadata->>'${handleKey(key)}' = $1`,
     needsValue: true,
-    transformValue: /* @__PURE__ */ chunk7D636BPD_cjs.__name((value) => {
+    transformValue: /* @__PURE__ */ __name((value) => {
       if (typeof value !== "object" || Array.isArray(value)) {
         throw new Error("$elemMatch requires an object with conditions");
       }
@@ -173,25 +171,25 @@ var FILTER_OPERATORS = {
     }, "transformValue")
   }), "$elemMatch"),
   // Element Operators
-  $exists: /* @__PURE__ */ chunk7D636BPD_cjs.__name((key) => ({
+  $exists: /* @__PURE__ */ __name((key) => ({
     sql: `metadata ? '${handleKey(key)}'`,
     needsValue: false
   }), "$exists"),
   // Logical Operators
-  $and: /* @__PURE__ */ chunk7D636BPD_cjs.__name((key) => ({
+  $and: /* @__PURE__ */ __name((key) => ({
     sql: `(${key})`,
     needsValue: false
   }), "$and"),
-  $or: /* @__PURE__ */ chunk7D636BPD_cjs.__name((key) => ({
+  $or: /* @__PURE__ */ __name((key) => ({
     sql: `(${key})`,
     needsValue: false
   }), "$or"),
-  $not: /* @__PURE__ */ chunk7D636BPD_cjs.__name((key) => ({ sql: `NOT (${key})`, needsValue: false }), "$not"),
-  $nor: /* @__PURE__ */ chunk7D636BPD_cjs.__name((key) => ({
+  $not: /* @__PURE__ */ __name((key) => ({ sql: `NOT (${key})`, needsValue: false }), "$not"),
+  $nor: /* @__PURE__ */ __name((key) => ({
     sql: `NOT (${key})`,
     needsValue: false
   }), "$nor"),
-  $size: /* @__PURE__ */ chunk7D636BPD_cjs.__name((key) => ({
+  $size: /* @__PURE__ */ __name((key) => ({
     sql: `(
     CASE
       WHEN jsonb_typeof(metadata->'${handleKey(key)}') = 'array' THEN 
@@ -201,10 +199,10 @@ var FILTER_OPERATORS = {
   )`,
     needsValue: true
   }), "$size"),
-  $contains: /* @__PURE__ */ chunk7D636BPD_cjs.__name((key) => ({
+  $contains: /* @__PURE__ */ __name((key) => ({
     sql: `metadata->>'${handleKey(key)}' = $1`,
     needsValue: true,
-    transformValue: /* @__PURE__ */ chunk7D636BPD_cjs.__name((value) => {
+    transformValue: /* @__PURE__ */ __name((value) => {
       if (Array.isArray(value)) {
         return {
           sql: `(
@@ -230,7 +228,7 @@ var FILTER_OPERATORS = {
             }
           }
         };
-        chunk7D636BPD_cjs.__name(traverse2, "traverse");
+        __name(traverse2, "traverse");
         const paths = [];
         const values = [];
         traverse2(value);
@@ -243,7 +241,7 @@ var FILTER_OPERATORS = {
     }, "transformValue")
   }), "$contains")
 };
-var handleKey = /* @__PURE__ */ chunk7D636BPD_cjs.__name((key) => {
+var handleKey = /* @__PURE__ */ __name((key) => {
   return key.replace(/\./g, "->>");
 }, "handleKey");
 function buildFilterQuery(filter) {
@@ -261,7 +259,7 @@ function buildFilterQuery(filter) {
     values
   };
 }
-chunk7D636BPD_cjs.__name(buildFilterQuery, "buildFilterQuery");
+__name(buildFilterQuery, "buildFilterQuery");
 function buildCondition(key, value, parentPath) {
   if (["$and", "$or", "$not", "$nor"].includes(key)) {
     return handleLogicalOperator(key, value);
@@ -274,7 +272,7 @@ function buildCondition(key, value, parentPath) {
   }
   return handleOperator(key, value);
 }
-chunk7D636BPD_cjs.__name(buildCondition, "buildCondition");
+__name(buildCondition, "buildCondition");
 function handleLogicalOperator(key, value, parentPath) {
   if (!value || value.length === 0) {
     switch (key) {
@@ -312,7 +310,7 @@ function handleLogicalOperator(key, value, parentPath) {
     values
   };
 }
-chunk7D636BPD_cjs.__name(handleLogicalOperator, "handleLogicalOperator");
+__name(handleLogicalOperator, "handleLogicalOperator");
 function handleOperator(key, value) {
   if (typeof value === "object" && !Array.isArray(value)) {
     const entries = Object.entries(value);
@@ -332,8 +330,8 @@ function handleOperator(key, value) {
   const [[operator, operatorValue] = []] = Object.entries(value);
   return processOperator(key, operator, operatorValue);
 }
-chunk7D636BPD_cjs.__name(handleOperator, "handleOperator");
-var processOperator = /* @__PURE__ */ chunk7D636BPD_cjs.__name((key, operator, operatorValue) => {
+__name(handleOperator, "handleOperator");
+var processOperator = /* @__PURE__ */ __name((key, operator, operatorValue) => {
   if (!operator.startsWith("$") || !FILTER_OPERATORS[operator]) {
     throw new Error(`Invalid operator: ${operator}`);
   }
@@ -353,7 +351,7 @@ var processOperator = /* @__PURE__ */ chunk7D636BPD_cjs.__name((key, operator, o
 }, "processOperator");
 
 // src/vector/pglite/index.ts
-var _PGliteVector = class _PGliteVector extends chunkSWYZHOFJ_cjs.MastraVector {
+var _PGliteVector = class _PGliteVector extends MastraVector {
   constructor({
     connectionUrl,
     authToken,
@@ -361,16 +359,16 @@ var _PGliteVector = class _PGliteVector extends chunkSWYZHOFJ_cjs.MastraVector {
     syncInterval
   }) {
     super();
-    chunk7D636BPD_cjs.__publicField(this, "client", null);
-    chunk7D636BPD_cjs.__publicField(this, "clientPromise", null);
+    __publicField(this, "client", null);
+    __publicField(this, "clientPromise", null);
     this.clientPromise = this.initClient(connectionUrl);
   }
   async initClient(connectionUrl) {
     try {
-      const client = await pglite.PGlite.create(this.rewriteDbUrl(connectionUrl), {
-        fs: new pglite.MemoryFS(),
+      const client = await PGlite.create(this.rewriteDbUrl(connectionUrl), {
+        fs: new MemoryFS(),
         extensions: {
-          vector: vector.vector
+          vector
           // Enable pgvector support
         }
       });
@@ -385,13 +383,13 @@ var _PGliteVector = class _PGliteVector extends chunkSWYZHOFJ_cjs.MastraVector {
   rewriteDbUrl(url) {
     if (url.startsWith("file:") && url !== "file::memory:") {
       const pathPart = url.slice("file:".length);
-      if (path.isAbsolute(pathPart)) {
+      if (isAbsolute(pathPart)) {
         return url;
       }
       const cwd = process.cwd();
       if (cwd.includes(".mastra") && (cwd.endsWith(`output`) || cwd.endsWith(`output/`) || cwd.endsWith(`output\\`))) {
-        const baseDir = path.join(cwd, `..`, `..`);
-        const fullPath = path.resolve(baseDir, pathPart);
+        const baseDir = join(cwd, `..`, `..`);
+        const fullPath = resolve(baseDir, pathPart);
         this.logger.debug(
           `Initializing PGlite db with url ${url} with relative file path from inside .mastra/output directory. Rewriting relative file url to "file:${fullPath}". This ensures it's outside the .mastra/output directory.`
         );
@@ -643,18 +641,18 @@ var _PGliteVector = class _PGliteVector extends chunkSWYZHOFJ_cjs.MastraVector {
     }
   }
 };
-chunk7D636BPD_cjs.__name(_PGliteVector, "PGliteVector");
+__name(_PGliteVector, "PGliteVector");
 var PGliteVector = _PGliteVector;
 
 // src/memory/memory.ts
-var _MastraMemory = class _MastraMemory extends chunkSUWCCDLE_cjs.MastraBase {
+var _MastraMemory = class _MastraMemory extends MastraBase {
   constructor(config) {
     super({ component: "MEMORY", name: config.name });
-    chunk7D636BPD_cjs.__publicField(this, "MAX_CONTEXT_TOKENS");
-    chunk7D636BPD_cjs.__publicField(this, "storage");
-    chunk7D636BPD_cjs.__publicField(this, "vector");
-    chunk7D636BPD_cjs.__publicField(this, "embedder");
-    chunk7D636BPD_cjs.__publicField(this, "threadConfig", {
+    __publicField(this, "MAX_CONTEXT_TOKENS");
+    __publicField(this, "storage");
+    __publicField(this, "vector");
+    __publicField(this, "embedder");
+    __publicField(this, "threadConfig", {
       lastMessages: 40,
       semanticRecall: true,
       threads: {
@@ -662,7 +660,7 @@ var _MastraMemory = class _MastraMemory extends chunkSUWCCDLE_cjs.MastraBase {
         // TODO: should we disable this by default to reduce latency?
       }
     });
-    this.storage = config.storage || new chunkAUCYZR4G_cjs.DefaultProxyStorage({
+    this.storage = config.storage || new DefaultProxyStorage({
       config: {
         url: "file:memory.db"
       }
@@ -722,7 +720,7 @@ var _MastraMemory = class _MastraMemory extends chunkSUWCCDLE_cjs.MastraBase {
     return { indexName };
   }
   getMergedThreadConfig(config) {
-    return chunkIXT3T67O_cjs.deepMerge(this.threadConfig, config || {});
+    return deepMerge(this.threadConfig, config || {});
   }
   estimateTokens(text) {
     return Math.ceil(text.split(" ").length * 1.3);
@@ -761,7 +759,7 @@ var _MastraMemory = class _MastraMemory extends chunkSUWCCDLE_cjs.MastraBase {
       const resultContents = [...toolResultContents, ...toolMessage.content];
       return { chatMessages: chatMessages2, toolResultContents: resultContents };
     }
-    chunk7D636BPD_cjs.__name(addToolMessageToChat, "addToolMessageToChat");
+    __name(addToolMessageToChat, "addToolMessageToChat");
     const { chatMessages } = messages.reduce(
       (obj, message) => {
         if (message.role === "tool") {
@@ -871,10 +869,9 @@ var _MastraMemory = class _MastraMemory extends chunkSUWCCDLE_cjs.MastraBase {
     return crypto.randomUUID();
   }
 };
-chunk7D636BPD_cjs.__name(_MastraMemory, "MastraMemory");
+__name(_MastraMemory, "MastraMemory");
 var MastraMemory = _MastraMemory;
 
-exports.MastraMemory = MastraMemory;
-exports.PGliteVector = PGliteVector;
-//# sourceMappingURL=chunk-GZ2TYBIZ.cjs.map
-//# sourceMappingURL=chunk-GZ2TYBIZ.cjs.map
+export { MastraMemory };
+//# sourceMappingURL=chunk-5AWVIQA6.js.map
+//# sourceMappingURL=chunk-5AWVIQA6.js.map
