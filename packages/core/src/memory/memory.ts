@@ -18,6 +18,7 @@ import { deepMerge } from '../utils';
 import type { MastraVector } from '../vector';
 // import { defaultEmbedder } from '../vector/fastembed';
 // import { DefaultVectorDB } from '../vector/libsql';
+import { DefaultVectorDB } from '../vector/pglite';
 
 import type { MessageType, SharedMemoryConfig, StorageThreadType, MemoryConfig, AiMessageType } from './types';
 
@@ -71,7 +72,9 @@ export abstract class MastraMemory extends MastraBase {
       // this.vector = new DefaultVectorDB({
       //   connectionUrl: hasOldDb ? `file:${oldDb}` : `file:${newDb}`,
       // });
-      throw new Error('Vector config is required');
+      this.vector = new DefaultVectorDB({
+        connectionUrl: ':memory:',
+      });
     }
 
     if (config.embedder) {
