@@ -1,23 +1,9 @@
 {
-  "name": "mastra-browser-rag",
-  "version": "0.0.2",
+  "name": "@mastra/rag",
+  "version": "0.0.9",
   "description": "",
   "type": "module",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "exports": {
-    ".": {
-      "import": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.js"
-      },
-      "require": {
-        "types": "./dist/index.d.cts",
-        "default": "./dist/index.cjs"
-      }
-    },
-    "./package.json": "./package.json"
-  },
+  "main": "./src/index.ts",
   "scripts": {
     "build": "tsup src/index.ts --format esm,cjs --experimental-dts --clean --treeshake=smallest --splitting",
     "buld:watch": "pnpm build --watch",
@@ -27,7 +13,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@mastra/core": "npm:mastra-browser-core",
+    "@mastra/core": "workspace:*",
     "@paralleldrive/cuid2": "^2.2.2",
     "js-tiktoken": "^1.0.19",
     "node-html-better-parser": "^1.4.7",
@@ -40,7 +26,6 @@
   "devDependencies": {
     "@ai-sdk/cohere": "latest",
     "@ai-sdk/openai": "latest",
-    "@internal/lint": "workspace:*",
     "@microsoft/api-extractor": "^7.52.1",
     "@types/node": "^20.17.27",
     "ai": "^4.1.54",

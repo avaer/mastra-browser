@@ -1,23 +1,9 @@
 {
-  "name": "mastra-browser-mcp",
+  "name": "@mastra/mcp",
   "version": "0.0.3",
   "description": "",
   "type": "module",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "exports": {
-    ".": {
-      "import": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.js"
-      },
-      "require": {
-        "types": "./dist/index.d.cts",
-        "default": "./dist/index.cjs"
-      }
-    },
-    "./package.json": "./package.json"
-  },
+  "main": "./src/index.ts",
   "scripts": {
     "build": "tsup src/index.ts --format esm,cjs --experimental-dts --clean --treeshake=smallest --splitting",
     "build:watch": "pnpm build --watch",
@@ -28,7 +14,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@mastra/core": "npm:mastra-browser-core",
+    "@mastra/core": "workspace:*",
     "@modelcontextprotocol/sdk": "^1.7.0",
     "date-fns": "^4.1.0",
     "exit-hook": "^4.0.0",
@@ -36,7 +22,6 @@
   },
   "devDependencies": {
     "@ai-sdk/anthropic": "^1.1.15",
-    "@internal/lint": "workspace:*",
     "@microsoft/api-extractor": "^7.52.1",
     "@types/node": "^20.17.27",
     "eslint": "^9.23.0",
