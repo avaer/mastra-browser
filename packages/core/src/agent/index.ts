@@ -57,7 +57,7 @@ export class Agent<
   public name: string;
   readonly llm: MastraLLMBase;
   instructions: string;
-  readonly model?: MastraLanguageModel;
+  #model?: MastraLanguageModel;
   #mastra?: Mastra;
   #memory?: MastraMemory;
   tools: TTools;
@@ -65,6 +65,22 @@ export class Agent<
   metrics: TMetrics;
   evals: TMetrics;
   voice?: CompositeVoice;
+  
+  /**
+   * Gets the current language model
+   */
+  get model(): MastraLanguageModel | undefined {
+    return this.#model;
+  }
+  
+  /**
+   * Sets a new language model for the agent
+   */
+  set model(newModel: MastraLanguageModel) {
+    this.#model = newModel;
+    this.llm.setModel(newModel);
+    this.logger.debug(`[Agents:${this.name}] Model updated.`, { model: newModel, name: this.name });
+  }
 
   constructor(config: AgentConfig<TTools, TMetrics>) {
     super({ component: RegisteredLogger.AGENT });
@@ -76,6 +92,7 @@ export class Agent<
       throw new Error(`LanguageModel is required to create an Agent. Please provide the 'model'.`);
     }
 
+    this.#model = config.model;
     this.llm = new MastraLLM({ model: config.model, mastra: config.mastra });
 
     this.tools = {} as TTools;

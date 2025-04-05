@@ -66,6 +66,14 @@ export class MastraLLM extends MastraLLMBase {
     return this.#model;
   }
 
+  setModel(model: LanguageModel) {
+    this.#model = model;
+    this.logger.debug('[LLM] - Model updated', {
+      provider: model.provider,
+      modelId: model.modelId
+    });
+  }
+
   convertTools({
     tools,
     runId,
