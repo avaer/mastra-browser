@@ -1,26 +1,9 @@
 {
-  "name": "mastra-browser-voice-openai",
+  "name": "@mastra/voice-openai",
   "version": "0.0.1",
   "description": "Mastra OpenAI speech integration",
   "type": "module",
-  "files": [
-    "dist"
-  ],
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "exports": {
-    ".": {
-      "import": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.js"
-      },
-      "require": {
-        "types": "./dist/index.d.cts",
-        "default": "./dist/index.cjs"
-      }
-    },
-    "./package.json": "./package.json"
-  },
+  "main": "./src/index.ts",
   "scripts": {
     "build": "tsup src/index.ts --format esm,cjs --experimental-dts --clean --treeshake=smallest --splitting",
     "build:watch": "pnpm build --watch",
@@ -28,12 +11,11 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@mastra/core": "npm:mastra-browser-core",
+    "@mastra/core": "workspace:*",
     "openai": "^4.86.2",
     "zod": "^3.24.2"
   },
   "devDependencies": {
-    "@internal/lint": "workspace:*",
     "@microsoft/api-extractor": "^7.52.1",
     "@types/node": "^20.17.27",
     "eslint": "^9.23.0",
