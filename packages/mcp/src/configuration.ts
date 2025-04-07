@@ -1,7 +1,7 @@
 import { MastraBase } from '@mastra/core/base';
 import { v5 as uuidv5 } from 'uuid';
 import { MastraMCPClient } from './client';
-import type { MastraMCPServerDefinition } from './client';
+import type { MastraMCPServerDefinition, ServerSpecification } from './client';
 
 const mastraMCPConfigurationInstances = new Map<string, InstanceType<typeof MCPConfiguration>>();
 
@@ -58,6 +58,14 @@ To fix this you have three different options:
     }
   }
 
+  public async getServerSpecifications() {
+    const results: Record<string, ServerSpecification> = {};
+    await this.eachClient(async ({ serverName, client }) => {
+      results[serverName] = client.getServerSpecification();
+    });
+    return results;
+  }
+
   public async getTools() {
     this.addToInstanceCache();
     const connectedTools: Record<string, any> = {}; // <- any because we don't have proper tool schemas
@@ -82,6 +90,17 @@ To fix this you have three different options:
     });
 
     return connectedToolsets;
+  }
+
+  public async getResources() {
+    this.addToInstanceCache();
+    const connectedResources: Record<string, any> = {}; // <- any because we don't have proper resource schemas
+
+    await this.eachClientResources(async ({ serverName, resources }) => {
+      connectedResources[serverName] = resources;
+    });
+
+    return connectedResources;
   }
 
   private mcpClientsById = new Map<string, MastraMCPClient>();
@@ -116,11 +135,11 @@ To fix this you have three different options:
     return mcpClient;
   }
 
-  private async eachClientTools(
+  async eachClientTools(
     cb: (input: {
       serverName: string;
       tools: Record<string, any>; // <- any because we don't have proper tool schemas
-      client: InstanceType<typeof MastraMCPClient>;
+      client: MastraMCPClient;
     }) => Promise<void>,
   ) {
     for (const [serverName, serverConfig] of Object.entries(this.serverConfigs)) {
@@ -131,6 +150,36 @@ To fix this you have three different options:
         tools,
         client,
       });
+    }
+  }
+
+   async eachClientResources(
+    cb: (input: {
+      serverName: string;
+      resources: {
+        uri: string;
+        name: string;
+        description?: string;
+        mimeType?: string;
+      }[]; // <- any because we don't have proper resource schemas
+      client: MastraMCPClient;
+    }) => Promise<void>,
+  ) {
+    for (const [serverName, serverConfig] of Object.entries(this.serverConfigs)) {
+      const client = await this.getConnectedClient(serverName, serverConfig);
+      const resources = await client.resources();
+      await cb({ serverName, resources, client });
+    }
+  }
+
+  async eachClient(cb: (input: {
+    serverName: string;
+    client: MastraMCPClient;
+  }) => Promise<void>,
+  ) {
+    for (const [serverName, serverConfig] of Object.entries(this.serverConfigs)) {
+      const client = await this.getConnectedClient(serverName, serverConfig);
+      await cb({ serverName, client });
     }
   }
 }
