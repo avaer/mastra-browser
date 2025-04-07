@@ -172,7 +172,6 @@ export class MastraMCPClient extends MastraBase {
 
   getServerSpecification(): ServerSpecification {
     const capabilities = this.client.getServerCapabilities();
-    // const capabilities = {};
     const version = this.client.getServerVersion();
     const instructions = this.client.getInstructions();
     return {
