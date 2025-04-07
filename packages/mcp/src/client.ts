@@ -233,14 +233,6 @@ export class MastraMCPClient extends MastraBase {
   }
   
   /**
-   * Get the EventTarget for subscribing to resource events
-   * @returns The event target that emits resource change events
-   */
-  getEventTarget(): EventTarget {
-    return this.eventTarget;
-  }
-  
-  /**
    * Subscribe to a resource by URI
    * @param uri The URI of the resource to subscribe to
    * @returns A promise that resolves when the subscription is complete
