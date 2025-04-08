@@ -8,7 +8,7 @@ import { SSEClientTransport } from '@modelcontextprotocol/sdk/client/sse.js';
 import { DEFAULT_REQUEST_TIMEOUT_MSEC } from '@modelcontextprotocol/sdk/shared/protocol.js';
 import type { Protocol } from '@modelcontextprotocol/sdk/shared/protocol.js';
 import type { Transport } from '@modelcontextprotocol/sdk/shared/transport.js';
-import type { ClientCapabilities, ResourceChangedNotification } from '@modelcontextprotocol/sdk/types.js';
+import type { ClientCapabilities, ResourceListChangedNotification } from '@modelcontextprotocol/sdk/types.js';
 import { CallToolResultSchema, ListResourcesResultSchema } from '@modelcontextprotocol/sdk/types.js';
 import { z } from 'zod';
 
