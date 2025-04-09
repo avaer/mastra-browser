@@ -2,6 +2,7 @@ import { MastraBase } from '@mastra/core/base';
 import { v5 as uuidv5 } from 'uuid';
 import { MastraMCPClient } from './client';
 import type { MastraMCPServerDefinition, ServerSpecification } from './client';
+import type { Tool } from '@mastra/core/tools';
 
 const mastraMCPConfigurationInstances = new Map<string, InstanceType<typeof MCPConfiguration>>();
 
@@ -68,7 +69,7 @@ To fix this you have three different options:
 
   public async getTools() {
     this.addToInstanceCache();
-    const connectedTools: Record<string, any> = {}; // <- any because we don't have proper tool schemas
+    const connectedTools: Record<string, Tool> = {}; // <- any because we don't have proper tool schemas
 
     await this.eachClientTools(async ({ serverName, tools }) => {
       for (const [toolName, toolConfig] of Object.entries(tools)) {
@@ -138,7 +139,7 @@ To fix this you have three different options:
   async eachClientTools(
     cb: (input: {
       serverName: string;
-      tools: Record<string, any>; // <- any because we don't have proper tool schemas
+      tools: Record<string, Tool<any, any, any>>; // <- any because we don't have proper tool schemas
       client: MastraMCPClient;
     }) => Promise<void>,
   ) {
