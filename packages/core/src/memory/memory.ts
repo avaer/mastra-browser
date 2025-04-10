@@ -12,13 +12,13 @@ import type {
 
 import { MastraBase } from '../base';
 import type { MastraStorage, StorageGetMessagesArg } from '../storage';
-import { DefaultProxyStorage } from '../storage/default-proxy-storage';
+// import { DefaultProxyStorage } from '../storage/default-proxy-storage';
 import type { CoreTool } from '../tools';
 import { deepMerge } from '../utils';
 import type { MastraVector } from '../vector';
 // import { defaultEmbedder } from '../vector/fastembed';
 // import { DefaultVectorDB } from '../vector/libsql';
-import { DefaultVectorDB } from '../vector/pglite';
+// import { DefaultVectorDB } from '../vector/pglite';
 
 import type { MessageType, SharedMemoryConfig, StorageThreadType, MemoryConfig, AiMessageType } from './types';
 
@@ -44,13 +44,16 @@ export abstract class MastraMemory extends MastraBase {
   constructor(config: { name: string } & SharedMemoryConfig) {
     super({ component: 'MEMORY', name: config.name });
 
-    this.storage =
-      config.storage ||
-      new DefaultProxyStorage({
-        config: {
-          url: 'file:memory.db',
-        },
-      });
+    if (config.storage) {
+      this.storage = config.storage;
+    } else {
+      // new DefaultProxyStorage({
+      //   config: {
+      //     url: 'file:memory.db',
+      //   },
+      // });
+      throw new Error('Storage config is required');
+    }
 
     if (config.vector) {
       this.vector = config.vector;
@@ -72,9 +75,10 @@ export abstract class MastraMemory extends MastraBase {
       // this.vector = new DefaultVectorDB({
       //   connectionUrl: hasOldDb ? `file:${oldDb}` : `file:${newDb}`,
       // });
-      this.vector = new DefaultVectorDB({
-        connectionUrl: ':memory:',
-      });
+      // this.vector = new DefaultVectorDB({
+      //   connectionUrl: ':memory:',
+      // });
+      throw new Error('Vector config is required');
     }
 
     if (config.embedder) {
