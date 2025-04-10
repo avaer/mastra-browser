@@ -1,7 +1,7 @@
 import { join, resolve, isAbsolute } from 'path';
 import { PGlite } from '@electric-sql/pglite';
-import { MemoryFS } from '@electric-sql/pglite';
-import { vector } from '@electric-sql/pglite/vector';
+// import { MemoryFS } from '@electric-sql/pglite';
+// import { vector } from '@electric-sql/pglite/vector';
 
 import type { VectorFilter } from '../filter';
 import { MastraVector } from '../index';
@@ -25,66 +25,18 @@ interface PGliteQueryParams extends QueryVectorParams {
 type PGliteQueryArgs = [...QueryVectorArgs, number?];
 
 export class PGliteVector extends MastraVector {
-  private client: PGlite | null = null;
-  private clientPromise: Promise<PGlite> | null = null;
+  private client: PGlite;
+  private clientPromise: Promise<PGlite>;
 
   constructor({
-    connectionUrl,
-    authToken,
-    syncUrl,
-    syncInterval,
+    client,
   }: {
-    connectionUrl: string;
-    authToken?: string;
-    syncUrl?: string;
-    syncInterval?: number;
+    client: PGlite;
   }) {
     super();
 
-    this.clientPromise = this.initClient(connectionUrl);
-  }
-
-  private async initClient(connectionUrl: string): Promise<PGlite> {
-    try {
-      const client = await PGlite.create(this.rewriteDbUrl(connectionUrl), {
-        fs: new MemoryFS(),
-        extensions: {
-          vector, // Enable pgvector support
-        },
-      });
-      this.client = client;
-      return client;
-    } catch (error) {
-      this.logger.error(`Error initializing PGlite client: ${error}`);
-      throw error;
-    }
-  }
-
-  // If we're in the .mastra/output directory, use the dir outside .mastra dir
-  protected rewriteDbUrl(url: string): string {
-    if (url.startsWith('file:') && url !== 'file::memory:') {
-      const pathPart = url.slice('file:'.length);
-
-      if (isAbsolute(pathPart)) {
-        return url;
-      }
-
-      const cwd = process.cwd();
-
-      if (cwd.includes('.mastra') && (cwd.endsWith(`output`) || cwd.endsWith(`output/`) || cwd.endsWith(`output\\`))) {
-        const baseDir = join(cwd, `..`, `..`); // <- .mastra/output/../../
-
-        const fullPath = resolve(baseDir, pathPart);
-
-        this.logger.debug(
-          `Initializing PGlite db with url ${url} with relative file path from inside .mastra/output directory. Rewriting relative file url to "file:${fullPath}". This ensures it's outside the .mastra/output directory.`,
-        );
-
-        return `file:${fullPath}`;
-      }
-    }
-
-    return url;
+    this.client = client;
+    this.clientPromise = Promise.resolve(client);
   }
 
   private async getClient(): Promise<PGlite> {
