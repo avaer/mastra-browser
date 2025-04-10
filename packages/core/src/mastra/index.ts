@@ -5,7 +5,7 @@ import type { Logger } from '../logger';
 import type { MastraMemory } from '../memory/memory';
 import type { AgentNetwork } from '../network';
 import type { MastraStorage } from '../storage';
-import { DefaultProxyStorage } from '../storage/default-proxy-storage';
+// import { DefaultProxyStorage } from '../storage/default-proxy-storage';
 import { InstrumentClass, Telemetry } from '../telemetry';
 import type { OtelConfig } from '../telemetry';
 import type { MastraTTS } from '../tts';
@@ -119,11 +119,12 @@ export class Mastra<
 
     let storage = config?.storage;
     if (!storage) {
-      storage = new DefaultProxyStorage({
-        config: {
-          url: process.env.MASTRA_DEFAULT_STORAGE_URL || `:memory:`,
-        },
-      });
+      // storage = new DefaultProxyStorage({
+      //   config: {
+      //     url: process.env.MASTRA_DEFAULT_STORAGE_URL || `:memory:`,
+      //   },
+      // });
+      throw new Error('Storage is required');
     }
 
     /*
