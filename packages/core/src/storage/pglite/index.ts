@@ -1,6 +1,6 @@
 import { join, resolve, isAbsolute } from 'path';
-import { PGlite } from '@electric-sql/pglite';
-import { MemoryFS } from '@electric-sql/pglite';
+import { PGlite, MemoryFS } from '@electric-sql/pglite';
+import { vector } from '@electric-sql/pglite/vector';
 
 import type { MetricResult, TestInfo } from '../../eval';
 import type { MessageType, StorageThreadType } from '../../memory/types';
@@ -8,6 +8,8 @@ import { MastraStorage } from '../base';
 import { TABLE_EVALS, TABLE_MESSAGES, TABLE_THREADS, TABLE_TRACES, TABLE_WORKFLOW_SNAPSHOT } from '../constants';
 import type { TABLE_NAMES } from '../constants';
 import type { StorageColumn, StorageGetMessagesArg, EvalRow } from '../types';
+
+export { PGlite, MemoryFS, vector };
 
 function safelyParseJSON(jsonString: string): any {
   try {
@@ -49,49 +51,16 @@ interface TraceRow {
 }
 
 export class PGliteStore extends MastraStorage {
-  private client: PGlite | null = null;
-  private clientPromise: Promise<PGlite> | null = null;
+  private client: PGlite;
+  private clientPromise: Promise<PGlite>;
 
-  constructor({ config }: { config: PGliteConfig }) {
+  constructor({ client }: { client: PGlite }) {
     super({ name: `PGliteStore` });
 
+    this.client = client;
+    this.clientPromise = Promise.resolve(client);
     // need to re-init every time for in memory dbs or the tables might not exist
-    if (config.url === ':memory:' || config.url.startsWith('file::memory:')) {
-      this.shouldCacheInit = false;
-    }
-
-    this.clientPromise = this.initClient(config);
-  }
-
-  private async initClient(config: PGliteConfig): Promise<PGlite> {
-    const url = this.rewriteDbUrl(config.url);
-    this.logger.debug(`Initializing PGlite with URL: ${url}`);
-    
-    try {
-      // interface PGliteOptions<TExtensions extends Extensions = Extensions> {
-      //   dataDir?: string;
-      //   username?: string;
-      //   database?: string;
-      //   fs?: Filesystem;
-      //   debug?: DebugLevel;
-      //   relaxedDurability?: boolean;
-      //   extensions?: TExtensions;
-      //   loadDataDir?: Blob | File;
-      //   initialMemory?: number;
-      //   wasmModule?: WebAssembly.Module;
-      //   fsBundle?: Blob | File;
-      //   parsers?: ParserOptions;
-      //   serializers?: SerializerOptions;
-      // }
-      const client = await PGlite.create(url, {
-        fs: new MemoryFS(),
-      });
-      this.client = client;
-      return client;
-    } catch (error) {
-      this.logger.error(`Error initializing PGlite client: ${error}`);
-      throw error;
-    }
+    this.shouldCacheInit = false;
   }
 
   private async getClient(): Promise<PGlite> {
@@ -102,33 +71,6 @@ export class PGliteStore extends MastraStorage {
       throw new Error('PGlite client not initialized');
     }
     return this.client;
-  }
-
-  // Rewrite DB URL to match the LibSQLStore logic for consistent file paths
-  protected rewriteDbUrl(url: string): string {
-    if (url.startsWith('file:') && url !== 'file::memory:') {
-      const pathPart = url.slice('file:'.length);
-
-      if (isAbsolute(pathPart)) {
-        return url;
-      }
-
-      const cwd = process.cwd();
-
-      if (cwd.includes('.mastra') && (cwd.endsWith(`output`) || cwd.endsWith(`output/`) || cwd.endsWith(`output\\`))) {
-        const baseDir = join(cwd, `..`, `..`); // <- .mastra/output/../../
-
-        const fullPath = resolve(baseDir, pathPart);
-
-        this.logger.debug(
-          `Initializing PGlite db with url ${url} with relative file path from inside .mastra/output directory. Rewriting relative file url to "file:${fullPath}". This ensures it's outside the .mastra/output directory.`,
-        );
-
-        return `file:${fullPath}`;
-      }
-    }
-
-    return url;
   }
 
   private getCreateTableSQL(tableName: TABLE_NAMES, schema: Record<string, StorageColumn>): string {
