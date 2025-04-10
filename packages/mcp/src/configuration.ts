@@ -82,7 +82,7 @@ To fix this you have three different options:
 
   public async getToolsets() {
     this.addToInstanceCache();
-    const connectedToolsets: Record<string, Record<string, any>> = {}; // <- any because we don't have proper tool schemas
+    const connectedToolsets: Record<string, Record<string, Tool<any, any, any>>> = {}; // <- any because we don't have proper tool schemas
 
     await this.eachClientTools(async ({ serverName, tools }) => {
       if (tools) {
