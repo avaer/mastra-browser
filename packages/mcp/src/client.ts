@@ -315,7 +315,7 @@ export class MastraMCPClient extends MastraBase {
     tools.forEach(tool => {
       const s = jsonSchemaToModel(tool.inputSchema);
       const mastraTool = createTool({
-        id: `${this.name}_${tool.name}`,
+        id: tool.name,
         description: tool.description || '',
         inputSchema: deepRequired(s),
         execute: async ({ context }) => {
