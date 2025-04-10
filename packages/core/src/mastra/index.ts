@@ -282,6 +282,10 @@ This is a warning for now, but will throw an error in the future
     return this.#agents;
   }
 
+  public setAgents(agents: TAgents) {
+    this.#agents = agents;
+  }
+
   public getVector<TVectorName extends keyof TVectors>(name: TVectorName): TVectors[TVectorName] {
     const vector = this.#vectors?.[name];
     if (!vector) {
