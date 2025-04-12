@@ -4,6 +4,7 @@ import { vector } from '@electric-sql/pglite/vector';
 
 import type { MetricResult, TestInfo } from '../../eval';
 import type { MessageType, StorageThreadType } from '../../memory/types';
+import type { WorkflowRunState } from '../../workflows';
 import { MastraStorage } from '../base';
 import { TABLE_EVALS, TABLE_MESSAGES, TABLE_THREADS, TABLE_TRACES, TABLE_WORKFLOW_SNAPSHOT } from '../constants';
 import type { TABLE_NAMES } from '../constants';
@@ -556,7 +557,15 @@ export class PGliteStore extends MastraStorage {
       page,
       perPage,
       attributes,
-    }: { name?: string; scope?: string; page: number; perPage: number; attributes?: Record<string, string> } = {
+      filters,
+    }: {
+      name?: string;
+      scope?: string;
+      page: number;
+      perPage: number;
+      attributes?: Record<string, string>;
+      filters?: Record<string, any>;
+    } = {
       page: 0,
       perPage: 100,
     },
@@ -581,8 +590,20 @@ export class PGliteStore extends MastraStorage {
       });
     }
 
+    if (filters) {
+      Object.entries(filters).forEach(([key, _value]) => {
+        conditions.push(`"${key}" = $${args.length + 1}`);
+      });
+    }
+
     if (attributes) {
       for (const [_key, value] of Object.entries(attributes)) {
+        args.push(value);
+      }
+    }
+
+    if (filters) {
+      for (const [_key, value] of Object.entries(filters)) {
         args.push(value);
       }
     }
@@ -617,6 +638,97 @@ export class PGliteStore extends MastraStorage {
       other: safelyParseJSON(row.other as string),
       createdAt: row.createdAt,
     })) as any;
+  }
+
+  async getWorkflowRuns({
+    workflowName,
+    fromDate,
+    toDate,
+    limit,
+    offset,
+  }: {
+    workflowName?: string;
+    fromDate?: Date;
+    toDate?: Date;
+    limit?: number;
+    offset?: number;
+  } = {}): Promise<{
+    runs: Array<{
+      workflowName: string;
+      runId: string;
+      snapshot: WorkflowRunState | string;
+      createdAt: Date;
+      updatedAt: Date;
+    }>;
+    total: number;
+  }> {
+    const conditions: string[] = [];
+    const args: any[] = [];
+
+    if (workflowName) {
+      conditions.push('workflow_name = $' + (args.length + 1));
+      args.push(workflowName);
+    }
+
+    if (fromDate) {
+      conditions.push('"createdAt" >= $' + (args.length + 1));
+      args.push(fromDate.toISOString());
+    }
+
+    if (toDate) {
+      conditions.push('"createdAt" <= $' + (args.length + 1));
+      args.push(toDate.toISOString());
+    }
+
+    const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
+    const client = await this.getClient();
+    
+    let total = 0;
+    // Only get total count when using pagination
+    if (limit !== undefined && offset !== undefined) {
+      const countResult = await client.query(
+        `SELECT COUNT(*) FROM ${TABLE_WORKFLOW_SNAPSHOT} ${whereClause}`,
+        args
+      );
+      // Extract the count value from the first row's first column
+      if (countResult.rows?.[0]) {
+        total = Number(Object.values(countResult.rows[0])[0] || 0);
+      }
+    }
+
+    // Get results
+    let querySql = `SELECT * FROM ${TABLE_WORKFLOW_SNAPSHOT} ${whereClause} ORDER BY "createdAt" DESC`;
+    const queryArgs = [...args];
+    
+    if (limit !== undefined && offset !== undefined) {
+      querySql += ` LIMIT $${args.length + 1} OFFSET $${args.length + 2}`;
+      queryArgs.push(limit, offset);
+    }
+    
+    const result = await client.query(querySql, queryArgs);
+
+    const runs = ((result.rows || []) as Record<string, any>[]).map(row => {
+      let parsedSnapshot: WorkflowRunState | string = row.snapshot as string;
+      if (typeof parsedSnapshot === 'string') {
+        try {
+          parsedSnapshot = JSON.parse(row.snapshot as string) as WorkflowRunState;
+        } catch (e) {
+          // If parsing fails, return the raw snapshot string
+          console.warn(`Failed to parse snapshot for workflow ${row.workflow_name}: ${e}`);
+        }
+      }
+
+      return {
+        workflowName: row.workflow_name as string,
+        runId: row.run_id as string,
+        snapshot: parsedSnapshot,
+        createdAt: new Date(row.createdAt as string),
+        updatedAt: new Date(row.updatedAt as string),
+      };
+    });
+
+    // Use runs.length as total when not paginating
+    return { runs, total: total || runs.length };
   }
 }
 
