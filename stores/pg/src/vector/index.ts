@@ -1,4 +1,3 @@
-import { createHash } from 'crypto';
 import { MastraVector } from '@mastra/core/vector';
 import type {
   IndexStats,
@@ -11,7 +10,9 @@ import type {
   CreateIndexArgs,
 } from '@mastra/core/vector';
 import type { VectorFilter } from '@mastra/core/vector/filter';
+import { Mutex } from 'async-mutex';
 import pg from 'pg';
+import xxhash from 'xxhash-wasm';
 
 import { PGFilterTranslator } from './filter';
 import { buildFilterQuery } from './sql-builder';
@@ -60,7 +61,11 @@ type PgDefineIndexArgs = [string, 'cosine' | 'euclidean' | 'dotproduct', IndexCo
 
 export class PgVector extends MastraVector {
   private pool: pg.Pool;
-  private indexCache: Map<string, PGIndexStats> = new Map();
+  private describeIndexCache: Map<string, PGIndexStats> = new Map();
+  private createdIndexes = new Map<string, number>();
+  private mutexesByName = new Map<string, Mutex>();
+  private installVectorExtensionPromise: Promise<void> | null = null;
+  private vectorExtensionInstalled: boolean | undefined = undefined;
 
   constructor(connectionString: string) {
     super();
@@ -81,6 +86,26 @@ export class PgVector extends MastraVector {
           'vector.type': 'postgres',
         },
       }) ?? basePool;
+
+    void (async () => {
+      // warm the created indexes cache so we don't need to check if indexes exist every time
+      const existingIndexes = await this.listIndexes();
+      void existingIndexes.map(async indexName => {
+        const info = await this.getIndexInfo(indexName);
+        const key = await this.getIndexCacheKey({
+          indexName,
+          metric: info.metric,
+          dimension: info.dimension,
+          type: info.type,
+        });
+        this.createdIndexes.set(indexName, key);
+      });
+    })();
+  }
+
+  private getMutexByName(indexName: string) {
+    if (!this.mutexesByName.has(indexName)) this.mutexesByName.set(indexName, new Mutex());
+    return this.mutexesByName.get(indexName)!;
   }
 
   transformFilter(filter?: VectorFilter) {
@@ -89,10 +114,10 @@ export class PgVector extends MastraVector {
   }
 
   async getIndexInfo(indexName: string): Promise<PGIndexStats> {
-    if (!this.indexCache.has(indexName)) {
-      this.indexCache.set(indexName, await this.describeIndex(indexName));
+    if (!this.describeIndexCache.has(indexName)) {
+      this.describeIndexCache.set(indexName, await this.describeIndex(indexName));
     }
-    return this.indexCache.get(indexName)!;
+    return this.describeIndexCache.get(indexName)!;
   }
 
   async query(...args: ParamsToArgs<PgQueryVectorParams> | PgQueryVectorArgs): Promise<QueryResult[]> {
@@ -181,12 +206,31 @@ export class PgVector extends MastraVector {
       return vectorIds;
     } catch (error) {
       await client.query('ROLLBACK');
+      if (error instanceof Error && error.message?.includes('expected') && error.message?.includes('dimensions')) {
+        const match = error.message.match(/expected (\d+) dimensions, not (\d+)/);
+        if (match) {
+          const [, expected, actual] = match;
+          throw new Error(
+            `Vector dimension mismatch: Index "${params.indexName}" expects ${expected} dimensions but got ${actual} dimensions. ` +
+              `Either use a matching embedding model or delete and recreate the index with the new dimension.`,
+          );
+        }
+      }
       throw error;
     } finally {
       client.release();
     }
   }
 
+  private hasher = xxhash();
+  private async getIndexCacheKey(params: CreateIndexParams & { type: IndexType | undefined }) {
+    const input = params.indexName + params.dimension + params.metric + (params.type || 'ivfflat'); // ivfflat is default
+    return (await this.hasher).h32(input);
+  }
+  private cachedIndexExists(indexName: string, newKey: number) {
+    const existingIndexCacheKey = this.createdIndexes.get(indexName);
+    return existingIndexCacheKey && existingIndexCacheKey === newKey;
+  }
   async createIndex(...args: ParamsToArgs<PgCreateIndexParams> | PgCreateIndexArgs): Promise<void> {
     const params = this.normalizeArgs<PgCreateIndexParams, PgCreateIndexArgs>('createIndex', args, [
       'indexConfig',
@@ -195,81 +239,53 @@ export class PgVector extends MastraVector {
 
     const { indexName, dimension, metric = 'cosine', indexConfig = {}, buildIndex = true } = params;
 
-    const client = await this.pool.connect();
-    try {
-      // Validate inputs
-      if (!indexName.match(/^[a-zA-Z_][a-zA-Z0-9_]*$/)) {
-        throw new Error('Invalid index name format');
-      }
-      if (!Number.isInteger(dimension) || dimension <= 0) {
-        throw new Error('Dimension must be a positive integer');
-      }
-
-      // First check if vector extension is available
-      const extensionCheck = await client.query(`
-        SELECT EXISTS (
-          SELECT 1 FROM pg_available_extensions WHERE name = 'vector'
-        );
-      `);
-
-      if (!extensionCheck.rows[0].exists) {
-        throw new Error('PostgreSQL vector extension is not available. Please install it first.');
-      }
-
-      // Get advisory lock using hash of index name
-      const hash = createHash('sha256').update(indexName).digest('hex');
-      const lockId = BigInt('0x' + hash.slice(0, 8)) % BigInt(2 ** 31); // Take first 8 chars and convert to number
-      const acquired = await client.query('SELECT pg_try_advisory_lock($1)', [lockId]);
-
-      if (!acquired.rows[0].pg_try_advisory_lock) {
-        // Check if table already exists
-        const exists = await client.query(
-          `
-          SELECT 1 FROM pg_class c 
-          JOIN pg_namespace n ON n.oid = c.relnamespace
-          WHERE c.relname = $1 
-          AND n.nspname = 'public'
-        `,
-          [indexName],
-        );
-
-        if (exists.rows.length > 0) {
-          // Table exists so return early
-          console.log(`Table ${indexName} already exists, skipping creation`);
-          return;
-        }
-
-        // Table doesn't exist, wait for lock
-        await client.query('SELECT pg_advisory_lock($1)', [lockId]);
-      }
-
-      try {
-        // Try to create extension
-        await client.query('CREATE EXTENSION IF NOT EXISTS vector');
-
-        // Create the table with explicit schema
-        await client.query(`
-        CREATE TABLE IF NOT EXISTS ${indexName} (
-          id SERIAL PRIMARY KEY,
-          vector_id TEXT UNIQUE NOT NULL,
-          embedding vector(${dimension}),
-          metadata JSONB DEFAULT '{}'::jsonb
-        );
-      `);
-      } finally {
-        // Always release lock
-        await client.query('SELECT pg_advisory_unlock($1)', [lockId]);
-      }
-
-      if (buildIndex) {
-        await this.buildIndex({ indexName, metric, indexConfig });
-      }
-    } catch (error: any) {
-      console.error('Failed to create vector table:', error);
-      throw error;
-    } finally {
-      client.release();
+    // Validate inputs
+    if (!indexName.match(/^[a-zA-Z_][a-zA-Z0-9_]*$/)) {
+      throw new Error('Invalid index name format');
     }
+    if (!Number.isInteger(dimension) || dimension <= 0) {
+      throw new Error('Dimension must be a positive integer');
+    }
+
+    const indexCacheKey = await this.getIndexCacheKey({ indexName, dimension, type: indexConfig.type, metric });
+    if (this.cachedIndexExists(indexName, indexCacheKey)) {
+      // we already saw this index get created since the process started, no need to recreate it
+      return;
+    }
+
+    const mutex = this.getMutexByName(`create-${indexName}`);
+    // Use async-mutex instead of advisory lock for perf (over 2x as fast)
+    await mutex.runExclusive(async () => {
+      if (this.cachedIndexExists(indexName, indexCacheKey)) {
+        // this may have been created while we were waiting to acquire a lock
+        return;
+      }
+
+      const client = await this.pool.connect();
+      try {
+        // install vector extension
+        await this.installVectorExtension(client);
+        await client.query(`
+          CREATE TABLE IF NOT EXISTS ${indexName} (
+            id SERIAL PRIMARY KEY,
+            vector_id TEXT UNIQUE NOT NULL,
+            embedding vector(${dimension}),
+            metadata JSONB DEFAULT '{}'::jsonb
+          );
+      `);
+        this.createdIndexes.set(indexName, indexCacheKey);
+
+        if (buildIndex) {
+          await this.setupIndex({ indexName, metric, indexConfig }, client);
+        }
+      } catch (error: any) {
+        this.createdIndexes.delete(indexName);
+        console.error('Failed to create vector table:', error);
+        throw error;
+      } finally {
+        client.release();
+      }
+    });
   }
 
   /**
@@ -293,52 +309,34 @@ export class PgVector extends MastraVector {
 
     const client = await this.pool.connect();
     try {
-      // Use a different hash prefix for buildIndex locks to avoid conflicts with createIndex
-      const hash = createHash('sha256')
-        .update('build:' + indexName)
-        .digest('hex');
-      const lockId = BigInt('0x' + hash.slice(0, 8)) % BigInt(2 ** 31);
-      const acquired = await client.query('SELECT pg_try_advisory_lock($1)', [lockId]);
+      await this.setupIndex({ indexName, metric, indexConfig }, client);
+    } finally {
+      client.release();
+    }
+  }
 
-      if (!acquired.rows[0].pg_try_advisory_lock) {
-        // Check if index already exists
-        const exists = await client.query(
-          `
-            SELECT 1 FROM pg_class c 
-            JOIN pg_namespace n ON n.oid = c.relnamespace
-            WHERE c.relname = $1 
-            AND n.nspname = 'public'
-          `,
-          [`${indexName}_vector_idx`],
-        );
-
-        if (exists.rows.length > 0) {
-          console.log(`Index ${indexName}_vector_idx already exists, skipping creation`);
-          this.indexCache.delete(indexName); // Still clear cache since we checked
-          return;
-        }
-
-        // Index doesn't exist, wait for lock
-        await client.query('SELECT pg_advisory_lock($1)', [lockId]);
+  private async setupIndex({ indexName, metric, indexConfig }: PgDefineIndexParams, client: pg.PoolClient) {
+    const mutex = this.getMutexByName(`build-${indexName}`);
+    // Use async-mutex instead of advisory lock for perf (over 2x as fast)
+    await mutex.runExclusive(async () => {
+      if (this.createdIndexes.has(indexName)) {
+        await client.query(`DROP INDEX IF EXISTS ${indexName}_vector_idx`);
       }
 
-      try {
-        await client.query(`DROP INDEX IF EXISTS ${indexName}_vector_idx`);
+      if (indexConfig.type === 'flat') {
+        this.describeIndexCache.delete(indexName);
+        return;
+      }
 
-        if (indexConfig.type === 'flat') {
-          this.indexCache.delete(indexName);
-          return;
-        }
+      const metricOp =
+        metric === 'cosine' ? 'vector_cosine_ops' : metric === 'euclidean' ? 'vector_l2_ops' : 'vector_ip_ops';
 
-        const metricOp =
-          metric === 'cosine' ? 'vector_cosine_ops' : metric === 'euclidean' ? 'vector_l2_ops' : 'vector_ip_ops';
+      let indexSQL: string;
+      if (indexConfig.type === 'hnsw') {
+        const m = indexConfig.hnsw?.m ?? 8;
+        const efConstruction = indexConfig.hnsw?.efConstruction ?? 32;
 
-        let indexSQL: string;
-        if (indexConfig.type === 'hnsw') {
-          const m = indexConfig.hnsw?.m ?? 8;
-          const efConstruction = indexConfig.hnsw?.efConstruction ?? 32;
-
-          indexSQL = `
+        indexSQL = `
           CREATE INDEX IF NOT EXISTS ${indexName}_vector_idx 
           ON ${indexName} 
           USING hnsw (embedding ${metricOp})
@@ -347,32 +345,77 @@ export class PgVector extends MastraVector {
             ef_construction = ${efConstruction}
           )
         `;
+      } else {
+        let lists: number;
+        if (indexConfig.ivf?.lists) {
+          lists = indexConfig.ivf.lists;
         } else {
-          let lists: number;
-          if (indexConfig.ivf?.lists) {
-            lists = indexConfig.ivf.lists;
-          } else {
-            const size = (await client.query(`SELECT COUNT(*) FROM ${indexName}`)).rows[0].count;
-            lists = Math.max(100, Math.min(4000, Math.floor(Math.sqrt(size) * 2)));
-          }
-          indexSQL = `
+          const size = (await client.query(`SELECT COUNT(*) FROM ${indexName}`)).rows[0].count;
+          lists = Math.max(100, Math.min(4000, Math.floor(Math.sqrt(size) * 2)));
+        }
+        indexSQL = `
           CREATE INDEX IF NOT EXISTS ${indexName}_vector_idx
           ON ${indexName}
           USING ivfflat (embedding ${metricOp})
           WITH (lists = ${lists});
         `;
-        }
-
-        await client.query(indexSQL);
-        this.indexCache.delete(indexName);
-      } finally {
-        await client.query('SELECT pg_advisory_unlock($1)', [lockId]);
       }
-    } finally {
-      client.release();
-    }
+
+      await client.query(indexSQL);
+    });
   }
 
+  private async installVectorExtension(client: pg.PoolClient) {
+    // If we've already successfully installed, no need to do anything
+    if (this.vectorExtensionInstalled) {
+      return;
+    }
+
+    // If there's no existing installation attempt or the previous one failed
+    if (!this.installVectorExtensionPromise) {
+      this.installVectorExtensionPromise = (async () => {
+        try {
+          // First check if extension is already installed
+          const extensionCheck = await client.query(`
+            SELECT EXISTS (
+              SELECT 1 FROM pg_extension WHERE extname = 'vector'
+            );
+          `);
+
+          this.vectorExtensionInstalled = extensionCheck.rows[0].exists;
+
+          if (!this.vectorExtensionInstalled) {
+            try {
+              await client.query('CREATE EXTENSION IF NOT EXISTS vector');
+              this.vectorExtensionInstalled = true;
+              this.logger.info('Vector extension installed successfully');
+            } catch {
+              this.logger.warn(
+                'Could not install vector extension. This requires superuser privileges. ' +
+                  'If the extension is already installed globally, you can ignore this warning.',
+              );
+              // Don't set vectorExtensionInstalled to false here since we're not sure if it failed
+              // due to permissions or if it's already installed globally
+            }
+          } else {
+            this.logger.debug('Vector extension already installed, skipping installation');
+          }
+        } catch (error) {
+          this.logger.error('Error checking vector extension status', { error });
+          // Reset both the promise and the flag so we can retry
+          this.vectorExtensionInstalled = undefined;
+          this.installVectorExtensionPromise = null;
+          throw error; // Re-throw so caller knows it failed
+        } finally {
+          // Clear the promise after completion (success or failure)
+          this.installVectorExtensionPromise = null;
+        }
+      })();
+    }
+
+    // Wait for the installation process to complete
+    await this.installVectorExtensionPromise;
+  }
   async listIndexes(): Promise<string[]> {
     const client = await this.pool.connect();
     try {
@@ -402,8 +445,7 @@ export class PgVector extends MastraVector {
             `;
 
       // Get row count
-      const countQuery = `
-                SELECT COUNT(*) as count
+      const countQuery = `                SELECT COUNT(*) as count
                 FROM ${indexName};
             `;
 
@@ -472,6 +514,7 @@ export class PgVector extends MastraVector {
     try {
       // Drop the table
       await client.query(`DROP TABLE IF EXISTS ${indexName} CASCADE`);
+      this.createdIndexes.delete(indexName);
     } catch (error: any) {
       await client.query('ROLLBACK');
       throw new Error(`Failed to delete vector table: ${error.message}`);

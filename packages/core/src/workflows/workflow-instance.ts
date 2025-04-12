@@ -2,9 +2,7 @@ import type { Span } from '@opentelemetry/api';
 import { context as otlpContext, trace } from '@opentelemetry/api';
 import type { Snapshot } from 'xstate';
 import type { z } from 'zod';
-
 import type { Logger } from '../logger';
-
 import type { Mastra } from '../mastra';
 import { Machine } from './machine';
 import type { Step } from './step';
@@ -14,11 +12,17 @@ import type {
   StepAction,
   StepDef,
   StepGraph,
-  WorkflowContext,
+  StepNode,
   WorkflowRunResult,
   WorkflowRunState,
 } from './types';
-import { getActivePathsAndStatus, mergeChildValue, resolveVariables, updateStepInHierarchy } from './utils';
+import {
+  getActivePathsAndStatus,
+  getResultActivePaths,
+  mergeChildValue,
+  resolveVariables,
+  updateStepInHierarchy,
+} from './utils';
 
 export interface WorkflowResultReturn<
   TResult extends z.ZodObject<any>,
@@ -27,7 +31,9 @@ export interface WorkflowResultReturn<
 > {
   runId: string;
   start: (props?: { triggerData?: z.infer<T> } | undefined) => Promise<WorkflowRunResult<T, TSteps, TResult>>;
-  watch: (onTransition: (state: WorkflowRunState) => void) => () => void;
+  watch: (
+    onTransition: (state: Pick<WorkflowRunResult<T, TSteps, TResult>, 'results' | 'activePaths' | 'runId'>) => void,
+  ) => () => void;
   resume: (props: {
     stepId: string;
     context?: Record<string, any>;
@@ -39,7 +45,7 @@ export interface WorkflowResultReturn<
 }
 
 export class WorkflowInstance<
-  TSteps extends Step<any, any, any>[] = any,
+  TSteps extends Step<any, any, any, any>[] = Step<any, any, any, any>[],
   TTriggerSchema extends z.ZodObject<any> = any,
   TResult extends z.ZodObject<any> = any,
 > implements WorkflowResultReturn<TResult, TTriggerSchema, TSteps>
@@ -50,7 +56,7 @@ export class WorkflowInstance<
 
   logger: Logger;
 
-  #steps: Record<string, StepAction<any, any, any, any>> = {};
+  #steps: Record<string, StepNode> = {};
   #stepGraph: StepGraph;
   #stepSubscriberGraph: Record<string, StepGraph> = {};
 
@@ -61,7 +67,14 @@ export class WorkflowInstance<
   #state: any | null = null;
   #executionSpan: Span | undefined;
 
-  #onStepTransition: Set<(state: WorkflowRunState) => void | Promise<void>> = new Set();
+  #onStepTransition: Set<
+    (
+      state: Pick<
+        WorkflowRunResult<TTriggerSchema, TSteps, TResult>,
+        'results' | 'activePaths' | 'runId' | 'timestamp'
+      >,
+    ) => void | Promise<void>
+  > = new Set();
   #onFinish?: () => void;
 
   #resultMapping?: Record<string, { step: StepAction<any, any, any, any>; path: string }>;
@@ -87,14 +100,21 @@ export class WorkflowInstance<
   }: {
     name: string;
     logger: Logger;
-    steps: Record<string, StepAction<any, any, any, any>>;
+    steps: Record<string, StepNode>;
     mastra?: Mastra;
     retryConfig?: RetryConfig;
     runId?: string;
     stepGraph: StepGraph;
     stepSubscriberGraph: Record<string, StepGraph>;
     onFinish?: () => void;
-    onStepTransition?: Set<(state: WorkflowRunState) => void | Promise<void>>;
+    onStepTransition?: Set<
+      (
+        state: Pick<
+          WorkflowRunResult<TTriggerSchema, TSteps, TResult>,
+          'results' | 'activePaths' | 'runId' | 'timestamp'
+        >,
+      ) => void | Promise<void>
+    >;
     resultMapping?: Record<string, { step: StepAction<any, any, any, any>; path: string }>;
     events?: Record<string, { schema: z.ZodObject<any> }>;
   }) {
@@ -131,7 +151,14 @@ export class WorkflowInstance<
     return this.#executionSpan;
   }
 
-  watch(onTransition: (state: WorkflowRunState) => void): () => void {
+  watch(
+    onTransition: (
+      state: Pick<
+        WorkflowRunResult<TTriggerSchema, TSteps, TResult>,
+        'results' | 'activePaths' | 'runId' | 'timestamp'
+      >,
+    ) => void,
+  ): () => void {
     this.#onStepTransition.add(onTransition);
 
     return () => {
@@ -182,7 +209,7 @@ export class WorkflowInstance<
       triggerData: triggerData || {},
       attempts: Object.keys(this.#steps).reduce(
         (acc, stepKey) => {
-          acc[stepKey] = this.#steps[stepKey]?.retryConfig?.attempts || this.#retryConfig?.attempts || 0;
+          acc[stepKey] = this.#steps[stepKey]?.step?.retryConfig?.attempts || this.#retryConfig?.attempts || 0;
           return acc;
         },
         {} as Record<string, number>,
@@ -201,7 +228,7 @@ export class WorkflowInstance<
       }
     }
 
-    const defaultMachine = new Machine({
+    const defaultMachine = new Machine<TSteps, TTriggerSchema, TResult>({
       logger: this.logger,
       mastra: this.#mastra,
       workflowInstance: this,
@@ -216,11 +243,18 @@ export class WorkflowInstance<
 
     this.#machines[startStepId] = defaultMachine;
 
-    const stateUpdateHandler = (startStepId: string, state: any, context: any) => {
-      if (startStepId === 'trigger') {
-        this.#state = state;
+    const stateUpdateHandler = (startStepId: string, state: any, ctx?: any) => {
+      let fullState: { value: any; context: any } = { value: {}, context: {} };
+      if (ctx) {
+        fullState['value'] = state;
+        fullState['context'] = ctx;
       } else {
-        this.#state = mergeChildValue(startStepId, this.#state, state);
+        fullState = state;
+      }
+      if (startStepId === 'trigger') {
+        this.#state = fullState.value;
+      } else {
+        this.#state = mergeChildValue(startStepId, this.#state, fullState.value);
       }
 
       const now = Date.now();
@@ -228,9 +262,10 @@ export class WorkflowInstance<
         this.#onStepTransition.forEach(onTransition => {
           void onTransition({
             runId: this.#runId,
-            value: this.#state as Record<string, string>,
-            context: context as WorkflowContext,
-            activePaths: getActivePathsAndStatus(this.#state as Record<string, string>),
+            results: fullState.context.steps,
+            activePaths: getResultActivePaths(
+              fullState as unknown as { value: Record<string, string>; context: { steps: Record<string, any> } },
+            ),
             timestamp: now,
           });
         });
@@ -248,7 +283,12 @@ export class WorkflowInstance<
 
     await this.persistWorkflowSnapshot();
 
-    const result: Omit<WorkflowRunResult<TTriggerSchema, TSteps, TResult>, 'runId'> = { results, activePaths };
+    const result: Omit<WorkflowRunResult<TTriggerSchema, TSteps, TResult>, 'runId'> = {
+      results,
+      activePaths,
+      timestamp: Date.now(),
+    };
+
     if (this.#resultMapping) {
       result.result = resolveVariables({
         runId: this.#runId,
@@ -259,6 +299,7 @@ export class WorkflowInstance<
           triggerData: triggerData,
           inputData: {},
           attempts: machineInput.attempts,
+          // @ts-ignore
           getStepResult: (stepId: string) => results[stepId],
         },
       });
@@ -283,11 +324,18 @@ export class WorkflowInstance<
       }
     });
 
-    const stateUpdateHandler = (startStepId: string, state: any, context: any) => {
-      if (startStepId === 'trigger') {
-        this.#state = state;
+    const stateUpdateHandler = (startStepId: string, state: any, ctx?: any) => {
+      let fullState: { value: any; context: any } = { value: {}, context: {} };
+      if (ctx) {
+        fullState['value'] = state;
+        fullState['context'] = ctx;
       } else {
-        this.#state = mergeChildValue(startStepId, this.#state, state);
+        fullState = state;
+      }
+      if (startStepId === 'trigger') {
+        this.#state = fullState.value;
+      } else {
+        this.#state = mergeChildValue(startStepId, this.#state, fullState.value);
       }
 
       const now = Date.now();
@@ -295,9 +343,10 @@ export class WorkflowInstance<
         this.#onStepTransition.forEach(onTransition => {
           void onTransition({
             runId: this.#runId,
-            value: this.#state as Record<string, string>,
-            context: context as WorkflowContext,
-            activePaths: getActivePathsAndStatus(this.#state as Record<string, string>),
+            results: fullState.context.steps,
+            activePaths: getResultActivePaths(
+              fullState as unknown as { value: Record<string, string>; context: { steps: Record<string, any> } },
+            ),
             timestamp: now,
           });
         });
@@ -310,9 +359,9 @@ export class WorkflowInstance<
           return;
         }
 
-        this.#initializeCompoundDependencies();
+        this.#resetCompoundDependency(key);
 
-        const machine = new Machine({
+        const machine = new Machine<TSteps, TTriggerSchema, TResult>({
           logger: this.logger,
           mastra: this.#mastra,
           workflowInstance: this,
@@ -341,7 +390,13 @@ export class WorkflowInstance<
    * Persists the workflow state to the database
    */
   async persistWorkflowSnapshot(): Promise<void> {
-    const existingSnapshot = (await this.#mastra?.storage?.loadWorkflowSnapshot({
+    const storage = this.#mastra?.getStorage();
+    if (!storage) {
+      this.logger.debug('Snapshot cannot be persisted. Mastra engine is not initialized', { runId: this.#runId });
+      return;
+    }
+
+    const existingSnapshot = (await storage.loadWorkflowSnapshot({
       workflowName: this.name,
       runId: this.#runId,
     })) as WorkflowRunState;
@@ -368,7 +423,7 @@ export class WorkflowInstance<
     if (!snapshot && existingSnapshot) {
       existingSnapshot.childStates = { ...existingSnapshot.childStates, ...machineSnapshots };
       existingSnapshot.suspendedSteps = { ...existingSnapshot.suspendedSteps, ...suspendedSteps };
-      await this.#mastra?.storage?.persistWorkflowSnapshot({
+      await storage.persistWorkflowSnapshot({
         workflowName: this.name,
         runId: this.#runId,
         snapshot: existingSnapshot,
@@ -378,7 +433,7 @@ export class WorkflowInstance<
     } else if (snapshot && !existingSnapshot) {
       snapshot.suspendedSteps = suspendedSteps;
       snapshot.childStates = { ...machineSnapshots };
-      await this.#mastra?.storage?.persistWorkflowSnapshot({
+      await storage.persistWorkflowSnapshot({
         workflowName: this.name,
         runId: this.#runId,
         snapshot,
@@ -392,7 +447,7 @@ export class WorkflowInstance<
     snapshot.suspendedSteps = { ...existingSnapshot.suspendedSteps, ...suspendedSteps };
 
     if (!existingSnapshot || snapshot === existingSnapshot) {
-      await this.#mastra?.storage?.persistWorkflowSnapshot({
+      await storage.persistWorkflowSnapshot({
         workflowName: this.name,
         runId: this.#runId,
         snapshot,
@@ -407,7 +462,7 @@ export class WorkflowInstance<
       snapshot.childStates = machineSnapshots;
     }
 
-    await this.#mastra?.storage?.persistWorkflowSnapshot({
+    await storage.persistWorkflowSnapshot({
       workflowName: this.name,
       runId: this.#runId,
       snapshot,
@@ -479,14 +534,15 @@ export class WorkflowInstance<
   }
 
   async #loadWorkflowSnapshot(runId: string) {
-    if (!this.#mastra?.storage) {
+    const storage = this.#mastra?.getStorage();
+    if (!storage) {
       this.logger.debug('Snapshot cannot be loaded. Mastra engine is not initialized', { runId });
       return;
     }
 
     await this.persistWorkflowSnapshot();
 
-    return this.#mastra.getStorage()?.loadWorkflowSnapshot({ runId, workflowName: this.name });
+    return storage.loadWorkflowSnapshot({ runId, workflowName: this.name });
   }
 
   async _resume({ stepId, context: resumeContext }: { stepId: string; context?: Record<string, any> }) {
@@ -510,7 +566,6 @@ export class WorkflowInstance<
       throw new Error('Failed to parse workflow snapshot');
     }
 
-    const origSnapshot = parsedSnapshot;
     const startStepId = parsedSnapshot.suspendedSteps?.[stepId];
 
     if (!startStepId) {
@@ -539,7 +594,7 @@ export class WorkflowInstance<
     // Reattach the step handler
     // TODO: need types
     if (parsedSnapshot.children) {
-      Object.entries(parsedSnapshot.children).forEach(([_childId, child]: [string, any]) => {
+      Object.entries(parsedSnapshot.children).forEach(([, child]: [string, any]) => {
         if (child.snapshot?.input?.stepNode) {
           // Reattach handler
           const stepDef = this.#makeStepDef(child.snapshot.input.stepNode.step.id);
@@ -559,7 +614,7 @@ export class WorkflowInstance<
     // Reset attempt count
     if (parsedSnapshot.context?.attempts) {
       parsedSnapshot.context.attempts[stepId] =
-        this.#steps[stepId]?.retryConfig?.attempts || this.#retryConfig?.attempts || 0;
+        this.#steps[stepId]?.step?.retryConfig?.attempts || this.#retryConfig?.attempts || 0;
     }
 
     this.logger.debug('Resuming workflow with updated snapshot', {
@@ -590,6 +645,19 @@ export class WorkflowInstance<
     });
   }
 
+  #resetCompoundDependency(key: string) {
+    if (this.#isCompoundKey(key)) {
+      const requiredSteps = key.split('&&');
+      this.#compoundDependencies[key] = requiredSteps.reduce(
+        (acc, step) => {
+          acc[step] = false;
+          return acc;
+        },
+        {} as Record<string, boolean>,
+      );
+    }
+  }
+
   #makeStepDef<TStepId extends TSteps[number]['id'], TSteps extends Step<any, any, any>[]>(
     stepId: TStepId,
   ): StepDef<TStepId, TSteps, any, any>[TStepId] {
@@ -618,7 +686,7 @@ export class WorkflowInstance<
       const targetStep = this.#steps[stepId];
       if (!targetStep) throw new Error(`Step not found`);
 
-      const { payload = {}, execute = async () => {} } = targetStep;
+      const { payload = {}, execute = async () => {} } = targetStep.step;
 
       // Merge static payload with dynamically resolved variables
       // Variables take precedence over payload values

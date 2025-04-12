@@ -18,6 +18,7 @@ openapi-ts-error*
 
 .mastra
 memory.db
+memory.db-*
 
 # github actions
 .secrets

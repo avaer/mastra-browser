@@ -93,12 +93,12 @@ export function WorkflowTrigger({
   useEffect(() => {
     if (!watchResultToUse?.activePaths || !result?.runId) return;
 
-    const suspended = watchResultToUse.activePaths
-      .filter((path: WorkflowPath) => watchResultToUse.context?.steps?.[path.stepId]?.status === 'suspended')
-      .map((path: WorkflowPath) => ({
-        stepId: path.stepId,
+    const suspended = Object.entries(watchResultToUse.activePaths)
+      .filter(([_, { status }]) => status === 'suspended')
+      .map(([stepId, { suspendPayload }]) => ({
+        stepId,
         runId: result.runId,
-        suspendPayload: watchResultToUse.context?.steps?.[path.stepId]?.suspendPayload,
+        suspendPayload,
       }));
     setSuspendedSteps(suspended);
   }, [watchResultToUse, result]);
@@ -122,85 +122,71 @@ export function WorkflowTrigger({
 
   if (!workflow) return null;
 
-  if (!triggerSchema) {
-    return (
-      <ScrollArea className="h-[calc(100vh-126px)] pt-2 px-4 pb-4 text-xs w-full">
-        <div className="space-y-4">
-          <div className="px-4 space-y-4">
-            <Button className="w-full" disabled={isRunning} onClick={() => handleExecuteWorkflow(null)}>
-              {isRunning ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Trigger'}
-            </Button>
-          </div>
-
-          <div>
-            <Text variant="secondary" className="px-4 text-mastra-el-3" size="xs">
-              Output
-            </Text>
-            <div className="flex flex-col gap-2">
-              <CopyButton
-                classname="absolute z-40 w-8 h-8 p-0 transition-opacity duration-150 ease-in-out opacity-0 top-4 right-4 group-hover:opacity-100"
-                content={JSON.stringify(result ?? {}, null, 2)}
-              />
-            </div>
-            <CodeBlockDemo
-              className="w-[368px] overflow-x-auto"
-              code={JSON.stringify(result ?? {}, null, 2)}
-              language="json"
-            />
-          </div>
-        </div>
-      </ScrollArea>
-    );
-  }
-
-  const zodInputSchema = resolveSerializedZodOutput(jsonSchemaToZod(parse(triggerSchema)));
-
   const isSuspendedSteps = suspendedSteps.length > 0;
+
+  const zodInputSchema = triggerSchema ? resolveSerializedZodOutput(jsonSchemaToZod(parse(triggerSchema))) : null;
 
   return (
     <ScrollArea className="h-[calc(100vh-126px)] pt-2 px-4 pb-4 text-xs w-full">
       <div className="space-y-4">
         {!isSuspendedSteps && (
-          <div className="flex flex-col">
-            <div className="flex items-center justify-between w-full">
-              <Text variant="secondary" className="px-4 text-mastra-el-3" size="xs">
-                Input
-              </Text>
-              {isResumingWorkflow ? (
-                <span className="flex items-center gap-1">
-                  <Loader2 className="w-3 h-3 animate-spin text-mastra-el-accent" /> Resuming workflow
-                </span>
-              ) : (
-                <></>
-              )}
-            </div>
-            <DynamicForm
-              schema={zodInputSchema}
-              defaultValues={payload}
-              isSubmitLoading={isWatchingWorkflow}
-              onSubmit={data => {
-                setPayload(data);
-                handleExecuteWorkflow(data);
-              }}
-            />
-          </div>
+          <>
+            {zodInputSchema ? (
+              <div className="flex flex-col">
+                <div className="flex items-center justify-between w-full">
+                  <Text variant="secondary" className="px-4 text-mastra-el-3" size="xs">
+                    Input
+                  </Text>
+                  {isResumingWorkflow ? (
+                    <span className="flex items-center gap-1">
+                      <Loader2 className="w-3 h-3 animate-spin text-mastra-el-accent" /> Resuming workflow
+                    </span>
+                  ) : (
+                    <></>
+                  )}
+                </div>
+                <DynamicForm
+                  schema={zodInputSchema}
+                  defaultValues={payload}
+                  isSubmitLoading={isWatchingWorkflow}
+                  onSubmit={data => {
+                    setPayload(data);
+                    handleExecuteWorkflow(data);
+                  }}
+                />
+              </div>
+            ) : (
+              <div className="px-4 space-y-4">
+                {isResumingWorkflow ? (
+                  <span className="flex items-center gap-1">
+                    <Loader2 className="w-3 h-3 animate-spin text-mastra-el-accent" /> Resuming workflow
+                  </span>
+                ) : (
+                  <></>
+                )}
+                <Button className="w-full" disabled={isRunning} onClick={() => handleExecuteWorkflow(null)}>
+                  {isRunning ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Trigger'}
+                </Button>
+              </div>
+            )}
+          </>
         )}
 
-        {workflowActivePaths.length > 0 && (
-          <div className="flex flex-col">
+        {Object.values(workflowActivePaths).length > 0 && (
+          <div className="flex flex-col gap-2">
             <Text variant="secondary" className="px-4 text-mastra-el-3" size="xs">
               Status
             </Text>
-            <div className="px-4">
-              {workflowActivePaths?.map((activePath: any, idx: number) => {
+            <div className="px-4 flex flex-col gap-4">
+              {Object.entries(workflowActivePaths)?.map(([stepId, { status: pathStatus, stepPath }]) => {
                 return (
-                  <div key={idx} className="flex flex-col mt-2 overflow-hidden border">
-                    {activePath?.stepPath?.map((sp: any, idx: number) => {
+                  <div className="flex flex-col gap-1">
+                    {stepPath?.map((path, idx) => {
                       const status =
-                        activePath?.status === 'completed'
+                        pathStatus === 'completed'
                           ? 'Completed'
-                          : sp === activePath?.stepId
-                            ? activePath?.status.charAt(0).toUpperCase() + activePath?.status.slice(1)
+                          : stepId === path
+                            ? pathStatus.charAt(0).toUpperCase() + pathStatus.slice(1)
                             : 'Completed';
 
                       const statusIcon =
@@ -211,23 +197,18 @@ export function WorkflowTrigger({
                         );
 
                       return (
-                        <div
-                          key={idx}
-                          className={`
-                            flex items-center justify-between p-3
-                            ${idx !== activePath.stepPath.length - 1 ? 'border-b' : ''}
-                            bg-white/5
-                          `}
-                        >
-                          <Text variant="secondary" className="text-mastra-el-3" size="xs">
-                            {sp.charAt(0).toUpperCase() + sp.slice(1)}
-                          </Text>
-                          <span className="flex items-center gap-2">
+                        <div key={idx} className="flex flex-col overflow-hidden border">
+                          <div className={`flex items-center justify-between p-3`}>
                             <Text variant="secondary" className="text-mastra-el-3" size="xs">
-                              {statusIcon}
+                              {path.charAt(0).toUpperCase() + path.slice(1)}
                             </Text>
-                            {status}
-                          </span>
+                            <span className="flex items-center gap-2">
+                              <Text variant="secondary" className="text-mastra-el-3" size="xs">
+                                {statusIcon}
+                              </Text>
+                              {status}
+                            </span>
+                          </div>
                         </div>
                       );
                     })}
@@ -247,7 +228,7 @@ export function WorkflowTrigger({
               {step.suspendPayload && (
                 <div>
                   <CodeBlockDemo
-                    className="w-[300px] overflow-x-auto"
+                    className="w-full overflow-x-auto p-2"
                     code={JSON.stringify(step.suspendPayload, null, 2)}
                     language="json"
                   />
@@ -270,7 +251,7 @@ export function WorkflowTrigger({
           ))}
 
         {result && (
-          <div className="flex flex-col">
+          <div className="flex flex-col group relative">
             <Text variant="secondary" className="px-4 text-mastra-el-3" size="xs">
               Output
             </Text>
@@ -281,8 +262,8 @@ export function WorkflowTrigger({
               />
             </div>
             <CodeBlockDemo
-              className="w-[368px] overflow-x-auto"
-              code={JSON.stringify(result, null, 2)}
+              className="w-full overflow-x-auto"
+              code={result.sanitizedOutput || JSON.stringify(result, null, 2)}
               language="json"
             />
           </div>

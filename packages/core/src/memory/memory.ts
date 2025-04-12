@@ -22,6 +22,26 @@ import type { MastraVector } from '../vector';
 
 import type { MessageType, SharedMemoryConfig, StorageThreadType, MemoryConfig, AiMessageType } from './types';
 
+export type MemoryProcessorOpts = {
+  systemMessage?: string;
+  memorySystemMessage?: string;
+  newMessages?: CoreMessage[];
+};
+/**
+ * Interface for message processors that can filter or transform messages
+ * before they're sent to the LLM.
+ */
+export abstract class MemoryProcessor extends MastraBase {
+  /**
+   * Process a list of messages and return a filtered or transformed list.
+   * @param messages The messages to process
+   * @returns The processed messages
+   */
+  process(messages: CoreMessage[], _opts: MemoryProcessorOpts): CoreMessage[] {
+    return messages;
+  }
+}
+
 /**
  * Abstract Memory class that defines the interface for storing and retrieving
  * conversation threads and messages.
@@ -30,8 +50,9 @@ export abstract class MastraMemory extends MastraBase {
   MAX_CONTEXT_TOKENS?: number;
 
   storage: MastraStorage;
-  vector: MastraVector;
-  embedder: EmbeddingModel<string>;
+  vector?: MastraVector;
+  embedder?: EmbeddingModel<string>;
+  private processors: MemoryProcessor[] = [];
 
   protected threadConfig: MemoryConfig = {
     lastMessages: 40,
@@ -44,10 +65,14 @@ export abstract class MastraMemory extends MastraBase {
   constructor(config: { name: string } & SharedMemoryConfig) {
     super({ component: 'MEMORY', name: config.name });
 
+    if (config.options) {
+      this.threadConfig = this.getMergedThreadConfig(config.options);
+    }
+
     if (config.storage) {
       this.storage = config.storage;
     } else {
-      // new DefaultProxyStorage({
+      // this.storage = new DefaultProxyStorage({
       //   config: {
       //     url: 'file:memory.db',
       //   },
@@ -55,29 +80,11 @@ export abstract class MastraMemory extends MastraBase {
       throw new Error('Storage config is required');
     }
 
-    if (config.vector) {
+    const semanticRecallIsEnabled = this.threadConfig.semanticRecall !== false; // default is to have it enabled, so any value except false means it's on
+
+    if (config.vector && semanticRecallIsEnabled) {
       this.vector = config.vector;
     } else {
-      // // for backwards compat reasons, check if there's a memory-vector.db in cwd or in cwd/.mastra
-      // // if it's there we need to use it, otherwise use the same file:memory.db
-      // // We used to need two separate DBs because we would get schema errors
-      // // Creating a new index for each vector dimension size fixed that, so we no longer need a separate sqlite db
-      // const oldDb = 'memory-vector.db';
-      // const hasOldDb = existsSync(join(process.cwd(), oldDb)) || existsSync(join(process.cwd(), '.mastra', oldDb));
-      // const newDb = 'memory.db';
-
-      // if (hasOldDb) {
-      //   this.logger.warn(
-      //     `Found deprecated Memory vector db file ${oldDb} this db is now merged with the default ${newDb} file. Delete the old one to use the new one. You will need to migrate any data if that's important to you. For now the deprecated path will be used but in a future breaking change we will only use the new db file path.`,
-      //   );
-      // }
-
-      // this.vector = new DefaultVectorDB({
-      //   connectionUrl: hasOldDb ? `file:${oldDb}` : `file:${newDb}`,
-      // });
-      // this.vector = new DefaultVectorDB({
-      //   connectionUrl: ':memory:',
-      // });
       throw new Error('Vector config is required');
     }
 
@@ -88,8 +95,9 @@ export abstract class MastraMemory extends MastraBase {
       throw new Error('Embedder config is required');
     }
 
-    if (config.options) {
-      this.threadConfig = this.getMergedThreadConfig(config.options);
+    // Initialize processors if provided
+    if (config.processors) {
+      this.processors = config.processors;
     }
   }
 
@@ -123,21 +131,19 @@ export abstract class MastraMemory extends MastraBase {
     return {};
   }
 
-  protected async createEmbeddingIndex(): Promise<{ indexName: string }> {
+  protected async createEmbeddingIndex(dimensions?: number): Promise<{ indexName: string }> {
     const defaultDimensions = 1536;
-
-    // AI SDK doesn't expose a way to check how many dimensions a model uses.
-    const dimensionsByModelId: Record<string, number> = {
-      'bge-small-en-v1.5': 384,
-      'bge-base-en-v1.5': 768,
-      'voyage-3-lite': 512
-    };
-
-    const dimensions = dimensionsByModelId[this.embedder.modelId] || defaultDimensions;
     const isDefault = dimensions === defaultDimensions;
-    const indexName = isDefault ? 'memory_messages' : `memory_messages_${dimensions}`;
+    const usedDimensions = dimensions ?? defaultDimensions;
+    const indexName = isDefault ? 'memory_messages' : `memory_messages_${usedDimensions}`;
 
-    await this.vector.createIndex({ indexName, dimension: dimensions });
+    if (typeof this.vector === `undefined`) {
+      throw new Error(`Tried to create embedding index but no vector db is attached to this Memory instance.`);
+    }
+    await this.vector.createIndex({
+      indexName,
+      dimension: usedDimensions,
+    });
     return { indexName };
   }
 
@@ -145,15 +151,57 @@ export abstract class MastraMemory extends MastraBase {
     return deepMerge(this.threadConfig, config || {});
   }
 
+  /**
+   * Apply all configured message processors to a list of messages.
+   * @param messages The messages to process
+   * @returns The processed messages
+   */
+  private applyProcessors(
+    messages: CoreMessage[],
+    opts: {
+      processors?: MemoryProcessor[];
+    } & MemoryProcessorOpts,
+  ): CoreMessage[] {
+    const processors = opts.processors || this.processors;
+    if (!processors || processors.length === 0) {
+      return messages;
+    }
+
+    let processedMessages = [...messages];
+
+    for (const processor of processors) {
+      processedMessages = processor.process(processedMessages, {
+        systemMessage: opts.systemMessage,
+        newMessages: opts.newMessages,
+        memorySystemMessage: opts.memorySystemMessage,
+      });
+    }
+
+    return processedMessages;
+  }
+
+  processMessages({
+    messages,
+    processors,
+    ...opts
+  }: {
+    messages: CoreMessage[];
+    processors?: MemoryProcessor[];
+  } & MemoryProcessorOpts) {
+    return this.applyProcessors(messages, { processors: processors || this.processors, ...opts });
+  }
+
   abstract rememberMessages({
     threadId,
     resourceId,
     vectorMessageSearch,
+    systemMessage,
     config,
   }: {
     threadId: string;
     resourceId?: string;
     vectorMessageSearch?: string;
+    systemMessage?: CoreMessage;
     config?: MemoryConfig;
   }): Promise<{
     threadId: string;
@@ -166,15 +214,22 @@ export abstract class MastraMemory extends MastraBase {
   }
 
   protected parseMessages(messages: MessageType[]): CoreMessage[] {
-    return messages.map(msg => ({
-      ...msg,
-      content:
-        typeof msg.content === 'string' && (msg.content.startsWith('[') || msg.content.startsWith('{'))
-          ? JSON.parse((msg as MessageType).content as string)
-          : typeof msg.content === 'number'
-            ? String(msg.content)
-            : msg.content,
-    }));
+    return messages.map(msg => {
+      let content = msg.content;
+      if (typeof content === 'string' && (content.startsWith('[') || content.startsWith('{'))) {
+        try {
+          content = JSON.parse(content);
+        } catch {
+          // Keep the original string if it's not valid JSON
+        }
+      } else if (typeof content === 'number') {
+        content = String(content);
+      }
+      return {
+        ...msg,
+        content,
+      };
+    }) as CoreMessage[];
   }
 
   protected convertToUIMessages(messages: MessageType[]): AiMessageType[] {
@@ -254,6 +309,7 @@ export abstract class MastraMemory extends MastraBase {
           role: message.role as AiMessageType['role'],
           content: textContent,
           toolInvocations,
+          createdAt: message.createdAt,
         });
 
         return obj;
@@ -363,6 +419,7 @@ export abstract class MastraMemory extends MastraBase {
    */
   async addMessage({
     threadId,
+    resourceId,
     config,
     content,
     role,
@@ -372,6 +429,7 @@ export abstract class MastraMemory extends MastraBase {
     toolCallIds,
   }: {
     threadId: string;
+    resourceId: string;
     config?: MemoryConfig;
     content: UserContent | AssistantContent;
     role: 'user' | 'assistant';
@@ -386,6 +444,7 @@ export abstract class MastraMemory extends MastraBase {
       role,
       createdAt: new Date(),
       threadId,
+      resourceId,
       type,
       toolNames,
       toolCallArgs,
