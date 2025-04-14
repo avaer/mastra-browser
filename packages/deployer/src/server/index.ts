@@ -1,7 +1,7 @@
 import { randomUUID } from 'crypto';
 import { readFile } from 'fs/promises';
-import { join } from 'path';
-import { pathToFileURL } from 'url';
+// import { join } from 'path';
+// import { pathToFileURL } from 'url';
 import { serve } from '@hono/node-server';
 import { serveStatic } from '@hono/node-server/serve-static';
 import { swaggerUI } from '@hono/swagger-ui';
@@ -78,11 +78,8 @@ export async function createHonoServer(
     swaggerUI?: boolean;
     apiReqLogs?: boolean;
     playgroundPath?: string;
-    subroute?: string;
   } = {},
 ) {
-  console.log('*** createHonoServer', options);
-
   // Create typed Hono app
   const app = new Hono<{ Bindings: Bindings; Variables: Variables }>();
   const server = mastra.getServer();
@@ -199,7 +196,6 @@ export async function createHonoServer(
       if (route.openapi) {
         middlewares.push(describeRoute(route.openapi));
       }
-      console.log({ path: route.path, middlewares });
       if (route.method === 'GET') {
         app.get(route.path, ...middlewares, route.handler);
       } else if (route.method === 'POST') {
@@ -2133,6 +2129,8 @@ export async function createHonoServer(
     app.get('/swagger-ui', swaggerUI({ url: '/openapi.json' }));
   }
 
+  const playgroundPath = options?.playgroundPath ?? './playground';
+
   if (options?.playground) {
     // SSE endpoint for refresh notifications
     app.get('/refresh-events', handleClientsRefresh);
@@ -2155,7 +2153,7 @@ export async function createHonoServer(
     app.use(
       '/assets/*',
       serveStatic({
-        root: './playground/assets',
+        root: `${playgroundPath}/assets`,
       }),
     );
 
@@ -2163,7 +2161,7 @@ export async function createHonoServer(
     app.use(
       '*',
       serveStatic({
-        root: './playground',
+        root: playgroundPath,
       }),
     );
   }
@@ -2181,7 +2179,7 @@ export async function createHonoServer(
 
     if (options?.playground) {
       // For all other routes, serve index.html
-      const indexHtml = await readFile(join(process.cwd(), './playground/index.html'), 'utf-8');
+      const indexHtml = await readFile(`${playgroundPath}/index.html`, 'utf-8');
       return c.newResponse(indexHtml, 200, { 'Content-Type': 'text/html' });
     }
 
