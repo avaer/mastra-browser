@@ -73,21 +73,30 @@ type Variables = {
 
 export async function createHonoServer(
   mastra: Mastra,
-  options: { playground?: boolean; swaggerUI?: boolean; apiReqLogs?: boolean } = {},
+  options: {
+    playground?: boolean;
+    swaggerUI?: boolean;
+    apiReqLogs?: boolean;
+    playgroundPath?: string;
+    subroute?: string;
+  } = {},
 ) {
+  console.log('*** createHonoServer', options);
+
   // Create typed Hono app
   const app = new Hono<{ Bindings: Bindings; Variables: Variables }>();
   const server = mastra.getServer();
 
   // Initialize tools
-  const mastraToolsPaths = process.env.MASTRA_TOOLS_PATH;
-  const toolImports = mastraToolsPaths
-    ? await Promise.all(
-        mastraToolsPaths.split(',').map(async toolPath => {
-          return import(pathToFileURL(toolPath).href);
-        }),
-      )
-    : [];
+  // const mastraToolsPaths = process.env.MASTRA_TOOLS_PATH;
+  // const toolImports = mastraToolsPaths
+  //   ? await Promise.all(
+  //       mastraToolsPaths.split(',').map(async toolPath => {
+  //         return import(pathToFileURL(toolPath).href);
+  //       }),
+  //     )
+  //   : [];
+  const toolImports: any[] = [];
 
   const tools = toolImports.reduce((acc, toolModule) => {
     Object.entries(toolModule).forEach(([key, tool]) => {
