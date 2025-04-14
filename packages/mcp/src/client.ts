@@ -254,9 +254,6 @@ export class MastraMCPClient extends MastraBase {
           uri,
         });
         await this.client.subscribeResource({ uri });
-        console.log(`Client subscribed to resource`, {
-          uri,
-        });
         this.resourceSubscriptions.set(uri, 1);
         this.logger.debug(`Subscribed to resource: ${uri}`);
       } catch (e) {
