@@ -13,6 +13,10 @@
       "import": "./src/*/index.ts",
       "require": "./src/*/index.ts"
     },
+    "./deployer": {
+      "import": "./src/deployer/index.ts",
+      "require": "./src/deployer/index.ts"
+    },
     "./storage/libsql": {
       "import": "./src/storage/libsql/index.ts",
       "require": "./src/storage/libsql/index.ts"
