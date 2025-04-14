@@ -59,8 +59,8 @@ import {
   watchWorkflowHandler,
   createRunHandler,
   getWorkflowRunsHandler,
-} from './handlers/workflows.js';
-import { html } from './welcome.js';
+} from './handlers/workflows';
+import { html } from './welcome';
 
 type Bindings = {};
 
