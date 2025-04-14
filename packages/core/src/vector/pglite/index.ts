@@ -336,4 +336,4 @@ export class PGliteVector extends MastraVector {
   }
 }
 
-export { PGliteVector as DefaultVectorDB };
+// export { PGliteVector as DefaultVectorDB };

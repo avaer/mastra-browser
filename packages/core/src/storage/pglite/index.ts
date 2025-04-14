@@ -1,4 +1,4 @@
-import { join, resolve, isAbsolute } from 'path';
+// import { join, resolve, isAbsolute } from 'path';
 import { PGlite, MemoryFS } from '@electric-sql/pglite';
 import { vector } from '@electric-sql/pglite/vector';
 
@@ -732,4 +732,4 @@ export class PGliteStore extends MastraStorage {
   }
 }
 
-export { PGliteStore as DefaultStorage };
+// export { PGliteStore as DefaultStorage };

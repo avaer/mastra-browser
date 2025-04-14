@@ -657,4 +657,4 @@ export class LibSQLStore extends MastraStorage {
   }
 }
 
-export { LibSQLStore as DefaultStorage };
+// export { LibSQLStore as DefaultStorage };
