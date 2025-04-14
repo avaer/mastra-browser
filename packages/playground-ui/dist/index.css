@@ -1,0 +1,21 @@
+.thread-viewport > [data-radix-scroll-area-content] {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  align-self: stretch;
+  background-color: inherit;
+}
+
+[hidden]:where(:not([hidden=until-found])) {
+  display: none !important;
+}
+
+.unset-position {
+  position: unset;
+}
+
+.react-flow__controls-button {
+  color: #e6e6e6 !important;
+  background-color: #121212 !important;
+  border: none !important;
+}

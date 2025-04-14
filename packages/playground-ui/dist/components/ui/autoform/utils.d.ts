@@ -1,0 +1,1 @@
+export declare const fieldConfig: (config: import('@autoform/core').FieldConfig<import('../../../../node_modules/@types/react').ReactNode, "string" | "number" | "boolean" | "select" | "date" | "record", import('../../../../node_modules/@types/react').ComponentType<import('@autoform/react').FieldWrapperProps>, {}>) => import('@autoform/zod').SuperRefineFunction;
