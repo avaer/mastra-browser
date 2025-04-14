@@ -1,5 +1,5 @@
 import * as babel from '@babel/core';
-import type { MastraDeployer } from '@mastra/core';
+import type { MastraDeployer } from '@mastra/core/deployer';
 import { rollup } from 'rollup';
 import esbuild from 'rollup-plugin-esbuild';
 
