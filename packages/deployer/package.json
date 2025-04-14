@@ -3,80 +3,41 @@
   "version": "0.2.9-alpha.0",
   "description": "",
   "type": "module",
-  "files": [
-    "dist"
-  ],
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "src/index.ts",
   "exports": {
     ".": {
       "import": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.js"
-      },
-      "require": {
-        "types": "./dist/index.d.cts",
-        "default": "./dist/index.cjs"
+        "default": "./src/index.ts"
       }
     },
     "./server": {
       "import": {
-        "types": "./dist/server/index.d.ts",
-        "default": "./dist/server/index.js"
-      },
-      "require": {
-        "types": "./dist/server/index.d.cts",
-        "default": "./dist/server/index.cjs"
+        "default": "./src/server/index.ts"
       }
     },
     "./services": {
       "import": {
-        "types": "./dist/services/index.d.ts",
-        "default": "./dist/services/index.js"
-      },
-      "require": {
-        "types": "./dist/services/index.d.cts",
-        "default": "./dist/services/index.cjs"
+        "default": "./src/services/index.ts"
       }
     },
     "./build": {
       "import": {
-        "types": "./dist/build/index.d.ts",
-        "default": "./dist/build/index.js"
-      },
-      "require": {
-        "types": "./dist/build/index.d.cts",
-        "default": "./dist/build/index.cjs"
+        "default": "./src/build/index.ts"
       }
     },
     "./bundler": {
       "import": {
-        "types": "./dist/bundler/index.d.ts",
-        "default": "./dist/bundler/index.js"
-      },
-      "require": {
-        "types": "./dist/bundler/index.d.cts",
-        "default": "./dist/bundler/index.cjs"
+        "default": "./src/bundler/index.ts"
       }
     },
     "./analyze": {
       "import": {
-        "types": "./dist/build/analyze.d.ts",
-        "default": "./dist/build/analyze.js"
-      },
-      "require": {
-        "types": "./dist/build/analyze.d.cts",
-        "default": "./dist/build/analyze.cjs"
+        "default": "./src/analyze/index.ts"
       }
     },
     "./loader": {
       "import": {
-        "types": "./dist/validator/loader.d.ts",
-        "default": "./dist/validator/loader.js"
-      },
-      "require": {
-        "types": "./dist/validator/loader.d.cts",
-        "default": "./dist/validator/loader.cjs"
+        "default": "./src/validator/loader.ts"
       }
     },
     "./package.json": "./package.json"
