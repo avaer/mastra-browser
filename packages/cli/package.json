@@ -73,7 +73,6 @@
     "zod-to-json-schema": "^3.24.3"
   },
   "devDependencies": {
-    "@internal/lint": "workspace:*",
     "@mastra/client-js": "workspace:*",
     "@mastra/playground-ui": "workspace:*",
     "@microsoft/api-extractor": "^7.52.1",
