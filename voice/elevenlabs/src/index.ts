@@ -71,9 +71,9 @@ export class ElevenLabsVoice extends MastraVoice {
     if (!baseURL) {
       throw new Error('baseURL is required');
     }
-    if (!apiKey) {
-      throw new Error('ELEVENLABS_API_KEY is not set');
-    }
+    // if (!apiKey) {
+    //   throw new Error('ELEVENLABS_API_KEY is not set');
+    // }
 
     this.client = new ElevenLabsClient({
       baseUrl: baseURL,
