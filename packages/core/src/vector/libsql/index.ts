@@ -1,6 +1,6 @@
 import { join, resolve, isAbsolute } from 'path';
-// import { createClient } from '@libsql/client';
-// import type { Client as TursoClient, InValue } from '@libsql/client';
+import { createClient } from '@libsql/client';
+import type { Client as TursoClient, InValue } from '@libsql/client';
 
 import type { VectorFilter } from '../filter';
 import { MastraVector } from '../index';
@@ -24,7 +24,7 @@ interface LibSQLQueryParams extends QueryVectorParams {
 type LibSQLQueryArgs = [...QueryVectorArgs, number?];
 
 export class LibSQLVector extends MastraVector {
-  private turso: any;
+  private turso: TursoClient;
 
   constructor({
     connectionUrl,
@@ -39,20 +39,19 @@ export class LibSQLVector extends MastraVector {
   }) {
     super();
 
-    // this.turso = createClient({
-    //   url: this.rewriteDbUrl(connectionUrl),
-    //   syncUrl: syncUrl,
-    //   authToken,
-    //   syncInterval,
-    // });
+    this.turso = createClient({
+      url: this.rewriteDbUrl(connectionUrl),
+      syncUrl: syncUrl,
+      authToken,
+      syncInterval,
+    });
 
-    // if (connectionUrl.includes(`file:`) || connectionUrl.includes(`:memory:`)) {
-    //   void this.turso.execute({
-    //     sql: 'PRAGMA journal_mode=WAL;',
-    //     args: {},
-    //   });
-    // }
-    this.turso = null;
+    if (connectionUrl.includes(`file:`) || connectionUrl.includes(`:memory:`)) {
+      void this.turso.execute({
+        sql: 'PRAGMA journal_mode=WAL;',
+        args: {},
+      });
+    }
   }
 
   // If we're in the .mastra/output directory, use the dir outside .mastra dir
@@ -130,12 +129,7 @@ export class LibSQLVector extends MastraVector {
         args: filterValues,
       });
 
-      return result.rows.map(({ id, score, metadata, embedding }: {
-        id: any,
-        score: any,
-        metadata: any,
-        embedding: any,
-      }) => ({
+      return result.rows.map(({ id, score, metadata, embedding }) => ({
         id: id as string,
         score: score as number,
         metadata: JSON.parse((metadata as string) ?? '{}'),
@@ -175,7 +169,7 @@ export class LibSQLVector extends MastraVector {
           sql: query,
           // @ts-ignore
           args: [
-            vectorIds[i] as any,
+            vectorIds[i] as InValue,
             JSON.stringify(vectors[i]),
             JSON.stringify(metadata?.[i] || {}),
             JSON.stringify(vectors[i]),
@@ -269,7 +263,7 @@ export class LibSQLVector extends MastraVector {
         sql: vectorTablesQuery,
         args: [],
       });
-      return result.rows.map((row: any) => row.name as string);
+      return result.rows.map(row => row.name as string);
     } catch (error: any) {
       throw new Error(`Failed to list vector tables: ${error.message}`);
     }
@@ -337,7 +331,7 @@ export class LibSQLVector extends MastraVector {
   ): Promise<void> {
     try {
       const updates = [];
-      const args: any[] = [];
+      const args: InValue[] = [];
 
       if (update.vector) {
         updates.push('embedding = vector32(?)');
@@ -389,4 +383,4 @@ export class LibSQLVector extends MastraVector {
   }
 }
 
-export { LibSQLVector as DefaultVectorDB };
+// export { LibSQLVector as DefaultVectorDB };
