@@ -27,7 +27,13 @@ export class MemoryStore extends MastraStorage {
     [TABLE_TRACES]: new Map(),
   };
 
-  private schemas: Record<TABLE_NAMES, Record<string, StorageColumn>> = {};
+  private schemas: Record<TABLE_NAMES, Record<string, StorageColumn>> = {
+    [TABLE_WORKFLOW_SNAPSHOT]: {},
+    [TABLE_EVALS]: {},
+    [TABLE_MESSAGES]: {},
+    [TABLE_THREADS]: {},
+    [TABLE_TRACES]: {},
+  };
 
   constructor({ name = 'MemoryStore' }: { name?: string } = {}) {
     super({ name });

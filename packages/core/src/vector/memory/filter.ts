@@ -122,19 +122,20 @@ function evaluateCondition(value: any, condition: any): boolean {
   }
   
   return Object.entries(condition).every(([operator, operand]) => {
+    // Cast operand to appropriate type for comparison operations
     switch (operator) {
       case '$eq':
         return value === operand;
       case '$ne':
         return value !== operand;
       case '$gt':
-        return value > operand;
+        return value > (operand as number);
       case '$gte':
-        return value >= operand;
+        return value >= (operand as number);
       case '$lt':
-        return value < operand;
+        return value < (operand as number);
       case '$lte':
-        return value <= operand;
+        return value <= (operand as number);
       case '$in':
         return Array.isArray(operand) && operand.includes(value);
       case '$nin':
