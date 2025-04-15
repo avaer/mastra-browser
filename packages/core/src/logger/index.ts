@@ -42,6 +42,12 @@ export interface BaseLogMessage extends Run {
   name: string;
 }
 
+export interface LogMessage {
+  message: string;
+  level: LogLevel;
+  args: Record<string, any>;
+}
+
 export class LoggerTransport extends Transform {
   constructor(opts: any = {}) {
     super({ ...opts, objectMode: true });
@@ -58,7 +64,7 @@ export class LoggerTransport extends Transform {
 export type TransportMap = Record<string, LoggerTransport>;
 
 // Base Pino Logger
-export class Logger {
+export class Logger extends EventTarget {
   // protected logger: pino.Logger;
   transports: TransportMap;
 
@@ -70,6 +76,8 @@ export class Logger {
       overrideDefaultTransports?: boolean;
     } = {},
   ) {
+    super();
+
     this.transports = options.transports || {};
 
     // // Create Pino logger with multiple streams
@@ -117,25 +125,26 @@ export class Logger {
     // );
   }
 
-  debug(message: string, args: Record<string, any> = {}): void {
-    // this.logger.debug(args, message);
-    console.debug(args, message);
-  }
+  private makeLog(logMethod: 'debug' | 'info' | 'warn' | 'error', level: LogLevel) {
+    return (message: string, args: Record<string, any> = {}) => {
+      console[logMethod](args, message);
 
-  info(message: string, args: Record<string, any> = {}): void {
-    // this.logger.info(args, message);
-    console.info(args, message);
+      const logMessage: LogMessage = {
+        message,
+        level,
+        args,
+      };
+      this.dispatchEvent(
+        new MessageEvent('log', {
+          data: logMessage,
+        }) as any,
+      );
+    };
   }
-
-  warn(message: string, args: Record<string, any> = {}): void {
-    // this.logger.warn(args, message);
-    console.warn(args, message);
-  }
-
-  error(message: string, args: Record<string, any> = {}): void {
-    // this.logger.error(args, message);
-    console.error(args, message);
-  }
+  debug = this.makeLog('debug', LogLevel.DEBUG);
+  info = this.makeLog('info', LogLevel.INFO);
+  warn = this.makeLog('warn', LogLevel.WARN);
+  error = this.makeLog('error', LogLevel.ERROR);
 
   // Stream creation for process output handling
   createStream(): Transform {
