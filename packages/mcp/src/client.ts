@@ -1,4 +1,5 @@
 import { MastraBase } from '@mastra/core/base';
+import { Logger } from '@mastra/core/logger';
 import { createTool, Tool } from '@mastra/core/tools';
 import { jsonSchemaToModel } from '@mastra/core/utils';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
@@ -93,16 +94,21 @@ export class MastraMCPClient extends MastraBase {
     server,
     capabilities = {},
     timeout = DEFAULT_REQUEST_TIMEOUT_MSEC,
+    logger,
   }: {
     name: string;
     server: MastraMCPServerDefinition;
     capabilities?: ClientCapabilities;
     version?: string;
     timeout?: number;
+    logger?: Logger;
   }) {
     super({ name: 'MastraMCPClient' });
     this.name = name;
     this.timeout = timeout;
+    if (logger) {
+      this.logger = logger;
+    }
 
     if (`url` in server) {
       this.transport = new SSEClientTransport(server.url, {

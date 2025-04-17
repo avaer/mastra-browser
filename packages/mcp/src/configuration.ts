@@ -120,6 +120,8 @@ To fix this you have three different options:
       const mcpClient = this.mcpClientsById.get(name)!;
       if (connect) {
         await mcpClient.connect();
+
+        this.logger.debug(`Connected to ${name} MCP server`);
       }
 
       return mcpClient;
@@ -130,20 +132,21 @@ To fix this you have three different options:
     const mcpClient = new MastraMCPClient({
       name,
       server: config,
+      logger: this.logger,
     });
 
     this.mcpClientsById.set(name, mcpClient);
     try {
       if (connect) {
         await mcpClient.connect();
+
+        this.logger.debug(`Connected to ${name} MCP server`);
       }
     } catch (e) {
       this.mcpClientsById.delete(name);
       this.logger.error(`MCPConfiguration errored connecting to MCP server ${name}`);
       throw e;
     }
-
-    this.logger.debug(`Connected to ${name} MCP server`);
 
     return mcpClient;
   }
