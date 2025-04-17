@@ -1,4 +1,5 @@
 import { MastraBase } from '@mastra/core/base';
+import type { Logger } from '@mastra/core/logger';
 import { v5 as uuidv5 } from 'uuid';
 import { MastraMCPClient } from './client';
 import type { MastraMCPServerDefinition, ServerSpecification } from './client';
@@ -10,10 +11,17 @@ export class MCPConfiguration extends MastraBase {
   private serverConfigs: Record<string, MastraMCPServerDefinition> = {};
   private id: string;
 
-  constructor(args: { id?: string; servers: Record<string, MastraMCPServerDefinition> }) {
+  constructor(args: {
+    id?: string;
+    servers: Record<string, MastraMCPServerDefinition>,
+    logger?: Logger,
+  }) {
     super({ name: 'MCPConfiguration' });
     this.serverConfigs = args.servers;
     this.id = args.id ?? this.makeId();
+    if (args.logger) {
+      this.logger = args.logger;
+    }
 
     // to prevent memory leaks return the same MCP server instance when configured the same way multiple times
     const existingInstance = mastraMCPConfigurationInstances.get(this.id);
