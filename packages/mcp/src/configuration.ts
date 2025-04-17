@@ -113,12 +113,14 @@ To fix this you have three different options:
   }
 
   private mcpClientsById = new Map<string, MastraMCPClient>();
-  private async getConnectedClient(name: string, config: MastraMCPServerDefinition) {
+  private async getConnectedClient(name: string, config: MastraMCPServerDefinition, connect: boolean = true) {
     const exists = this.mcpClientsById.has(name);
 
     if (exists) {
       const mcpClient = this.mcpClientsById.get(name)!;
-      await mcpClient.connect();
+      if (connect) {
+        await mcpClient.connect();
+      }
 
       return mcpClient;
     }
@@ -132,7 +134,9 @@ To fix this you have three different options:
 
     this.mcpClientsById.set(name, mcpClient);
     try {
-      await mcpClient.connect();
+      if (connect) {
+        await mcpClient.connect();
+      }
     } catch (e) {
       this.mcpClientsById.delete(name);
       this.logger.error(`MCPConfiguration errored connecting to MCP server ${name}`);
@@ -181,13 +185,19 @@ To fix this you have three different options:
     }
   }
 
-  async eachClient(cb: (input: {
-    serverName: string;
-    client: MastraMCPClient;
-  }) => Promise<void>,
+  async eachClient(
+    cb: (input: {
+      serverName: string;
+      client: MastraMCPClient;
+    }) => Promise<void>,
+    opts: {
+      connect?: boolean;
+    } = {
+      connect: true,
+    }
   ) {
     for (const [serverName, serverConfig] of Object.entries(this.serverConfigs)) {
-      const client = await this.getConnectedClient(serverName, serverConfig);
+      const client = await this.getConnectedClient(serverName, serverConfig, opts.connect);
       await cb({ serverName, client });
     }
   }
