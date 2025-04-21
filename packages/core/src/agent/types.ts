@@ -112,6 +112,8 @@ export type AgentStreamOptions<Z extends ZodSchema | JSONSchema7 | undefined = u
   temperature?: number;
   /** Controls how tools are selected during generation */
   toolChoice?: 'auto' | 'none' | 'required' | { type: 'tool'; toolName: string };
+  /** Filter out tools that are allowed to be used */
+  toolFilter?: (tool: ToolAction<any, any, any> | VercelTool) => boolean;
   /** Experimental schema for structured output */
   experimental_output?: Z;
   /** Telemetry settings */

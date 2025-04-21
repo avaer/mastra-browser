@@ -28,7 +28,7 @@ import type { Mastra } from '../mastra';
 import type { MastraMemory } from '../memory/memory';
 import type { MemoryConfig, StorageThreadType } from '../memory/types';
 import { InstrumentClass } from '../telemetry';
-import type { CoreTool } from '../tools/types';
+import type { CoreTool, ToolAction, VercelTool } from '../tools/types';
 import { makeCoreTool, createMastraProxy, ensureToolProperties, ensureAllMessagesAreCoreMessages } from '../utils';
 import type { CompositeVoice } from '../voice';
 import { DefaultVoice } from '../voice';
@@ -1037,10 +1037,26 @@ export class Agent<
       output,
       temperature,
       toolChoice = 'auto',
+      toolFilter,
       experimental_output,
       telemetry,
       ...rest
     }: AgentStreamOptions<Z> = Object.assign({}, this.#defaultStreamOptions, streamOptions);
+
+    const filterTools = (tools: ToolsInput, toolFilter?: (tool: ToolAction<any, any, any> | VercelTool) => boolean) => {
+      if (toolFilter) {
+        const result: ToolsInput = {};
+        for (const [key, tool] of Object.entries(tools)) {
+          if (toolFilter(tool)) {
+            result[key] = tool;
+          }
+        }
+        return result;
+      } else {
+        return tools;
+      }
+    };
+
     const runIdToUse = runId || randomUUID();
 
     let messagesToUse: CoreMessage[] = [];
@@ -1082,10 +1098,12 @@ export class Agent<
         runId,
       });
 
+      const tools = filterTools(this.tools, toolFilter);
+
       const streamResult = await this.llm.__stream({
         messages: messageObjects,
         temperature,
-        tools: this.tools,
+        tools,
         convertedTools,
         onStepFinish: (result: any) => {
           void onStepFinish?.(result);
@@ -1117,10 +1135,13 @@ export class Agent<
       this.logger.debug(`Starting agent ${this.name} llm stream call`, {
         runId,
       });
+
+      const tools = filterTools(this.tools, toolFilter);
+
       return this.llm.__stream({
         messages: messageObjects,
         temperature,
-        tools: this.tools,
+        tools,
         convertedTools,
         onStepFinish: (result: any) => {
           void onStepFinish?.(result);
@@ -1150,9 +1171,11 @@ export class Agent<
       runId,
     });
 
+    const tools = filterTools(this.tools, toolFilter);
+
     return this.llm.__streamObject({
       messages: messageObjects,
-      tools: this.tools,
+      tools,
       temperature,
       structuredOutput: output,
       convertedTools,
