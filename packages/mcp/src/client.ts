@@ -5,12 +5,11 @@ import { jsonSchemaToModel } from '@mastra/core/utils';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { SSEClientTransport } from '@modelcontextprotocol/sdk/client/sse.js';
 import type { SSEClientTransportOptions } from '@modelcontextprotocol/sdk/client/sse.js';
-import { getDefaultEnvironment, StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
-import type { StdioServerParameters } from '@modelcontextprotocol/sdk/client/stdio.js';
 import { DEFAULT_REQUEST_TIMEOUT_MSEC } from '@modelcontextprotocol/sdk/shared/protocol.js';
 import type { Transport } from '@modelcontextprotocol/sdk/shared/transport.js';
-import type { ClientCapabilities, ResourceListChangedNotification } from '@modelcontextprotocol/sdk/types.js';
-import { CallToolResultSchema, ListResourcesResultSchema } from '@modelcontextprotocol/sdk/types.js';
+import type { ClientCapabilities } from '@modelcontextprotocol/sdk/types.js';
+import { CallToolResultSchema } from '@modelcontextprotocol/sdk/types.js';
+import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
 import { z } from 'zod';
 
 // Omit the fields we want to control from the SDK options
@@ -82,11 +81,12 @@ export type MastraMCPServerDefinition = any | SSEClientParameters;
 
 export class MastraMCPClient extends MastraBase {
   name: string;
-  private transport: Transport;
+  private transport: Transport | null;
   private client: Client;
   private readonly timeout: number;
   private resourceSubscriptions: Map<string, number> = new Map(); // reference count of subscriptions
   private eventTarget: EventTarget = new EventTarget();
+  private server: MastraMCPServerDefinition;
   
   constructor({
     name,
@@ -105,23 +105,11 @@ export class MastraMCPClient extends MastraBase {
   }) {
     super({ name: 'MastraMCPClient' });
     this.name = name;
+    this.server = server;
+    this.transport = null;
     this.timeout = timeout;
     if (logger) {
       this.logger = logger;
-    }
-
-    if (`url` in server) {
-      this.transport = new SSEClientTransport(server.url, {
-        requestInit: server.requestInit,
-        eventSourceInit: server.eventSourceInit,
-      });
-    } else {
-      // this.transport = new StdioClientTransport({
-      //   ...server,
-      //   // without ...getDefaultEnvironment() commands like npx will fail because there will be no PATH env var
-      //   env: { ...getDefaultEnvironment(), ...(server.env || {}) },
-      // });
-      this.transport = null as any;
     }
 
     this.client = new Client(
@@ -139,36 +127,50 @@ export class MastraMCPClient extends MastraBase {
 
   async connect() {
     if (this.isConnected) return;
-    try {
-      await this.client.connect(this.transport);
-      this.isConnected = true;
-      const originalOnClose = this.client.onclose;
-      this.client.onclose = () => {
-        this.isConnected = false;
-        if (typeof originalOnClose === `function`) {
-          originalOnClose();
-        }
-      };
-      
-      // Set up resource change notification handler
-      this.setupResourceChangeHandler();
-      
-      // asyncExitHook(
-      //   async () => {
-      //     this.logger.debug(`Disconnecting ${this.name} MCP server`);
-      //     await this.disconnect();
-      //   },
-      //   { wait: 5000 },
-      // );
 
-      // process.on('SIGTERM', () => gracefulExit());
+    try {
+      this.transport = new SSEClientTransport(this.server.url);
+
+      await this.client.connect(this.transport);
     } catch (e) {
       this.logger.error(
         `Failed connecting to MCPClient with name ${this.name}.\n${e instanceof Error ? e.stack : JSON.stringify(e, null, 2)}`,
       );
-      this.isConnected = false;
-      throw e;
+
+      try {
+        this.logger.info(
+          `Falling back to Streamable HTTP transport for MCPClient with name ${this.name}, using URL ${this.server.url}`,
+        );
+
+        this.transport = new StreamableHTTPClientTransport(this.server.url);
+
+        console.log(this.transport)
+  
+        await this.client.connect(this.transport);
+
+        this.client.listTools().then((tools) => {
+          console.log("Available tools:", tools);
+        });
+      } catch (e) {
+        this.logger.error(
+          `Failed connecting to MCPClient with name ${this.name} using Streamable HTTP transport.\n${e instanceof Error ? e.stack : JSON.stringify(e, null, 2)}`,
+        );
+        throw e;
+      }
     }
+
+    this.isConnected = true;
+
+    this.setupResourceChangeHandler();
+
+    const originalOnClose = this.client.onclose;
+
+    this.client.onclose = () => {
+      this.isConnected = false;
+      if (typeof originalOnClose === `function`) {
+        originalOnClose();
+      }
+    };
   }
 
   async disconnect() {
