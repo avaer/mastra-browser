@@ -3,15 +3,21 @@ import { Logger } from '@mastra/core/logger';
 import { createTool, Tool } from '@mastra/core/tools';
 import { jsonSchemaToModel } from '@mastra/core/utils';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
+import { RawStdioClientTransport } from './rawStdioTransport';
 import { SSEClientTransport } from '@modelcontextprotocol/sdk/client/sse.js';
 import type { SSEClientTransportOptions } from '@modelcontextprotocol/sdk/client/sse.js';
-import { getDefaultEnvironment, StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
-import type { StdioServerParameters } from '@modelcontextprotocol/sdk/client/stdio.js';
+// import { getDefaultEnvironment, StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
+// import type { StdioServerParameters } from '@modelcontextprotocol/sdk/client/stdio.js';
 import { DEFAULT_REQUEST_TIMEOUT_MSEC } from '@modelcontextprotocol/sdk/shared/protocol.js';
 import type { Transport } from '@modelcontextprotocol/sdk/shared/transport.js';
 import type { ClientCapabilities, ResourceListChangedNotification } from '@modelcontextprotocol/sdk/types.js';
 import { CallToolResultSchema, ListResourcesResultSchema } from '@modelcontextprotocol/sdk/types.js';
 import { z } from 'zod';
+import type { Readable, Writable } from 'stream';
+
+type StdioClientParameters = {
+  stdio: [Writable, Readable];
+};
 
 // Omit the fields we want to control from the SDK options
 type SSEClientParameters = {
@@ -78,7 +84,7 @@ function deepRequired<T extends z.ZodTypeAny>(schema: T): z.ZodTypeAny {
   return deepRequiredInner(schema);
 }
 
-export type MastraMCPServerDefinition = any | SSEClientParameters;
+export type MastraMCPServerDefinition = StdioClientParameters | SSEClientParameters;
 
 export class MastraMCPClient extends MastraBase {
   name: string;
@@ -114,6 +120,10 @@ export class MastraMCPClient extends MastraBase {
       this.transport = new SSEClientTransport(server.url, {
         requestInit: server.requestInit,
         eventSourceInit: server.eventSourceInit,
+      });
+    } else if (`stdio` in server) {
+      this.transport = new RawStdioClientTransport({
+        stdio: server.stdio,
       });
     } else {
       // this.transport = new StdioClientTransport({
