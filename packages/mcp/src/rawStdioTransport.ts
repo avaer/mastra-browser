@@ -3,7 +3,7 @@ import type { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
 import type { JSONRPCMessage } from "@modelcontextprotocol/sdk/types.js";
 
 export class RawStdioClientTransport implements Transport {
-  private stdio: [Writable, Readable];
+  private stdio: [Writable, Readable, Readable];
 
   get stdin(): Writable {
     return this.stdio[0];
@@ -18,7 +18,7 @@ export class RawStdioClientTransport implements Transport {
   constructor({
     stdio,
   }: {
-    stdio: [Writable, Readable];
+    stdio: [Writable, Readable, Readable];
   }) {
     this.stdio = stdio;
 

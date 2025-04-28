@@ -16,7 +16,7 @@ import { z } from 'zod';
 import type { Readable, Writable } from 'stream';
 
 type StdioClientParameters = {
-  stdio: [Writable, Readable];
+  stdio: [Writable, Readable, Readable];
 };
 
 // Omit the fields we want to control from the SDK options
